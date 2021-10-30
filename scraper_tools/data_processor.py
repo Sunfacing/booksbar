@@ -95,3 +95,19 @@ def copy_to_collection(copied_from_db, copy_to_db, key_for_hash, add_scrape_date
     collection_list = convert_new_collection(hashtable, add_scrape_date, scrape_date)
     mongo_insert(copy_to_db, collection_list)
     print(len(collection_list), 'is copied') 
+
+
+def find_unmatched_product(big_collection, small_collection, key_for_hash):
+    """
+    Find the products found in bigger_collection, but not in smaller_collection and return list
+    :param big_collection: used to find products not in small_collection
+    :param small_collection: used to find products not in small_collection
+    :param key_for_hash: key that should exist in both collections for comparison
+    """
+    small_collection = convert_hashtable(small_collection, key_for_hash)
+    unmatched_list = []
+    for doc in big_collection.find():
+        if doc[key_for_hash] not in small_collection:
+            doc.pop('_id')
+            unmatched_list.append(doc)
+    return unmatched_list
