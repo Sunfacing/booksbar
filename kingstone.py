@@ -292,6 +292,52 @@ def get_product_info(url_to_scrape, sliced_list, target_id_key):
         mongo_insert(product_error, not_found_list)
     return product_info
 
+
+def phased_out_checker(url_to_scrape, sliced_list, target_id_key):
+    i = 0
+    current_product_list = []
+    phased_out_list = []
+    for product in sliced_list:
+        product_id = product[target_id_key]
+        product_url = url_to_scrape + product_id
+        if i % 10 == 0:
+            time.sleep(1)       
+        try:
+            page  = requests.get(product_url, headers = HEADERS)
+        except:
+            # In case website block connection, pause 10 seconds
+            print('{} fetching data failed, try again in 10 seconds'.format(product_id))
+            time.sleep(10) 
+            page  = requests.get(product_url, headers = HEADERS)
+        try:
+        # Update product price and availability info before write back to [catalog_today]   
+            page.enconding = 'utf-8'
+            page_content = BeautifulSoup(page.content, 'html.parser')
+            availability = page_content.find('span', {'class': 'txt_btnbuyb'}).getText()
+            if availability == '立即結帳':
+                availability == '加入購物車'
+            price = page_content.find('b', {'class': 'sty2 txtSize2'}).getText()
+            try: 
+                discount = page_content.find('b', {'class': 'b1'}).getText()
+            except: 
+                discount = 0
+            product.pop('_id')
+            product.pop('type')
+            product['availability'] = availability
+            product['price'] = price
+            product['discount'] = discount
+            current_product_list.append(product)
+        except:
+            product.pop('_id')
+            phased_out_list.append(product)
+        i += 1
+    if len(phased_out_list) > 0:
+        phase_out_product_catalog.insert_many(phased_out_list)
+    return current_product_list
+
+
+
+
 if __name__=='__main__':
     # Step 1: Get all subcategory id and scrape, with batch insertion at subcategory level #
     # create_category_list()
@@ -331,3 +377,4 @@ if __name__=='__main__':
         insert_func = mongo_insert,
         slicing=True
     )
+
