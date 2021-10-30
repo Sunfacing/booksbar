@@ -83,3 +83,15 @@ def convert_new_collection(converted_hashtable, add_scrape_date=False, scrape_da
             doc['scrape_date'] = scrape_date
         new_collection.append(doc)
     return new_collection
+
+def copy_to_collection(copied_from_db, copy_to_db, key_for_hash, add_scrape_date=False, scrape_date=TODAY):
+    """
+    Used when need to remove duplicate products, and store the collection
+    this function combines functions of [convert_hashtable], [convert_new_collection], [mongo_insert]
+    :param copied_from_db: collection to be insert
+    :param copy_to_db: must be a list of dicts, best created by [convert_new_collection] function    
+    """
+    hashtable = convert_hashtable(copied_from_db, key_for_hash)
+    collection_list = convert_new_collection(hashtable, add_scrape_date, scrape_date)
+    mongo_insert(copy_to_db, collection_list)
+    print(len(collection_list), 'is copied') 
