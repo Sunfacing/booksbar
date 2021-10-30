@@ -68,3 +68,18 @@ def convert_hashtable(collection, key_for_hash, query={}):
         product.pop('_id')
         hash_table[product_value_as_key] = product
     return hash_table    
+
+
+def convert_new_collection(converted_hashtable, add_scrape_date=False, scrape_date=TODAY):
+    """
+    Create list type of new collection via hashtable, the result is duplicate free
+    :param converted_hashtable: a list of hashtable created by [covert_hashtable] 
+    :param add_scrape_date: if turned true, each document in collection will add 'scrape_date' field
+    :param scrape_date: if [add_scrape_date] is True, date must be provided
+    """ 
+    new_collection = []
+    for doc in converted_hashtable.values():
+        if add_scrape_date:
+            doc['scrape_date'] = scrape_date
+        new_collection.append(doc)
+    return new_collection
