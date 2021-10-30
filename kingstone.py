@@ -318,3 +318,16 @@ if __name__=='__main__':
     daily_change_tracker(catalog_today, catalog_yesterday, 'kingstone_pid', new_prodcut_catalog, unfound_product_catalog)
 
 
+    # Step 5: Reading catalog and scraped single product info 
+    product_catalog = new_prodcut_catalog.find({'track_date': TODAY})
+    product_list = convert_mongo_object_to_list(product_catalog)
+    multi_scrapers(
+        worker_num = 20, 
+        list_to_scrape = product_list, 
+        url_to_scrape = PRODUCT_PAGE, 
+        target_id_key = 'kingstone_pid', 
+        db_to_insert = product_info, 
+        scraper_func = get_product_info, 
+        insert_func = mongo_insert,
+        slicing=True
+    )
