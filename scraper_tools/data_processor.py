@@ -48,3 +48,20 @@ def create_new_field(product_list, **field_value):
             product[field] = value
         new_list.append(product)
     return new_list
+
+
+
+def convert_hashtable(collection, key_for_hash, query={}):
+    """
+    Create hashtable for finding duplicate products / comparing catalog and product info
+    :param collection: a list of hashtable created by [covert_hashtable] 
+    :param key_for_hash: if turned true, each document in collection will add 'scrape
+    """
+    collection = collection.find(query)
+    hash_table = defaultdict(dict)
+
+    for product in collection:
+        product_value_as_key = product[key_for_hash]
+        product.pop('_id')
+        hash_table[product_value_as_key] = product
+    return hash_table    
