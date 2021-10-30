@@ -134,11 +134,10 @@ def daily_change_tracker(catalog_today, catalog_yesterday, key_for_hash, new_pro
 
 def convert_mongo_object_to_list(mongo_object):
     """
-    Remove mongo object's _id key, and append to a new list
+    Loop through query result and append to a new list
     :param mongo_object: mongo object from collection.find() method
     """
     product_list = []
     for product in mongo_object:
-        product.pop('_id')
         product_list.append(product)
     return product_list
