@@ -111,3 +111,20 @@ def find_unmatched_product(big_collection, small_collection, key_for_hash):
             doc.pop('_id')
             unmatched_list.append(doc)
     return unmatched_list
+
+
+def daily_change_tracker(catalog_today, catalog_yesterday, key_for_hash, new_prodcut_catalog, unfound_product_catalog):
+    """
+    Track if there's any product found yesterday but not today
+    It's possible the product is missed today, and tomorrow shows up again
+    for tracking long term scrapping process's quality
+    """
+    # Find out new product compared to yesterday
+    new_product = find_unmatched_product(catalog_today, catalog_yesterday, key_for_hash)
+    product_list = create_new_field(new_product, track_date=TODAY, type='new_product')
+    mongo_insert(new_prodcut_catalog, product_list)
+
+    # Find out phased out product compared to today
+    phased_out_product = find_unmatched_product(catalog_yesterday, catalog_today, key_for_hash)
+    product_list = create_new_field(phased_out_product, track_date=TODAY, type='phase_out')
+    mongo_insert(unfound_product_catalog, product_list)
