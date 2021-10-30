@@ -1,5 +1,7 @@
 from collections import defaultdict
+from datetime import date
 
+TODAY = date.today().strftime("%Y-%m-%d")
 
 def mongo_insert(collection, product_list):
     """
@@ -119,15 +121,15 @@ def daily_change_tracker(catalog_today, catalog_yesterday, key_for_hash, new_pro
     It's possible the product is missed today, and tomorrow shows up again
     for tracking long term scrapping process's quality
     """
-    # Find out new product compared to yesterday
     new_product = find_unmatched_product(catalog_today, catalog_yesterday, key_for_hash)
     product_list = create_new_field(new_product, track_date=TODAY, type='new_product')
-    mongo_insert(new_prodcut_catalog, product_list)
-
+    if len(product_list) > 0:
+        mongo_insert(new_prodcut_catalog, product_list)
     # Find out phased out product compared to today
     phased_out_product = find_unmatched_product(catalog_yesterday, catalog_today, key_for_hash)
     product_list = create_new_field(phased_out_product, track_date=TODAY, type='phase_out')
-    mongo_insert(unfound_product_catalog, product_list)
+    if len(product_list) > 0:
+        mongo_insert(unfound_product_catalog, product_list)
 
 
 def convert_mongo_object_to_list(mongo_object):
