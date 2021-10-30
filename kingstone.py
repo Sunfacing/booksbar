@@ -3,6 +3,8 @@ from collections import defaultdict
 from datetime import date
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
+from scraper_tools.data_processor import *
+
 
 from datetime import datetime
 import random
@@ -90,3 +92,17 @@ def get_category_list(div):
                                                 'category_code': cate_link, 'category_nm': cate_nm, 
                                                 'subcate_code': subcate_link, 'subcate_nm': subcate_nm})                                 
     return nomenclature
+
+
+def create_category_list():
+    for i in range(len(DIVISION)):
+        result = get_category_list(DIVISION[i])
+        mongo_insert(category_list, result)
+
+
+
+
+
+if __name__=='__main__':
+    # Step 1: Get all subcategory id and scrape, with batch insertion at subcategory level #
+    create_category_list()
