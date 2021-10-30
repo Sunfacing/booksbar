@@ -199,4 +199,7 @@ if __name__=='__main__':
     copy_to_collection(catalog_tem_today, catalog_today, 'kingstone_pid')
     db.drop_collection(catalog_tem_today)
 
-
+    # Step 4. Mutually compare[catalog_today] with [catalog_yesterday], 
+    #         phase out product in [phase_out_product_catalog]
+    #         new product in [unfound_product_catalog]
+    daily_change_tracker(catalog_today, catalog_yesterday, 'kingstone_pid', new_prodcut_catalog, unfound_product_catalog)
