@@ -177,7 +177,120 @@ def get_product_list(url, subcate_code):
         mongo_insert(page_error, error_pages)
     return catalog
 
+def get_product_info(url_to_scrape, sliced_list, target_id_key):
+    product_info = []
+    not_found_list = []
+    i = 0
+    for each in sliced_list:
+        product_id = each[target_id_key]
+        subcate_id = each['subcate_id']
+        product_url = url_to_scrape + product_id
+        if i % 10 == 0:
+            time.sleep(1)
+        # In case website block connection, pause 10 seconds
+        try:
+            page  = requests.get(product_url, headers = HEADERS)
+        except:
+            print('{} fetching data failed, try again in 10 seconds'.format(subcate_id))
+            time.sleep(10) 
+            page  = requests.get(product_url, headers = HEADERS)
 
+        # This try block will ignore single item failure, and continue    
+        try: 
+            if page is None:
+                print(subcate_id, 'gets None, go check')
+                continue
+            page.enconding = 'utf-8'
+            page_content = BeautifulSoup(page.content, 'html.parser')
+            data = defaultdict(dict)
+            
+            # Product_id and Title
+            data['subcate_id'] = subcate_id
+            data['kingstone_pid'] = product_id
+            title = page_content.find('h1', {'class': 'pdname_basic'}).getText()
+            data['title'] = title
+
+            # Cover photo, kingstone has fixed api to get
+            data['main_img'] = 'https://cdn.kingstone.com.tw/book/images/product/{}/{}/{}b.jpg'.format(product_id[:5], product_id, product_id)
+
+            # Content photos, some photos are broken, which will be omitted
+            imgs = page_content.find_all('li', {'class': 'swiper-slide'})
+            img_collection = []
+            for img in imgs:
+                try: img_collection.append(img.find('img')['data-src'])
+                except: pass
+            data['images'] = img_collection
+
+            # Original price, ex: 170元 -> 170
+            original_price = page_content.find('div', {'class': 'basicfield'}).find('b').getText()
+            if original_price is not None: data['original_price'] = original_price
+
+
+            # Electronic version
+            electronic_book = BeautifulSoup(page.content, 'html.parser').find_all('span', {'class': 'versionbox'})
+            if len(electronic_book) > 0:
+                electronic_book = 'https://www.kingstone.com.tw/' + electronic_book[1].find('a')['href']
+                data['e_book'] = electronic_book
+            else:
+                data['e_book'] = None
+
+            # Content description, this contains html tag, so store in text
+            description = page_content.find('div', {'class': 'pdintro_txt1field panelCon'})
+            try:
+                # Kingstone's tag are not always in the same form, handle by each condition
+                # In case any unfound exception, return None
+                if description is not None: 
+                    if description.find('div', {'class': 'catalogfield panelCon'}) is not None:
+                        data['description'] = str(description.find('div', {'class': 'catalogfield panelCon'}).find('span').getText())
+                    elif description.find('div', {'class': 'pdintro_txt1field panelCon'}) is not None:
+                        data['description'] = str(description.find('div', {'class': 'pdintro_txt1field panelCon'}).find('span').getText())
+                    else:
+                        data['description'] = str(description.find('span').getText())
+            except:
+                data['description'] = None
+
+            # For author description, same as content description, saving html tag in text
+            author_description = page_content.find('div', {'class': 'authorintrofield panelCon'})
+            if author_description is not None:
+                author_description = str(author_description.find('span'))
+            data['author_description'] = author_description
+
+            # Same, this has html tag
+            table_of_contents = page_content.find('div', {'class': 'catalogfield panelCon'})
+            data['table_of_contents'] = str(table_of_contents)
+
+            # This area contains two information in the same row, must seperate to save
+            detail_info = page_content.find('ul', {'class': 'table_1col_deda'})
+            if detail_info is not None:
+                for each in detail_info.find_all('ul', {'class': 'table_2col_deda'}):
+                    name = each.find('li', {'class': 'table_th'}).getText()
+                    value = each.find('li', {'class': 'table_td'}).getText()
+                    name2 = each.find('li', {'class': 'table_th'}).findNext('li', {'class': 'table_th'}).getText()
+                    value2 = each.find('li', {'class': 'table_td'}).findNext('li', {'class': 'table_td'}).getText()
+                    data[name] = value
+                    data[name2] = value2
+
+            # Save in list if there's any
+            reader_comments = page_content.find_all('li', {'class': 'comment1unit'})
+            comments = []
+            if len(reader_comments) > 0:
+                for each in reader_comments:
+                    date = each.find('span', {'class': 'date_cmt1'}).getText()
+                    comment = each.find('div', {'class': 'td_comment1'}).getText()
+                    comments.append({date: comment})
+                data['reader_comments'] = comments
+            else:
+                data['reader_comments'] = None
+
+            data['scrap_date'] = datetime.today().strftime('%Y-%m-%d')
+            product_info.append(data)
+        except:
+            print('{} at product {} is failed, go check'.format(subcate_id, product_id))
+            not_found_list.append({'subcate_id': subcate_id, 'product_id': product_id, 'track_date': TODAY})
+        i += 1
+    if len(not_found_list) > 0:
+        mongo_insert(product_error, not_found_list)
+    return product_info
 
 if __name__=='__main__':
     # Step 1: Get all subcategory id and scrape, with batch insertion at subcategory level #
@@ -203,3 +316,5 @@ if __name__=='__main__':
     #         phase out product in [phase_out_product_catalog]
     #         new product in [unfound_product_catalog]
     daily_change_tracker(catalog_today, catalog_yesterday, 'kingstone_pid', new_prodcut_catalog, unfound_product_catalog)
+
+
