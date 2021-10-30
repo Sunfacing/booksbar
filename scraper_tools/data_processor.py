@@ -1,3 +1,6 @@
+from collections import defaultdict
+
+
 def mongo_insert(collection, product_list):
     """
     :param collection: collection to be insert
