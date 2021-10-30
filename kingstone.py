@@ -4,7 +4,7 @@ from datetime import date
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 from scraper_tools.data_processor import *
-
+from scraper_tools.scrapers import multi_scrapers
 
 from datetime import datetime
 import random
@@ -99,10 +99,96 @@ def create_category_list():
         result = get_category_list(DIVISION[i])
         mongo_insert(category_list, result)
 
+def get_product_list(url, subcate_code):
+    i = 1
+    catalog = []
+    error_pages = []
+    while True:
+        product_url = url.format(subcate_code, i)
+        try:
+            try:
+                page = requests.get(product_url, headers= HEADERS)
+            except:
+                # Eslite api sometimes won't response, so try second time
+                print('{} fetching data failed, try again in 10 seconds'.format(subcate_code))
+                time.sleep(10)
+                page = requests.get(product_url, headers= HEADERS)
+            page.enconding = 'utf-8'
+            category_links = BeautifulSoup(page.content, 'html.parser').find_all('li', {'class': 'displayunit'})
+            print('now is {} at page {}'.format(subcate_code, i), 'with result', len(category_links)) 
+            if len(category_links) == 0:
+                print(subcate_code, 'is done at page', i-1)
+                break
+            for product in category_links:
+                cover_img_url = product.find('div', {'class': 'coverbox'}).find('img')['data-src']
+                title = product.find('div', {'class': 'coverbox'}).find('img')['title']
+                product_url = 'https://www.kingstone.com.tw/' + product.find('h3', {'class': 'pdnamebox'}).find('a')['href']
+                product_code = product_url.split('/')[-1].split('?')[0]
+                # subcate_code = product_url.split('_')[-1]
+                try:
+                    author = product.find('span', {'class': 'author'}).find('a').getText()
+                except:
+                    author = ''
 
+                try:        
+                    publisher = product.find('span', {'class': 'publish'}).find('b').getText()
+                except:
+                    publisher = ''
+
+                try:
+                    publish_date = product.find('span', {'class': 'pubdate'}).find('b').getText()
+                except:
+                    publish_date = ''
+
+                try:
+                    price_info = product.find('div', {'class': 'buymixbox'}).find_all('b')
+                    discount = price_info[0].getText()
+                except:
+                    discount = 0
+
+                try:
+                    price = price_info[1].getText()
+                except:
+                    price = discount
+                    discount = 0
+
+                try:
+                    availability = product.find('div', {'class': 'btnbuyset'}).find('span').getText()
+                except:
+                    availability = 'Unknown'
+
+                catalog.append({'subcate_id': subcate_code,
+                                'kingstone_pid': product_code, 
+                                'title': title,
+                                'author': author,
+                                'publisher': publisher,
+                                'publish_date': publish_date,
+                                'product_url': product_url,
+                                'img_url': cover_img_url,
+                                'price': price,
+                                'discount': discount,
+                                'availability': availability
+                                })
+        except:
+            print('now is {} at page {}'.format(subcate_code, i), 'with result', len(category_links))
+            error_pages.append({'subcate_code': subcate_code, 'page': i, 'fail_date': TODAY})
+        i += 1
+    if len(error_pages) > 0:
+        mongo_insert(page_error, error_pages)
+    return catalog
 
 
 
 if __name__=='__main__':
     # Step 1: Get all subcategory id and scrape, with batch insertion at subcategory level #
-    create_category_list()
+    # create_category_list()
+
+
+    # Step 2. Scrap daily to get the price and looking for new items record error into [error_catalog]
+    for i in range(2):
+        category_query = {'subcate_code': {'$regex': 'book'}}
+        list_to_scrape = scan_category_for_scraping(catalog_tem_today, 'subcate_id', category_list, category_query, 'subcate_code')
+        multi_scrapers(30, list_to_scrape, CATALOG_URL, 'subcate_code', catalog_tem_today, get_product_list, mongo_insert)
+    unfinished_list = scan_category_for_scraping(catalog_tem_today, 'subcate_id', category_list, category_query, 'subcate_code')
+    unfinished_category_list = create_new_field(unfinished_list, error_date=TODAY)
+    mongo_insert(category_error, unfinished_category_list)
