@@ -31,3 +31,20 @@ def scan_category_for_scraping(catalog, key, category_list, category_query, key_
         except:
             pass
     return unfinished_list
+
+
+def create_new_field(product_list, **field_value):
+    """
+    Create new field or overwrite current field of each product with the same value
+    support multiple field input, and return product list able to be inserted into collection
+    :param product_list: the product list to add new field
+    :param **field_value: provide field=value will create the field(or overwrite) with the value
+    """
+    new_list = []
+    for product in product_list:
+        try: product.pop('_id')
+        except: pass   
+        for field, value in field_value.items():
+            product[field] = value
+        new_list.append(product)
+    return new_list
