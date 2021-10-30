@@ -128,3 +128,15 @@ def daily_change_tracker(catalog_today, catalog_yesterday, key_for_hash, new_pro
     phased_out_product = find_unmatched_product(catalog_yesterday, catalog_today, key_for_hash)
     product_list = create_new_field(phased_out_product, track_date=TODAY, type='phase_out')
     mongo_insert(unfound_product_catalog, product_list)
+
+
+def convert_mongo_object_to_list(mongo_object):
+    """
+    Remove mongo object's _id key, and append to a new list
+    :param mongo_object: mongo object from collection.find() method
+    """
+    product_list = []
+    for product in mongo_object:
+        product.pop('_id')
+        product_list.append(product)
+    return product_list
