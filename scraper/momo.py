@@ -241,7 +241,7 @@ if __name__=='__main__':
     # Step 1: Build up category list if not exists for later scrapping, it's one time set up
     if not category_list.find_one():
         get_category_list(SECTION_URL)
-
+    """
     # Step 2. Scrap daily to get the price and looking for new items record error into [error_catalog] 
     start = time.time()
     for i in range(2):
@@ -261,15 +261,15 @@ if __name__=='__main__':
         unfinished_category_list = create_new_field(unfinished_list, error_date=TODAY)
         mongo_insert(category_error, unfinished_category_list)
     end = time.time()
-    mongo_insert(timecounter, [{'date': TODAY, 'platform': 'momo', 'step': 'scrape catalog', 'time': end - start}])
-    
+    timecounter.insert_one({'date': TODAY, 'platform': 'momo', 'step': 'scrape catalog', 'time': end - start})
+    """
     # Step 3. The raw catalog contains duplicate products; remove them from [catalog_tem_today] 
     #         and copy cleaned catalog to [catalog_today] then delete [catalog_tem_today]
     start = time.time()
     copy_to_collection(catalog_tem_today, catalog_today, 'momo_pid')
     db.drop_collection(catalog_tem_today)
     end = time.time()
-    mongo_insert(timecounter, [{'date': TODAY, 'platform': 'momo', 'step': 'remove duplicates', 'time': end - start}])
+    timecounter.insert_one({'date': TODAY, 'platform': 'momo', 'step': 'remove duplicates', 'time': end - start})
 
 
     # Step 4. Mutually compare[catalog_today] with [catalog_yesterday], 
@@ -278,14 +278,14 @@ if __name__=='__main__':
     start = time.time()
     daily_change_tracker(catalog_today, catalog_yesterday, 'momo_pid', new_prodcut_catalog, unfound_product_catalog)
     end = time.time()
-    mongo_insert(timecounter, [{'date': TODAY, 'platform': 'momo', 'step': 'track change', 'time': end - start}]) 
+    timecounter.insert_one({'date': TODAY, 'platform': 'momo', 'step': 'track change', 'time': end - start}) 
 
     # Step 5. Use [new_prodcut_catalog] to request single product's api and insert into product_info
     start = time.time()
     product_catalog = new_prodcut_catalog.find({'track_date': TODAY})
     product_list = convert_mongo_object_to_list(product_catalog)
     multi_scrapers(
-        worker_num = 2, 
+        worker_num = 1, 
         list_to_scrape = product_list, 
         url_to_scrape = PRODUCT_URL, 
         target_id_key = 'momo_pid', 
@@ -295,7 +295,7 @@ if __name__=='__main__':
         slicing=True
     )
     end = time.time()
-    mongo_insert(timecounter, [{'date': TODAY, 'platform': 'momo', 'step': 'scrape product', 'time': end - start}])
+    timecounter.insert_one({'date': TODAY, 'platform': 'momo', 'step': 'scrape product', 'time': end - start})
 
     # Step 6: Reading [unfound_product_catalog], add current back to [catalog_today], phased out to [phase_out_product_catalog]
     #         Delete after finishing scraping
@@ -303,7 +303,7 @@ if __name__=='__main__':
     product_catalog = unfound_product_catalog.find()
     product_list = convert_mongo_object_to_list(product_catalog)
     multi_scrapers(
-        worker_num = 2, 
+        worker_num = 1, 
         list_to_scrape = product_list, 
         url_to_scrape = PRODUCT_URL, 
         target_id_key = 'momo_pid', 
@@ -314,7 +314,7 @@ if __name__=='__main__':
     )
     db.drop_collection(unfound_product_catalog)
     end = time.time()
-    mongo_insert(timecounter, [{'date': TODAY, 'platform': 'momo', 'step': 'check unfound', 'time': end - start}])
+    timecounter.insert_one({'date': TODAY, 'platform': 'momo', 'step': 'check unfound', 'time': end - start})
 
     # Step 7. Delete catalog of 7 days age, EX: today is '2021-10-26', so delete '2021-10-19'
     db.drop_collection(catalog_last_7_days)

@@ -242,7 +242,7 @@ if __name__ == '__main__':
         unfinished_category_list = create_new_field(unfinished_list, error_date=TODAY)
         mongo_insert(category_error, unfinished_category_list)
     end = time.time()
-    mongo_insert(timecounter, {'date': TODAY, 'platform': 'eslite', 'step': 'scrape catalog', 'time': end - start})
+    timecounter.insert_one({'date': TODAY, 'platform': 'eslite', 'step': 'scrape catalog', 'time': end - start})
 
 
 
@@ -252,7 +252,7 @@ if __name__ == '__main__':
     copy_to_collection(catalog_tem_today, catalog_today, 'eslite_pid')
     db.drop_collection(catalog_tem_today)
     end = time.time()
-    mongo_insert(timecounter, {'date': TODAY, 'platform': 'eslite', 'step': 'remove duplicates', 'time': end - start})
+    timecounter.insert_one({'date': TODAY, 'platform': 'eslite', 'step': 'remove duplicates', 'time': end - start})
 
 
     # Step 4. Mutually compare[catalog_today] with [catalog_yesterday], 
@@ -261,7 +261,7 @@ if __name__ == '__main__':
     start = time.time()
     daily_change_tracker(catalog_today, catalog_yesterday, 'eslite_pid', new_product_catalog, unfound_product_catalog)
     end = time.time()
-    mongo_insert(timecounter, {'date': TODAY, 'platform': 'eslite', 'step': 'track change', 'time': end - start}) 
+    timecounter.insert_one({'date': TODAY, 'platform': 'eslite', 'step': 'track change', 'time': end - start}) 
 
 
     # Step 5. Use [new_prodcut_catalog] to request single product's api and insert into product_info
@@ -280,7 +280,7 @@ if __name__ == '__main__':
             slicing=True
         )  
     end = time.time()
-    mongo_insert(timecounter, {'date': TODAY, 'platform': 'eslite', 'step': 'scrape product', 'time': end - start})
+    timecounter.insert_one({'date': TODAY, 'platform': 'eslite', 'step': 'scrape product', 'time': end - start})
 
 
     # Step 6: Reading [unfound_product_catalog], add current back to [catalog_today], phased out to [phase_out_product_catalog]
@@ -301,7 +301,7 @@ if __name__ == '__main__':
         )
         db.drop_collection(unfound_product_catalog)
     end = time.time()
-    mongo_insert(timecounter, {'date': TODAY, 'platform': 'eslite', 'step': 'check unfound', 'time': end - start})
+    timecounter.insert_one({'date': TODAY, 'platform': 'eslite', 'step': 'check unfound', 'time': end - start})
 
     # Step 7. Delete catalog of 7 days age, EX: today is '2021-10-26', so delete '2021-10-19'
     db.drop_collection(catalog_last_7_days)
