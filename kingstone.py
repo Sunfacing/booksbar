@@ -378,17 +378,18 @@ if __name__=='__main__':
     #         Delete after finishing scraping
     product_catalog = unfound_product_catalog.find()
     product_list = convert_mongo_object_to_list(product_catalog)
-    multi_scrapers(
-        worker_num = 20, 
-        list_to_scrape = product_list, 
-        url_to_scrape = PRODUCT_PAGE, 
-        target_id_key = 'kingstone_pid', 
-        db_to_insert = catalog_today, 
-        scraper_func = phased_out_checker, 
-        insert_func = mongo_insert,
-        slicing=True
-    )
-    db.drop_collection(unfound_product_catalog)
+    if len(product_list) > 0:
+        multi_scrapers(
+            worker_num = 20, 
+            list_to_scrape = product_list, 
+            url_to_scrape = PRODUCT_PAGE, 
+            target_id_key = 'kingstone_pid', 
+            db_to_insert = catalog_today, 
+            scraper_func = phased_out_checker, 
+            insert_func = mongo_insert,
+            slicing=True
+        )
+        db.drop_collection(unfound_product_catalog)
 
     
     # Step 7. Delete catalog of 7 days age, EX: today is '2021-10-26', so delete '2021-10-19'
