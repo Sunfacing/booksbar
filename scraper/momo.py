@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 from collections import defaultdict
-from datetime import date
+from datetime import date, datetime, timedelta
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 from scraper_tools.data_processor import *
@@ -10,9 +10,10 @@ import time
 
 TODAY = date.today().strftime("%Y-%m-%d")
 TODAY_FOR_COLLECTION_NAME = date.today().strftime("%m%d")
-DATE_FOR_DELETE_COLLECTION_NAME = str(int(TODAY_FOR_COLLECTION_NAME) - 7)
-YESTERDAY_FOR_EORROR_CHECKER = str(int(TODAY_FOR_COLLECTION_NAME) - 1)
-
+DATE_SUBTRACT_1 = str(datetime.today() - timedelta(days=1)).split(' ')[0].split('-')[1:]
+YESTERDAY_FOR_EORROR_CHECKER = ''.join(DATE_SUBTRACT_1)
+DATE_SUBTRACT_7 = str(datetime.today() - timedelta(days=7)).split(' ')[0].split('-')[1:]
+DATE_FOR_DELETE_COLLECTION_NAME = ''.join(DATE_SUBTRACT_7)
 
 client = MongoClient('localhost', 27017)
 db = client.Bookstores
@@ -241,7 +242,7 @@ if __name__=='__main__':
     # Step 1: Build up category list if not exists for later scrapping, it's one time set up
     if not category_list.find_one():
         get_category_list(SECTION_URL)
-    """
+    
     # Step 2. Scrap daily to get the price and looking for new items record error into [error_catalog] 
     start = time.time()
     for i in range(2):
@@ -262,7 +263,7 @@ if __name__=='__main__':
         mongo_insert(category_error, unfinished_category_list)
     end = time.time()
     timecounter.insert_one({'date': TODAY, 'platform': 'momo', 'step': 'scrape catalog', 'time': end - start})
-    """
+    
     # Step 3. The raw catalog contains duplicate products; remove them from [catalog_tem_today] 
     #         and copy cleaned catalog to [catalog_today] then delete [catalog_tem_today]
     start = time.time()

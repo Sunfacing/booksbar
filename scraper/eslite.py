@@ -3,7 +3,7 @@ import requests
 
 from pymongo import MongoClient
 from collections import defaultdict
-from datetime import date
+from datetime import date, datetime, timedelta
 from fake_useragent import UserAgent
 from scraper_tools.data_processor import *
 from scraper_tools.scrapers import multi_scrapers
@@ -19,8 +19,10 @@ PRODUCT_PAGE = 'https://athena.eslite.com/api/v1/products/' # Single product pag
 USER_AGENT = UserAgent().random
 TODAY = date.today().strftime("%Y-%m-%d")
 TODAY_FOR_COLLECTION_NAME = date.today().strftime("%m%d")
-DATE_FOR_DELETE_COLLECTION_NAME = str(int(TODAY_FOR_COLLECTION_NAME) - 7)
-YESTERDAY_FOR_EORROR_CHECKER = str(int(TODAY_FOR_COLLECTION_NAME) - 1)
+DATE_SUBTRACT_1 = str(datetime.today() - timedelta(days=1)).split(' ')[0].split('-')[1:]
+YESTERDAY_FOR_EORROR_CHECKER = ''.join(DATE_SUBTRACT_1)
+DATE_SUBTRACT_7 = str(datetime.today() - timedelta(days=7)).split(' ')[0].split('-')[1:]
+DATE_FOR_DELETE_COLLECTION_NAME = ''.join(DATE_SUBTRACT_7)
 
 
 client = MongoClient('localhost', 27017)
@@ -40,6 +42,7 @@ unfound_product_catalog = db.eslite_unfound_product_catalog
 phase_out_product_catalog = db.eslite_phase_out_catalog
 timecounter = db.timecounter
 
+    
 def create_category_list(url):
     """ Get all category/subcate id """
     data = requests.get(url, headers= {'user-agent': USER_AGENT }).json()
@@ -243,7 +246,7 @@ if __name__ == '__main__':
         mongo_insert(category_error, unfinished_category_list)
     end = time.time()
     timecounter.insert_one({'date': TODAY, 'platform': 'eslite', 'step': 'scrape catalog', 'time': end - start})
-
+    
 
 
     # Step 3. The raw catalog contains duplicate products; remove them from [catalog_tem_today] 
@@ -253,17 +256,21 @@ if __name__ == '__main__':
     db.drop_collection(catalog_tem_today)
     end = time.time()
     timecounter.insert_one({'date': TODAY, 'platform': 'eslite', 'step': 'remove duplicates', 'time': end - start})
-
-
+    
+    new_product_catalog.delete_many({'track_date':"2021-11-01"})
+    unfound_product_catalog.delete_many({'track_date':"2021-11-01"})
+    db.eslite_catalog_1030.rename('eslite_catalog_1031')
     # Step 4. Mutually compare[catalog_today] with [catalog_yesterday], 
     #         phase out product in [phase_out_product_catalog]
     #         new product in [new_prodcut_catalog]
+    print(catalog_today)
+    print(catalog_yesterday)
     start = time.time()
     daily_change_tracker(catalog_today, catalog_yesterday, 'eslite_pid', new_product_catalog, unfound_product_catalog)
     end = time.time()
     timecounter.insert_one({'date': TODAY, 'platform': 'eslite', 'step': 'track change', 'time': end - start}) 
 
-
+    
     # Step 5. Use [new_prodcut_catalog] to request single product's api and insert into product_info
     start = time.time()
     product_catalog = new_product_catalog.find({'track_date': TODAY})
@@ -305,4 +312,5 @@ if __name__ == '__main__':
 
     # Step 7. Delete catalog of 7 days age, EX: today is '2021-10-26', so delete '2021-10-19'
     db.drop_collection(catalog_last_7_days)
-
+ 
+    
