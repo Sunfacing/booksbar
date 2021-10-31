@@ -347,8 +347,9 @@ if __name__=='__main__':
         list_to_scrape = scan_category_for_scraping(catalog_tem_today, 'subcate_id', category_list, category_query, 'subcate_code')
         multi_scrapers(30, list_to_scrape, CATALOG_URL, 'subcate_code', catalog_tem_today, get_product_list, mongo_insert)
     unfinished_list = scan_category_for_scraping(catalog_tem_today, 'subcate_id', category_list, category_query, 'subcate_code')
-    unfinished_category_list = create_new_field(unfinished_list, error_date=TODAY)
-    mongo_insert(category_error, unfinished_category_list)
+    if len(unfinished_list) > 0:
+        unfinished_category_list = create_new_field(unfinished_list, error_date=TODAY)
+        mongo_insert(category_error, unfinished_category_list)
 
 
     # Step 3. The raw catalog contains duplicate products; remove them from [catalog_tem_today] 
