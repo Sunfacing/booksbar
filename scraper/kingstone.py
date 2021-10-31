@@ -336,6 +336,7 @@ def phased_out_checker(url_to_scrape, sliced_list, target_id_key):
 
 
 if __name__=='__main__':
+
     # Step 1: Get all subcategory id and scrape, with batch insertion at subcategory level #
     if not category_list.find_one():
         create_category_list()

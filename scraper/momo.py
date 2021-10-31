@@ -238,7 +238,7 @@ def phased_out_checker(url_to_scrape, sliced_list, target_id_key):
 
 
 if __name__=='__main__':
-    
+
     # Step 1: Build up category list if not exists for later scrapping, it's one time set up
     if not category_list.find_one():
         get_category_list(SECTION_URL)
