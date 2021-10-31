@@ -32,6 +32,7 @@ product_error = db.kingstone_product_error
 new_prodcut_catalog = db.kingstone_new_product_catalog
 unfound_product_catalog = db.kingstone_unfound_product_catalog
 phase_out_product_catalog = db.kingstone_phase_out_catalog
+timecounter = db.timecounter
 
 CATALOG_URL = 'https://www.kingstone.com.tw{}?sort=pu_desc&&page={}'
 PRODUCT_PAGE = 'https://www.kingstone.com.tw/basic/'
@@ -338,6 +339,7 @@ if __name__=='__main__':
         create_category_list()
 
     # Step 2. Scrap daily to get the price and looking for new items record error into [error_catalog]
+    start = time.time()
     for i in range(2):
         category_query = {'subcate_code': {'$regex': 'book'}}
         list_to_scrape = scan_category_for_scraping(catalog_tem_today, 'subcate_id', category_list, category_query, 'subcate_code')
@@ -346,20 +348,28 @@ if __name__=='__main__':
     if len(unfinished_list) > 0:
         unfinished_category_list = create_new_field(unfinished_list, error_date=TODAY)
         mongo_insert(category_error, unfinished_category_list)
+    end = time.time()
+    mongo_insert(timecounter, {'date': TODAY, 'platform': 'kingstone', 'step': 'scrape catalog', 'time': end - start})
 
 
     # Step 3. The raw catalog contains duplicate products; remove them from [catalog_tem_today] 
     #         and copy cleaned catalog to [catalog_today] then delete [catalog_tem_today]
+    start = time.time()
     copy_to_collection(catalog_tem_today, catalog_today, 'kingstone_pid')
     db.drop_collection(catalog_tem_today)
+    end = time.time()
+    mongo_insert(timecounter, {'date': TODAY, 'platform': 'kingstone', 'step': 'remove duplicates', 'time': end - start})
 
     # Step 4. Mutually compare[catalog_today] with [catalog_yesterday], 
     #         phase out product in [phase_out_product_catalog]
     #         new product in [unfound_product_catalog]
+    start = time.time()
     daily_change_tracker(catalog_today, catalog_yesterday, 'kingstone_pid', new_prodcut_catalog, unfound_product_catalog)
-
+    end = time.time()
+    mongo_insert(timecounter, {'date': TODAY, 'platform': 'kingstone', 'step': 'track change', 'time': end - start}) 
 
     # Step 5: Reading [new_prodcut_catalog] of today and scraped single product info 
+    start = time.time()
     product_catalog = new_prodcut_catalog.find({'track_date': TODAY})
     product_list = convert_mongo_object_to_list(product_catalog)
     if len(product_list) > 0:
@@ -373,9 +383,12 @@ if __name__=='__main__':
             insert_func = mongo_insert,
             slicing=True
         )
+    end = time.time()
+    mongo_insert(timecounter, {'date': TODAY, 'platform': 'kingstone', 'step': 'scrape product', 'time': end - start})
 
     # Step 6: Reading [unfound_product_catalog], add current back to [catalog_today], phased out to [phase_out_product_catalog]
     #         Delete after finishing scraping
+    start = time.time()    
     product_catalog = unfound_product_catalog.find()
     product_list = convert_mongo_object_to_list(product_catalog)
     if len(product_list) > 0:
@@ -390,7 +403,8 @@ if __name__=='__main__':
             slicing=True
         )
         db.drop_collection(unfound_product_catalog)
-
+    end = time.time()
+    mongo_insert(timecounter, {'date': TODAY, 'platform': 'kingstone', 'step': 'check unfound', 'time': end - start})
     
     # Step 7. Delete catalog of 7 days age, EX: today is '2021-10-26', so delete '2021-10-19'
     db.drop_collection(catalog_last_7_days)
