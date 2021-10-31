@@ -204,6 +204,37 @@ def get_product_info(url_to_scrape, sliced_list, target_id_key):
         info_list.append(data)
     return info_list
 
+def phased_out_checker(url_to_scrape, sliced_list, target_id_key):
+    current_product_list = []
+    phased_out_list = []
+    i = 0
+    for product in sliced_list: 
+        if i % 10 == 0:
+            time.sleep(1)
+        momo_pid = product[target_id_key]     
+        product_url = url_to_scrape + product[target_id_key]
+        print(i, product_url)
+        try:
+            page  = requests.get(product_url, headers = HEADERS)
+        except:
+            print('{} fetching data failed, try again in 10 seconds'.format(momo_pid))
+            time.sleep(10) 
+            page  = requests.get(product_url, headers = HEADERS)
+        page.enconding = 'utf-8'
+        page_content = BeautifulSoup(page.content, 'html.parser')
+        try:
+            product.pop('_id')
+            price = page_content.find('p', {'class': 'priceTxtArea'}).find('b').getText()
+            product['price'] = price
+            current_product_list.append(product)
+        except Exception as e:
+            print(product_url, e)
+            phased_out_list.append(product)
+        i += 1
+    if len(phased_out_list) > 0:
+        phase_out_product_catalog.insert_many(phased_out_list)
+    return current_product_list
+
 
 if __name__=='__main__':
     
@@ -253,4 +284,20 @@ if __name__=='__main__':
         scraper_func = get_product_info, 
         insert_func = mongo_insert,
         slicing=True
-    )   
+    )
+
+    # Step 6: Reading [unfound_product_catalog], add current back to [catalog_today], phased out to [phase_out_product_catalog]
+    #         Delete after finishing scraping
+    product_catalog = unfound_product_catalog.find()
+    product_list = convert_mongo_object_to_list(product_catalog)
+    multi_scrapers(
+        worker_num = 2, 
+        list_to_scrape = product_list, 
+        url_to_scrape = PRODUCT_URL, 
+        target_id_key = 'momo_pid', 
+        db_to_insert = catalog_today, 
+        scraper_func = phased_out_checker, 
+        insert_func = mongo_insert,
+        slicing=True
+    )
+    db.drop_collection(unfound_product_catalog)
