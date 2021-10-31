@@ -5,12 +5,9 @@ from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 from scraper_tools.data_processor import *
 from scraper_tools.scrapers import multi_scrapers
-
 from datetime import datetime
-import random
 import requests
 import time
-import json
 
 
 
