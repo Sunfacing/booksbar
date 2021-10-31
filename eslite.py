@@ -163,5 +163,10 @@ if __name__ == '__main__':
         mongo_insert(category_error, unfinished_category_list)
 
 
+    # Step 3. The raw catalog contains duplicate products; remove them from [catalog_tem_today] 
+    #         and copy cleaned catalog to [catalog_today] then delete [catalog_tem_today]
+    copy_to_collection(catalog_tem_today, catalog_today, 'eslite_pid')
+    db.drop_collection(catalog_tem_today)
+
 
     
