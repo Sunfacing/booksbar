@@ -93,7 +93,6 @@ def get_category_list(div):
                                                 'subcate_code': subcate_link, 'subcate_nm': subcate_nm})                                 
     return nomenclature
 
-
 def create_category_list():
     for i in range(len(DIVISION)):
         result = get_category_list(DIVISION[i])
@@ -292,7 +291,6 @@ def get_product_info(url_to_scrape, sliced_list, target_id_key):
         mongo_insert(product_error, not_found_list)
     return product_info
 
-
 def phased_out_checker(url_to_scrape, sliced_list, target_id_key):
     i = 0
     current_product_list = []
@@ -340,8 +338,8 @@ def phased_out_checker(url_to_scrape, sliced_list, target_id_key):
 
 if __name__=='__main__':
     # Step 1: Get all subcategory id and scrape, with batch insertion at subcategory level #
-    # create_category_list()
-
+    if not category_list.find_one():
+        create_category_list()
 
     # Step 2. Scrap daily to get the price and looking for new items record error into [error_catalog]
     for i in range(2):
