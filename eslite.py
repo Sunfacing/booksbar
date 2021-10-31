@@ -72,4 +72,23 @@ def create_category_list(url):
                                             'path': subcate['path']
                                             })
     mongo_insert(category_list, nomenclature)
+
+
+
+
+
+
+
+
+
+if __name__ == '__main__':
+
+    # Step 1: Build up category list if not exists for later scrapping, it's one time set up
+    if not category_list.find_one():
+        create_category_list(CETEGORY_URL)
+
+
+
+
+
     
