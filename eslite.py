@@ -130,7 +130,6 @@ def get_product_list(url, category_id):
         paging += 1
     return catalog
 
-
 def get_product_info(url_to_scrape, sliced_list, target_id_key):
     i = 0
     product_info = []
@@ -188,7 +187,6 @@ def get_product_info(url_to_scrape, sliced_list, target_id_key):
         mongo_insert(product_error, not_found_list)
     return product_info
 
-
 def phased_out_checker(url_to_scrape, sliced_list, target_id_key):
     i = 0
     product_info = []
@@ -218,9 +216,6 @@ def phased_out_checker(url_to_scrape, sliced_list, target_id_key):
         phase_out_product_catalog.insert_many(phased_out_list)
     return product_info
 
-
-
-
 if __name__ == '__main__':
 
     # Step 1: Build up category list if not exists for later scrapping, it's one time set up
@@ -246,12 +241,10 @@ if __name__ == '__main__':
         unfinished_category_list = create_new_field(unfinished_list, error_date=TODAY)
         mongo_insert(category_error, unfinished_category_list)
 
-
     # Step 3. The raw catalog contains duplicate products; remove them from [catalog_tem_today] 
     #         and copy cleaned catalog to [catalog_today] then delete [catalog_tem_today]
     copy_to_collection(catalog_tem_today, catalog_today, 'eslite_pid')
     db.drop_collection(catalog_tem_today)
-
 
     # Step 4. Mutually compare[catalog_today] with [catalog_yesterday], 
     #         phase out product in [phase_out_product_catalog]
@@ -292,3 +285,4 @@ if __name__ == '__main__':
 
     # Step 7. Delete catalog of 7 days age, EX: today is '2021-10-26', so delete '2021-10-19'
     db.drop_collection(catalog_last_7_days)
+
