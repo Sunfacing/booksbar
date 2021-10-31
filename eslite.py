@@ -73,6 +73,62 @@ def create_category_list(url):
                                             })
     mongo_insert(category_list, nomenclature)
 
+def get_product_list(url, category_id):
+    paging = 0
+    pause_count = 0
+    catalog = []
+    while True:
+        print('============== start', category_id, 'with paging:', paging, '==============')
+        if pause_count % 10 == 0:
+            time.sleep(3)
+        pause_count += 1
+        try:
+            data = requests.get(url.format(paging, category_id), headers= {'user-agent': USER_AGENT }).json()
+        except:
+            print('category {} fetching data at paging {} has error, try again in 10 seconds'.format(category_id, paging))
+            time.sleep(10)
+            data = requests.get(url.format(paging, category_id), headers= {'user-agent': USER_AGENT }).json()
+
+        if len(data['hits']['hit']) == 0:
+            print('category {} at page {} has no more'.format(category_id, paging))
+            break
+        product_list = data['hits']['hit']
+        for each in product_list:
+            field = each['fields']
+            catalog.append({
+                'category_id': category_id,
+                'eslite_pid': each['id'],
+                'discount_type': field['discount_type'], 
+                'categories': field['categories'], 
+                'create_date': field['create_date'], 
+                'name': field['name'], 
+                'description': field['description'], 
+                'final_price': field['final_price'], 
+                'mprice': field['mprice'], 
+                'product_url': field['url'], 
+                'product_photo_url': 'https://s.eslite.dev' + field['product_photo_url'], 
+                'subtitle': field['subtitle'], 
+                'restricted': field['restricted'], 
+                'stock': field['stock'], 
+                'discount': field['discount'], 
+                'hotcakes': field['hotcakes'], 
+                'eslite_sn': field['eslite_sn'], 
+                'isbn': field['isbn'], 
+                'isbn10': field['isbn10'], 
+                'ean': field['ean'], 
+                'original_name': field['original_name'], 
+                'sub_title': field['sub_title'], 
+                'origin_subtitle': field['origin_subtitle'], 
+                'key_word': field['key_word'], 
+                'author': field['author'][0], 
+                'manufacturer': field['manufacturer'][0], 
+                'discount_range': field['discount_range'], 
+                'publish_date': field['manufacturer_date'], 
+                'is_book': field['is_book'],
+                'category_ttl': int(data['hits']['found'])
+            })
+        paging += 1
+    return catalog
 
 
 
@@ -87,7 +143,24 @@ if __name__ == '__main__':
     if not category_list.find_one():
         create_category_list(CETEGORY_URL)
 
-
+    # Step 2. Scrap daily to get the price and looking for new items record error into [error_catalog]
+    for i in range(2):
+        category_query = [{"$match": {"$and" : [{'path': {'$regex': '中文出版'}},{"depth":3}]}}, 
+                        {"$project": {'id':1, 'depth':1, 'path': 1}}]
+        list_to_scrape = scan_category_for_scraping(catalog_tem_today, 'category_id', category_list, category_query, 'id')
+        multi_scrapers(
+            worker_num = 5, 
+            list_to_scrape = list_to_scrape, 
+            url_to_scrape = CATALOG_URL, 
+            target_id_key = 'id', 
+            db_to_insert = catalog_tem_today, 
+            scraper_func = get_product_list, 
+            insert_func = mongo_insert
+        )
+    unfinished_list = scan_category_for_scraping(catalog_tem_today, 'category_id', category_list, category_query, 'id')
+    if len(unfinished_list) > 0:
+        unfinished_category_list = create_new_field(unfinished_list, error_date=TODAY)
+        mongo_insert(category_error, unfinished_category_list)
 
 
 
