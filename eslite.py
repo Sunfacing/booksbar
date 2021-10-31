@@ -38,3 +38,38 @@ product_error = db.eslite_product_error
 new_product_catalog = db.eslite_new_product_catalog
 unfound_product_catalog = db.eslite_unfound_product_catalog
 phase_out_product_catalog = db.eslite_phase_out_catalog
+
+
+def create_category_list(url):
+    """ Get all category/subcate id """
+    data = requests.get(url, headers= {'user-agent': USER_AGENT }).json()
+    cate_list = []
+    # Get Chinese / Foreign / Children Section
+    for cate in data:
+        if cate['id'] in [3, 171, 301]:
+            cate_list.append(cate)
+
+    # Create list for Category / Subcategory Level
+    nomenclature = []
+    for section in cate_list:
+        nomenclature.append({'id': section['id'], 
+                            'depth': section['depth'], 
+                            'description': section['description'],
+                            'path': section['path']
+                            })
+        for cate in section['children']:
+            if cate['id'] not in CATE_EXCLUSDE:
+                nomenclature.append({'id': cate['id'], 
+                                    'depth': cate['depth'], 
+                                    'description': cate['description'],
+                                    'path': cate['path']
+                                    })
+                for subcate in cate['children']:
+                    if '新書' not in subcate['description']:
+                        nomenclature.append({'id': subcate['id'], 
+                                            'depth': subcate['depth'], 
+                                            'description': subcate['description'],
+                                            'path': subcate['path']
+                                            })
+    mongo_insert(category_list, nomenclature)
+    
