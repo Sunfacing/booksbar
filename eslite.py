@@ -189,6 +189,35 @@ def get_product_info(url_to_scrape, sliced_list, target_id_key):
     return product_info
 
 
+def phased_out_checker(url_to_scrape, sliced_list, target_id_key):
+    i = 0
+    product_info = []
+    phased_out_list = []
+    for product in sliced_list:
+        if i % 10 == 0: 
+            time.sleep(1) 
+
+        product_url = url_to_scrape + product['eslite_pid']
+        try:
+            data = requests.get(product_url, headers= {'user-agent': USER_AGENT}).json()
+        except:
+            # Eslite api sometimes won't response, so try second time
+            print('{} fetching data failed, try again in 10 seconds'.format(target_id_key))
+            time.sleep(10)
+            data = requests.get(product_url, headers= {'user-agent': USER_AGENT}).json()
+        try:
+            product.pop('_id')
+            product['final_price'] = data['final_price']
+            product['retail_price'] = data['retail_price']
+            product['stock'] = data['stock']
+            product_info.append(product)
+        except:
+            phased_out_list.append(product)
+        i += 1
+    if len(phased_out_list) > 0:
+        phase_out_product_catalog.insert_many(phased_out_list)
+    return product_info
+
 
 
 
@@ -243,3 +272,20 @@ if __name__ == '__main__':
             insert_func = mongo_insert,
             slicing=True
         )  
+
+    # Step 6: Reading [unfound_product_catalog], add current back to [catalog_today], phased out to [phase_out_product_catalog]
+    #         Delete after finishing scraping
+    product_catalog = unfound_product_catalog.find()
+    product_list = convert_mongo_object_to_list(product_catalog)
+    if len(product_list) > 0:
+        multi_scrapers(
+            worker_num = 20, 
+            list_to_scrape = product_list, 
+            url_to_scrape = PRODUCT_PAGE, 
+            target_id_key = 'eslite_pid', 
+            db_to_insert = catalog_today, 
+            scraper_func = phased_out_checker, 
+            insert_func = mongo_insert,
+            slicing=True
+        )
+        db.drop_collection(unfound_product_catalog)
