@@ -131,7 +131,62 @@ def get_product_list(url, category_id):
     return catalog
 
 
-
+def get_product_info(url_to_scrape, sliced_list, target_id_key):
+    i = 0
+    product_info = []
+    not_found_list = []
+    for each in sliced_list:   
+        product_url = url_to_scrape + each['eslite_pid']
+        try:
+            data = requests.get(product_url, headers= {'user-agent': USER_AGENT}).json()
+        except:
+            # Eslite api sometimes won't response, so try second time
+            print('{} fetching data failed, try again in 10 seconds'.format(target_id_key))
+            time.sleep(10)
+            data = requests.get(product_url, headers= {'user-agent': USER_AGENT}).json()
+        try: 
+            product_info.append({
+                'name': data['name'],
+                'publish_date': data['manufacturer_date'],
+                'final_price': data['final_price'],
+                'retail_price': data['retail_price'],
+                'stock': data['stock'],
+                'eslite_pid': data['product_guid'],
+                'photos': data['photos'],
+                'supplier': data['supplier'],
+                'author': data['auth'],
+                'descriptions': data['descriptions'],
+                'product_specifications': data['product_specifications'],
+                'is_book': data['is_book'],
+                'product_type': data['product_type'],
+                'product_attachments': data['product_attachments'],
+                'range': data['range'],
+                'level1': data['level1'],
+                'level2': data['level2'],
+                'level3': data['level3'],
+                'activities': data['activities'],
+                'scrape_date': date.today().strftime('%Y-%m-%d')
+                })
+        except Exception as e:
+            try:
+                print('item {} : {}'.format(product_url, data['message']))
+                not_found_list.append({
+                    'eslite_pid': each['eslite_pid'], 
+                    'product_url': each['product_url'],
+                    'track_date': TODAY,
+                    'type': "phase_out_from_scrape"})
+            except:
+                print('check {} with error message: {}'.format(data, e))
+                not_found_list.append({
+                    'eslite_pid': '', 
+                    'product_url': '',
+                    'track_date': TODAY,
+                    'type': "unexpected_error",
+                    'message': e})                
+        i += 1
+    if len(not_found_list) > 0:
+        mongo_insert(product_error, not_found_list)
+    return product_info
 
 
 
@@ -174,4 +229,16 @@ if __name__ == '__main__':
     #         new product in [new_prodcut_catalog]
     daily_change_tracker(catalog_today, catalog_yesterday, 'eslite_pid', new_product_catalog, unfound_product_catalog)
  
-  
+    # Step 5. Use [new_prodcut_catalog] to request single product's api and insert into product_info
+    product_catalog = new_product_catalog.find({'track_date': TODAY})
+    product_list = convert_mongo_object_to_list(product_catalog)
+    multi_scrapers(
+        worker_num = 10, 
+        list_to_scrape = product_list, 
+        url_to_scrape = PRODUCT_PAGE, 
+        target_id_key = 'eslite_pid', 
+        db_to_insert = product_info, 
+        scraper_func = get_product_info, 
+        insert_func = mongo_insert,
+        slicing=True
+    )  
