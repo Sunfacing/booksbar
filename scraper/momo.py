@@ -163,6 +163,46 @@ def get_product_list(url, subcate_code):
         i += 1
     return product_list
 
+def get_product_info(url_to_scrape, sliced_list, target_id_key):
+    info_list = []
+    i = 0
+    for product in sliced_list:       
+        data = defaultdict(dict)
+        data['subcate_code'] = product['subcate_code']
+        url = url_to_scrape + product[target_id_key]
+        print(i, url)
+        try:
+            page  = requests.get(url, headers = HEADERS)
+        except:
+            print('{} fetching data failed, try again in 10 seconds'.format(data['subcate_code']))
+            time.sleep(10) 
+            page  = requests.get(url, headers = HEADERS)
+        page.enconding = 'utf-8'
+        page_content = BeautifulSoup(page.content, 'html.parser')
+        try:
+            title = page_content.find('p', {'class': 'fprdTitle'}).getText()
+        except:
+            title = ''
+        try:
+            product_info = page_content.find('div', {'class': 'Area101'})
+            for info in product_info:
+                try:
+                    info = info.split('：')
+                    label = info[0]
+                    value = info[1]
+                    if '作者' in label:
+                        data['author'] = value
+                    elif len(info) > 1:
+                        data[label] = value.strip()
+                except:
+                    pass
+        except:
+            product_info = ''
+        data['momo_pid'] = url.split('i_code=')[-1].split('&')[0]
+        data['title'] = title
+        i += 1
+        info_list.append(data)
+    return info_list
 
 
 if __name__=='__main__':
@@ -201,3 +241,16 @@ if __name__=='__main__':
     #         new product in [new_prodcut_catalog]
     daily_change_tracker(catalog_today, catalog_yesterday, 'momo_pid', new_prodcut_catalog, unfound_product_catalog)
 
+    # Step 5. Use [new_prodcut_catalog] to request single product's api and insert into product_info
+    product_catalog = new_prodcut_catalog.find({'track_date': TODAY})
+    product_list = convert_mongo_object_to_list(product_catalog)
+    multi_scrapers(
+        worker_num = 2, 
+        list_to_scrape = product_list, 
+        url_to_scrape = PRODUCT_URL, 
+        target_id_key = 'momo_pid', 
+        db_to_insert = product_info, 
+        scraper_func = get_product_info, 
+        insert_func = mongo_insert,
+        slicing=True
+    )   
