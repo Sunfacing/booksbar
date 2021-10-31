@@ -232,13 +232,14 @@ if __name__ == '__main__':
     # Step 5. Use [new_prodcut_catalog] to request single product's api and insert into product_info
     product_catalog = new_product_catalog.find({'track_date': TODAY})
     product_list = convert_mongo_object_to_list(product_catalog)
-    multi_scrapers(
-        worker_num = 10, 
-        list_to_scrape = product_list, 
-        url_to_scrape = PRODUCT_PAGE, 
-        target_id_key = 'eslite_pid', 
-        db_to_insert = product_info, 
-        scraper_func = get_product_info, 
-        insert_func = mongo_insert,
-        slicing=True
-    )  
+    if len(product_list) > 0:
+        multi_scrapers(
+            worker_num = 10, 
+            list_to_scrape = product_list, 
+            url_to_scrape = PRODUCT_PAGE, 
+            target_id_key = 'eslite_pid', 
+            db_to_insert = product_info, 
+            scraper_func = get_product_info, 
+            insert_func = mongo_insert,
+            slicing=True
+        )  
