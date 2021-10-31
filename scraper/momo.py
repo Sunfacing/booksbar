@@ -37,3 +37,66 @@ SECTION_URL = 'https://m.momoshop.com.tw/category.momo?cn=4000000000&cid=dir&oid
 CATALOG_URL = 'https://m.momoshop.com.tw/cateGoods.momo?cn={}&page={}&sortType=5&imgSH=itemizedType'
 PRODUCT_URL = 'https://m.momoshop.com.tw//goods.momo?i_code='
 HEADERS = {'User-Agent': UserAgent().random,'X-Requested-With': 'XMLHttpRequest'}
+
+
+
+def category_path_finder(data, url):
+    try:
+        code = data.find('a')['subcatecode']
+        page  = requests.get(url + code, headers = HEADERS)
+        try:
+            links = BeautifulSoup(page.content, 'html.parser').find('div', {'class': 'classificationList'}).find_all('dd')
+        except:           
+            try:
+                links = BeautifulSoup(page.content, 'html.parser').find('article', {'class': 'pathArea'}).find_all('li')
+            except:
+                return None
+
+    except:
+        print(data, 'is failed')
+        return None   
+
+    return links
+
+def get_category_list(url):
+    path_url_prefix = 'https://m.momoshop.com.tw/category.momo?cn='
+    nomenclature = []
+    page  = requests.get(url, headers = HEADERS) 
+    page.enconding = 'utf-8'
+    section_links = BeautifulSoup(page.content, 'html.parser').find('div', {'class': 'classificationList'}).find_all('dd')
+    for sec in section_links:
+        category_links = category_path_finder(sec, path_url_prefix)
+
+        for category in category_links:
+            subcate_links = category_path_finder(category, path_url_prefix)
+
+            for sub in subcate_links:
+                sub_links = category_path_finder(sub, path_url_prefix)
+
+                if sub_links is not None:
+                    path = ['section', 'category', 'subcate']
+                    i = 0
+                    data = defaultdict(dict)
+                    for li in sub_links[1:]:
+                        try:
+                            sub_code = li.find('a')['cn']
+                            sub_nm = li.find('a').getText()
+                            data[path[i] + '_code'] = sub_code
+                            data[path[i] + '_nm'] = sub_nm
+                        except:
+                            continue
+                        i += 1
+                    nomenclature.append(data)
+                    print(data)
+                else:
+                    print(sub, 'is failed')
+    mongo_insert(category_list, nomenclature)
+
+
+
+
+if __name__=='__main__':
+    
+    # Step 1: Build up category list if not exists for later scrapping, it's one time set up
+    if not category_list.find_one():
+        get_category_list(SECTION_URL)
