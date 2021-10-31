@@ -42,7 +42,15 @@ class Worker(threading.Thread):
             insert_func(db_to_insert, catalog)
         except Exception as e:
             print('{} has problem with inserting data: {}'.format(target_id, e))
-       
+   
+    def do_by_slicing_product_list(self, url_to_scrape, sliced_list, target_id_key, db_to_insert, scraper_func, insert_func):
+        catalog = scraper_func(url_to_scrape, sliced_list, target_id_key)
+        try:
+            if len(catalog) > 0:
+                insert_func(db_to_insert, catalog)
+            print('Worker {} has {} done'.format(self.worker_num, len(catalog)))
+        except Exception as e:
+            print('Worker {} has problem with inserting data: {}'.format(self.worker_num, e))    
 
 
 def multi_scrapers(worker_num, list_to_scrape, url_to_scrape, target_id_key, db_to_insert, scraper_func, insert_func):
