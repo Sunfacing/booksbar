@@ -301,3 +301,6 @@ if __name__=='__main__':
         slicing=True
     )
     db.drop_collection(unfound_product_catalog)
+
+    # Step 7. Delete catalog of 7 days age, EX: today is '2021-10-26', so delete '2021-10-19'
+    db.drop_collection(catalog_last_7_days)
