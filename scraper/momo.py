@@ -92,6 +92,76 @@ def get_category_list(url):
                     print(sub, 'is failed')
     mongo_insert(category_list, nomenclature)
 
+def get_product_list(url, subcate_code):
+    i = 1
+    product_list = []
+    while True:
+        try:
+            catalog_url = url.format(subcate_code, i)
+            try:
+                page  = requests.get(catalog_url, headers = HEADERS)
+            except:
+                print('something went wrong with {} at page {}, try again in 10 seconds'.format(subcate_code, i))
+                time.sleep(10)
+                page  = requests.get(catalog_url, headers = HEADERS)                
+            page.enconding = 'utf-8'
+            category_links = BeautifulSoup(page.content, 'html.parser').find_all('a', {'class': 'productInfo'})
+            publisher_author_links = BeautifulSoup(page.content, 'html.parser').find('p', {'class': 'publishInfo'})
+            if len(category_links) == 0:
+                print(subcate_code, 'is done at page', i-1)
+                break
+
+            for link in category_links:
+                
+                try:
+                    title = link['title']
+                except:
+                    title = ''
+
+                try:
+                    price_discount = link.find('p', {'class': 'prdEvent'}).getText().strip()
+                    price = link.find('b', {'class': 'price'}).getText().strip()
+                except:
+                    price = ''
+
+                try:
+                    publish_date = link.find('span', {'class': 'publishDate'}).getText()
+                except:
+                    publish_date = ''
+
+                try:
+                    author = str(publisher_author_links.find('a', {'class': 'writer'}).getText()).strip()
+                except:
+                    author = ''
+
+                try:
+                    publisher = str(publisher_author_links.find('a', {'class': 'publishing'}).getText()).strip()
+                except:
+                    publisher = ''
+
+                try:
+                    pic_url = link.find('img', {'class': 'goodsImg lazy lazy-loaded'})['data-original']
+                    product_url = 'https://m.momoshop.com.tw/' + link['href']
+                    momo_pid = product_url.split('i_code=')[-1].split('&')[0]
+                except:
+                    pic_url = ''
+                    product_url = ''
+
+                product_list.append({'momo_pid': momo_pid,
+                                    'subcate_code': subcate_code, 
+                                    'title': title, 
+                                    'price_discount': price_discount, 
+                                    'price': price, 
+                                    'publish_date': publish_date, 
+                                    'author': author,
+                                    'publisher': publisher,
+                                    'product_url': product_url, 
+                                    'pic_url': pic_url})
+
+        except Exception as e:
+            print('something wrong with', subcate_code , e)
+        i += 1
+    return product_list
 
 
 
@@ -100,3 +170,21 @@ if __name__=='__main__':
     # Step 1: Build up category list if not exists for later scrapping, it's one time set up
     if not category_list.find_one():
         get_category_list(SECTION_URL)
+
+    # Step 2. Scrap daily to get the price and looking for new items record error into [error_catalog] 
+    for i in range(2):
+        list_to_scrape = scan_category_for_scraping(catalog_tem_today, 'subcate_code', category_list, {}, 'subcate_code')
+        multi_scrapers(
+            worker_num = 2, 
+            list_to_scrape = list_to_scrape, 
+            url_to_scrape = CATALOG_URL, 
+            target_id_key = 'subcate_code', 
+            db_to_insert = catalog_tem_today, 
+            scraper_func = get_product_list, 
+            insert_func = mongo_insert
+        )
+    
+    unfinished_list = scan_category_for_scraping(catalog_tem_today, 'subcate_code', category_list, {}, 'subcate_code')
+    if len(unfinished_list) > 0:
+        unfinished_category_list = create_new_field(unfinished_list, error_date=TODAY)
+        mongo_insert(category_error, unfinished_category_list)
