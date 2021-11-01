@@ -5,8 +5,6 @@ from sqlalchemy import ForeignKey
 
 class Nomenclature(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    division_id = db.Integer
-    division = db.Column(db.String(30))
     section_id = db.Integer
     section = db.Column(db.String(30))
     category_id = db.Integer
@@ -14,14 +12,29 @@ class Nomenclature(db.Model):
     subcategory_id = db.Integer
     subcategory = db.Column(db.String(30))
 
+class EsliteTOKingstoneCategoryTable(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    subcategory_id = db.Integer
+    subcategory = db.Column(db.String(30))
+    kingstone_id = db.Integer
+
+class MomoTOKingstoneCategoryTable(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    subcategory_id = db.Integer
+    subcategory = db.Column(db.String(30))
+    kingstone_id = db.Integer
+
+
 class Platform(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
     platform = db.Column(db.String(30), primary_key=True)
 
+
 class BookInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
-    isbn = db.Column(db.Integer, nullable=False) 
     platform = db.Column(db.Integer, ForeignKey('platform.id'), nullable=False)
+    platform_pid = db.Column(db.Integer, nullable=False) 
+    isbn = db.Column(db.Integer, nullable=False) 
     create_date = db.Column(db.DateTime, nullable=False)
     Nomenclature_id = db.Column(db.Integer, ForeignKey('nomenclature.id'), nullable=False) 
     title = db.Column(db.String(30), nullable=False)

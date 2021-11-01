@@ -17,6 +17,7 @@ class BaseModel(Model):
 app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app, model_class=BaseModel)
+
 limiter = Limiter(app, key_func=get_remote_address)
 bcrypt = Bcrypt(app)  # Create/Check hashpassword
 jwt = JWTManager(app) # Generate token
@@ -39,6 +40,7 @@ def server_error(e):
 
 
 from server.controller import user_controller
+
 
 
 
