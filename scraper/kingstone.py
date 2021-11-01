@@ -102,7 +102,7 @@ def get_product_list(url, subcate_code):
     catalog = []
     error_pages = []
     while True:
-        product_url = url.format(subcate_code, i)
+        product_url = url.format(subcate_code, i, timeout=60)
         try:
             try:
                 page = requests.get(product_url, headers= HEADERS)
@@ -110,7 +110,10 @@ def get_product_list(url, subcate_code):
                 # Eslite api sometimes won't response, so try second time
                 print('{} fetching data failed, try again in 10 seconds'.format(subcate_code))
                 time.sleep(10)
-                page = requests.get(product_url, headers= HEADERS)
+                try:
+                    page = requests.get(product_url, headers= HEADERS, timeout=60)
+                except:
+                    error_pages.append({'subcate_code': subcate_code, 'page': i, 'fail_date': TODAY})
             page.enconding = 'utf-8'
             category_links = BeautifulSoup(page.content, 'html.parser').find_all('li', {'class': 'displayunit'})
             print('now is {} at page {}'.format(subcate_code, i), 'with result', len(category_links)) 
@@ -187,12 +190,14 @@ def get_product_info(url_to_scrape, sliced_list, target_id_key):
             time.sleep(1)
         # In case website block connection, pause 10 seconds
         try:
-            page  = requests.get(product_url, headers = HEADERS)
+            page  = requests.get(product_url, headers = HEADERS, timeout=60)
         except:
             print('{} fetching data failed, try again in 10 seconds'.format(subcate_id))
-            time.sleep(10) 
-            page  = requests.get(product_url, headers = HEADERS)
-
+            time.sleep(10)
+            try:
+                page  = requests.get(product_url, headers = HEADERS, timeout=60)
+            except:
+                not_found_list.append({'subcate_id': subcate_id, 'product_id': product_id, 'track_date': TODAY})
         # This try block will ignore single item failure, and continue    
         try: 
             if page is None:
@@ -300,12 +305,15 @@ def phased_out_checker(url_to_scrape, sliced_list, target_id_key):
         if i % 10 == 0:
             time.sleep(1)       
         try:
-            page  = requests.get(product_url, headers = HEADERS)
+            page  = requests.get(product_url, headers = HEADERS, timeout=60)
         except:
             # In case website block connection, pause 10 seconds
             print('{} fetching data failed, try again in 10 seconds'.format(product_id))
-            time.sleep(10) 
-            page  = requests.get(product_url, headers = HEADERS)
+            time.sleep(10)
+            try:
+                page  = requests.get(product_url, headers = HEADERS, timeout=60)
+            except:
+                pass
         try:
         # Update product price and availability info before write back to [catalog_today]   
             page.enconding = 'utf-8'

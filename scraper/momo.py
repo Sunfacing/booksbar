@@ -25,7 +25,7 @@ catalog_last_7_days = db['momo_catalog_' + DATE_FOR_DELETE_COLLECTION_NAME]
 
 category_list = db.momo_nomenclature  # Category List
 catalog_tem_today = db.momo_catalog_tem_today
-# category_list = db.momo  # Category List
+page_error = db.kingstone_page_error
 category_error = db.momo_category_error
 product_info = db.momo_product_info
 product_error = db.momo_product_error
@@ -96,15 +96,19 @@ def get_category_list(url):
 def get_product_list(url, subcate_code):
     i = 1
     product_list = []
+    error_pages = []
     while True:
         try:
             catalog_url = url.format(subcate_code, i)
             try:
-                page  = requests.get(catalog_url, headers = HEADERS)
+                page  = requests.get(catalog_url, headers = HEADERS, timeout=60)
             except:
                 print('something went wrong with {} at page {}, try again in 10 seconds'.format(subcate_code, i))
                 time.sleep(10)
-                page  = requests.get(catalog_url, headers = HEADERS)                
+                try:
+                    page  = requests.get(catalog_url, headers = HEADERS, timeout=60)                
+                except:
+                    error_pages.append({'subcate_code': subcate_code, 'page': i, 'fail_date': TODAY})
             page.enconding = 'utf-8'
             category_links = BeautifulSoup(page.content, 'html.parser').find_all('a', {'class': 'productInfo'})
             publisher_author_links = BeautifulSoup(page.content, 'html.parser').find('p', {'class': 'publishInfo'})
@@ -160,12 +164,16 @@ def get_product_list(url, subcate_code):
                                     'pic_url': pic_url})
 
         except Exception as e:
-            print('something wrong with', subcate_code , e)
+            print('now is {} at page {}'.format(subcate_code, i), 'with result', len(category_links))
+            error_pages.append({'subcate_code': subcate_code, 'page': i, 'fail_date': TODAY})
         i += 1
+    if len(error_pages) > 0:
+        mongo_insert(page_error, error_pages)
     return product_list
 
 def get_product_info(url_to_scrape, sliced_list, target_id_key):
     info_list = []
+    not_found_list = []
     i = 0
     for product in sliced_list:       
         data = defaultdict(dict)
@@ -173,11 +181,14 @@ def get_product_info(url_to_scrape, sliced_list, target_id_key):
         url = url_to_scrape + product[target_id_key]
         print(i, url)
         try:
-            page  = requests.get(url, headers = HEADERS)
+            page  = requests.get(url, headers = HEADERS, timeout=60)
         except:
             print('{} fetching data failed, try again in 10 seconds'.format(data['subcate_code']))
-            time.sleep(10) 
-            page  = requests.get(url, headers = HEADERS)
+            time.sleep(10)
+            try:
+                page  = requests.get(url, headers = HEADERS, timeout=60)
+            except:
+                not_found_list.append({'subcate_id': product['subcate_code'], 'product_id': product[target_id_key], 'track_date': TODAY})
         page.enconding = 'utf-8'
         page_content = BeautifulSoup(page.content, 'html.parser')
         try:
@@ -198,7 +209,7 @@ def get_product_info(url_to_scrape, sliced_list, target_id_key):
                 except:
                     pass
         except:
-            product_info = ''
+            not_found_list.append({'subcate_id': product['subcate_code'], 'product_id': product[target_id_key], 'track_date': TODAY})
         data['momo_pid'] = url.split('i_code=')[-1].split('&')[0]
         data['title'] = title
         i += 1
@@ -216,11 +227,14 @@ def phased_out_checker(url_to_scrape, sliced_list, target_id_key):
         product_url = url_to_scrape + product[target_id_key]
         print(i, product_url)
         try:
-            page  = requests.get(product_url, headers = HEADERS)
+            page  = requests.get(product_url, headers = HEADERS, timeout=60)
         except:
             print('{} fetching data failed, try again in 10 seconds'.format(momo_pid))
-            time.sleep(10) 
-            page  = requests.get(product_url, headers = HEADERS)
+            time.sleep(10)
+            try:
+                page  = requests.get(product_url, headers = HEADERS, timeout=60)
+            except:
+                pass
         page.enconding = 'utf-8'
         page_content = BeautifulSoup(page.content, 'html.parser')
         try:
@@ -238,7 +252,7 @@ def phased_out_checker(url_to_scrape, sliced_list, target_id_key):
 
 
 if __name__=='__main__':
-
+    
     # Step 1: Build up category list if not exists for later scrapping, it's one time set up
     if not category_list.find_one():
         get_category_list(SECTION_URL)
@@ -297,7 +311,7 @@ if __name__=='__main__':
     )
     end = time.time()
     timecounter.insert_one({'date': TODAY, 'platform': 'momo', 'step': 'scrape product', 'time': end - start})
-
+    
     # Step 6: Reading [unfound_product_catalog], add current back to [catalog_today], phased out to [phase_out_product_catalog]
     #         Delete after finishing scraping
     start = time.time()    
