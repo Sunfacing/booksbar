@@ -5,11 +5,11 @@ from sqlalchemy import ForeignKey
 
 class CategoryList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    section_id = db.Column(db.Integer)
+    section_id = db.Column(db.String(30))
     section = db.Column(db.String(30))
-    category_id = db.Column(db.Integer)
+    category_id = db.Column(db.String(30))
     category = db.Column(db.String(30))
-    subcategory_id = db.Column(db.Integer)
+    subcategory_id = db.Column(db.String(30))
     subcategory = db.Column(db.String(30))
 
 class EsliteToKingsCategory(db.Model):
@@ -30,10 +30,11 @@ class Platform(db.Model):
 
 class BookInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
-    isbn = db.Column(db.Integer, nullable=False) 
+    isbn = db.Column(db.String(30), nullable=False) 
+    platform_id = db.Column(db.Integer, primary_key=True)
     platform = db.Column(db.Integer, ForeignKey('platform.id'), nullable=False)
     create_date = db.Column(db.DateTime, nullable=False)
-    Nomenclature_id = db.Column(db.Integer, ForeignKey('category_list.id'), nullable=False) 
+    category_id = db.Column(db.Integer, ForeignKey('category_list.id'), nullable=False) 
     title = db.Column(db.String(30), nullable=False)
     author = db.Column(db.Integer, ForeignKey('publisher.id'))
     publisher = db.Column(db.Integer, ForeignKey('author.id'))
@@ -61,7 +62,7 @@ class Publisher(db.Model):
 
 class Picture(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
-    isbn_id = db.Column(db.Integer, ForeignKey('category_list.id')) 
+    isbn_id = db.Column(db.Integer, ForeignKey('book_info.id')) 
     platform = db.Column(db.Integer, ForeignKey('platform.id'))
     pic_type = db.Column(db.String(30))
     url = db.Column(db.String(30))
