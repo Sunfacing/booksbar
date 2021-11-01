@@ -1,6 +1,6 @@
 from server import db
 from sqlalchemy import ForeignKey
-
+from server.models.product_model import *
 
 
 class UserInfo(db.Model):

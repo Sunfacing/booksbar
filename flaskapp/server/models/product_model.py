@@ -3,16 +3,26 @@ from sqlalchemy import ForeignKey
 
 
 
-class Nomenclature(db.Model):
+class CategoryList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    division_id = db.Integer
-    division = db.Column(db.String(30))
-    section_id = db.Integer
+    section_id = db.Column(db.Integer)
     section = db.Column(db.String(30))
-    category_id = db.Integer
+    category_id = db.Column(db.Integer)
     category = db.Column(db.String(30))
-    subcategory_id = db.Integer
+    subcategory_id = db.Column(db.Integer)
     subcategory = db.Column(db.String(30))
+
+class EsliteToKingsCategory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    category_id = db.Column(db.Integer)
+    category = db.Column(db.String(30))
+    kingstone_id = db.Column(db.Integer, ForeignKey('category_list.id'), nullable=False) 
+
+class MomoToKingsCategory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    subcategory_id = db.Column(db.Integer)
+    subcategory = db.Column(db.String(30))
+    kingstone_id = db.Column(db.Integer, ForeignKey('category_list.id'), nullable=False) 
 
 class Platform(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
@@ -23,7 +33,7 @@ class BookInfo(db.Model):
     isbn = db.Column(db.Integer, nullable=False) 
     platform = db.Column(db.Integer, ForeignKey('platform.id'), nullable=False)
     create_date = db.Column(db.DateTime, nullable=False)
-    Nomenclature_id = db.Column(db.Integer, ForeignKey('nomenclature.id'), nullable=False) 
+    Nomenclature_id = db.Column(db.Integer, ForeignKey('category_list.id'), nullable=False) 
     title = db.Column(db.String(30), nullable=False)
     author = db.Column(db.Integer, ForeignKey('publisher.id'))
     publisher = db.Column(db.Integer, ForeignKey('author.id'))
@@ -51,7 +61,7 @@ class Publisher(db.Model):
 
 class Picture(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
-    isbn_id = db.Column(db.Integer, ForeignKey('nomenclature.id')) 
+    isbn_id = db.Column(db.Integer, ForeignKey('category_list.id')) 
     platform = db.Column(db.Integer, ForeignKey('platform.id'))
     pic_type = db.Column(db.String(30))
     url = db.Column(db.String(30))
