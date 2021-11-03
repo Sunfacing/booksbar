@@ -62,7 +62,7 @@ def category_path_finder(data, url):
 def get_category_list(url):
     path_url_prefix = 'https://m.momoshop.com.tw/category.momo?cn='
     nomenclature = []
-    page  = requests.get(url, headers = HEADERS) 
+    page  = requests.get(url, headers = HEADERS, timeout=60) 
     page.enconding = 'utf-8'
     section_links = BeautifulSoup(page.content, 'html.parser').find('div', {'class': 'classificationList'}).find_all('dd')
     for sec in section_links:
@@ -300,7 +300,7 @@ if __name__=='__main__':
     product_catalog = new_prodcut_catalog.find({'track_date': TODAY})
     product_list = convert_mongo_object_to_list(product_catalog)
     multi_scrapers(
-        worker_num = 1, 
+        worker_num = 5, 
         list_to_scrape = product_list, 
         url_to_scrape = PRODUCT_URL, 
         target_id_key = 'momo_pid', 
@@ -318,7 +318,7 @@ if __name__=='__main__':
     product_catalog = unfound_product_catalog.find()
     product_list = convert_mongo_object_to_list(product_catalog)
     multi_scrapers(
-        worker_num = 1, 
+        worker_num = 5, 
         list_to_scrape = product_list, 
         url_to_scrape = PRODUCT_URL, 
         target_id_key = 'momo_pid', 
