@@ -30,14 +30,15 @@ class Platform(db.Model):
 
 class BookInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
-    isbn = db.Column(db.String(30), nullable=False) 
-    platform_id = db.Column(db.Integer, primary_key=True)
+    isbn = db.Column(db.String(30), nullable=False)
+    show_priority = db.Column(db.Integer, nullable=False)
     platform = db.Column(db.Integer, ForeignKey('platform.id'), nullable=False)
+    platform_product_id = db.Column(db.Integer, nullable=False)
     create_date = db.Column(db.DateTime, nullable=False)
     category_id = db.Column(db.Integer, ForeignKey('category_list.id'), nullable=False) 
-    title = db.Column(db.String(30), nullable=False)
-    author = db.Column(db.Integer, ForeignKey('publisher.id'))
-    publisher = db.Column(db.Integer, ForeignKey('author.id'))
+    title = db.Column(db.String(255), nullable=False)
+    author = db.Column(db.Integer, ForeignKey('author.id'))
+    publisher = db.Column(db.Integer, ForeignKey('publisher.id'))
     size = db.Column(db.String(30))
     publish_date = db.Column(db.DateTime)
     table_of_content = db.Column(db.Text)
@@ -50,13 +51,13 @@ class BookInfo(db.Model):
 
 class Author(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
-    name = db.Column(db.String(30))
+    name = db.Column(db.String(100))
     platform = db.Column(db.Integer, ForeignKey('platform.id'))
 
 
 class Publisher(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
-    name = db.Column(db.String(30))
+    name = db.Column(db.String(100))
     platform = db.Column(db.Integer, ForeignKey('platform.id'))
 
 
