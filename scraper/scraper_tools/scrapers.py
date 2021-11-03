@@ -36,9 +36,10 @@ class Worker(threading.Thread):
             catalog = scraper_func(url_to_scrape, target_id[target_id_key])
         except Exception as e:
             print('{} has problem with gathering information: {}'.format(target_id, e))
-
+            catalog = []
         try:
-            insert_func(db_to_insert, catalog)
+            if len(catalog) > 0:
+                insert_func(db_to_insert, catalog)
         except Exception as e:
             print('{} has problem with inserting data: {}'.format(target_id, e))
 
