@@ -1,3 +1,4 @@
+from operator import index
 from server import db
 from sqlalchemy import ForeignKey
 
@@ -30,7 +31,7 @@ class Platform(db.Model):
 
 class BookInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
-    isbn = db.Column(db.String(30), nullable=False)
+    isbn = db.Column(db.String(30), nullable=False, index=True)
     show_priority = db.Column(db.Integer, nullable=False)
     platform = db.Column(db.Integer, ForeignKey('platform.id'), nullable=False)
     platform_product_id = db.Column(db.Integer, nullable=False)
@@ -48,6 +49,7 @@ class BookInfo(db.Model):
     page = db.Column(db.Integer)
     product_url = db.Column(db.String(255))
     e_book_url = db.Column(db.String(255))
+
 
 class Author(db.Model):
     id = db.Column(db.Integer, primary_key=True) 

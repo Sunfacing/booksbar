@@ -30,17 +30,12 @@ cursor = connection.cursor()
 
 
 
-
-
-
-
 def mongo_to_hashtable(collection, hashkey):
     data = collection.find()
     hashtable = defaultdict(dict)
     for each in data:
         hashtable[each[hashkey]] = each
     return hashtable
-
 
 
 
@@ -59,21 +54,33 @@ def create_hashtable(hashkey, data):
 if __name__ == '__main__':
 
     # Set up category list
-    # ks_category_list = ks_category_list.find()
-    # cate_list = []
-    # for each in ks_category_list:
-    #     category = CategoryList(section_id=each['section_code'],
-    #                             section=each['section_nm'],
-    #                             category_id=each['category_code'],
-    #                             category=each['category_nm'],
-    #                             subcategory_id=each['subcate_code'],
-    #                             subcategory=each['subcate_nm'])
-    #     cate_list.append(category)
-    # db.session.add_all(cate_list)
-    # db.session.commit()
-    from sqlalchemy import select
+    ks_category_list = ks_category_list.find()
+    cate_list = []
+    for each in ks_category_list:
+        section_id=each['section_code']
+        if 'book' in section_id:
+            category = CategoryList(section_id=section_id,
+                                    section=each['section_nm'],
+                                    category_id=each['category_code'],
+                                    category=each['category_nm'],
+                                    subcategory_id=each['subcate_code'],
+                                    subcategory=each['subcate_nm'])
+            cate_list.append(category)
+    db.session.add_all(cate_list)
+    db.session.commit()
+
+
+
     # Check if ISBN and platform exists
     
+
+
+
+
+
+
+
+    """
     isbn = '0'
     ks_platform_id = 1
     book = db.session.execute('SELECT id, isbn, platform_id FROM book_info WHERE platform_id = {} AND isbn = "{}"'.format(ks_platform_id, isbn)).first()
@@ -154,19 +161,9 @@ if __name__ == '__main__':
         i += 1
     db.session.add_all(products)
     db.session.commit()
-    """"""
+    
 
-
-
-
-
-
-
-
-
-
-
-    """
+    
     catalog = catalog_today.find({}).distinct('author')
     
     author_list = []
