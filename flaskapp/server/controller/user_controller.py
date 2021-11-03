@@ -53,8 +53,20 @@ BUCKET = 'stylishproject'
 
 
 @app.route('/')
-@limiter.limit("5/minute", error_message='chill!')
+# @limiter.limit("5/minute", error_message='chill!')
 def index(category=None):
-    db.create_all()
-    return 'hi'
+    books = db.session.execute('SELECT title, publish_date, cover_photo, a.name AS author FROM readbar.book_info AS b\
+                                INNER JOIN readbar.author AS a\
+                                ON a.id = b.author WHERE category_id = 16 ORDER BY publish_date DESC LIMIT 40')
+    collections = []
+    row = []
+    i = 0
+    for book in books:
+        if i % 4 == 0 and i > 1:
+            collections.append(row)
+            row = []
+        row.append(book)
+        i += 1
+    collections.append(row)
+    return render_template('index.html', collections=collections)
 
