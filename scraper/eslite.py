@@ -220,7 +220,7 @@ def phased_out_checker(url_to_scrape, sliced_list, target_id_key):
     return product_info
 
 if __name__ == '__main__':
-
+    
     # Step 1: Build up category list if not exists for later scrapping, it's one time set up
     if not category_list.find_one():
         create_category_list(CETEGORY_URL)
@@ -257,14 +257,10 @@ if __name__ == '__main__':
     end = time.time()
     timecounter.insert_one({'date': TODAY, 'platform': 'eslite', 'step': 'remove duplicates', 'time': end - start})
     
-    new_product_catalog.delete_many({'track_date':"2021-11-01"})
-    unfound_product_catalog.delete_many({'track_date':"2021-11-01"})
-    db.eslite_catalog_1030.rename('eslite_catalog_1031')
+
     # Step 4. Mutually compare[catalog_today] with [catalog_yesterday], 
     #         phase out product in [phase_out_product_catalog]
     #         new product in [new_prodcut_catalog]
-    print(catalog_today)
-    print(catalog_yesterday)
     start = time.time()
     daily_change_tracker(catalog_today, catalog_yesterday, 'eslite_pid', new_product_catalog, unfound_product_catalog)
     end = time.time()
