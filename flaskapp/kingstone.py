@@ -1,3 +1,4 @@
+import collections
 import pymysql
 import os
 from dotenv import load_dotenv
@@ -33,8 +34,12 @@ cursor = connection.cursor()
 
 
 
-
-
+def mongo_to_hashtable(collection, hashkey):
+    data = collection.find()
+    hashtable = defaultdict(dict)
+    for each in data:
+        hashtable[each[hashkey]] = each
+    return hashtable
 
 
 
@@ -68,53 +73,141 @@ if __name__ == '__main__':
     # db.session.commit()
     from sqlalchemy import select
     # Check if ISBN and platform exists
+    
     isbn = '0'
     ks_platform_id = 1
-    book = db.session.execute('SELECT id, isbn, platform FROM book_info WHERE platform = {} AND isbn = "{}"'.format(ks_platform_id, isbn)).first()
-    author = create_hashtable('name', db.session.execute('SELECT id, name FROM author WHERE platform = {}'.format(ks_platform_id)))
-    publisher = create_hashtable('name', db.session.execute('SELECT id, name FROM publisher WHERE platform = {}'.format(ks_platform_id)))
+    book = db.session.execute('SELECT id, isbn, platform_id FROM book_info WHERE platform_id = {} AND isbn = "{}"'.format(ks_platform_id, isbn)).first()
+    author_hash = create_hashtable('name', db.session.execute('SELECT id, name FROM author WHERE platform = {}'.format(ks_platform_id)))
+    publisher_hash = create_hashtable('name', db.session.execute('SELECT id, name FROM publisher WHERE platform = {}'.format(ks_platform_id)))
     category_id = create_hashtable('subcategory_id', db.session.execute('SELECT id, subcategory_id FROM category_list WHERE subcategory_id LIKE "/book%"'))
     
-    print(len(author['d']), publisher)
+    # print(len(author['d']), publisher)
+
+    catalog = mongo_to_hashtable(catalog_today, 'kingstone_pid')
+    product_info = mongo_to_hashtable(ks_product_info, 'kingstone_pid')
+    product_list = []
+    for pid, info in product_info.items():
+        if len(catalog[pid]) > 0:
+            subcate = info['subcate_id']
+            subcate_id = category_id[subcate]
+            try:
+                author = catalog[pid]['author']
+                author = author_hash[author]
+            except: author = 1013197
+            try:
+                publisher = catalog[pid]['publisher']
+                publisher = publisher_hash[publisher]
+            except: 
+                publisher = 1
+
+            try: publish_date = catalog[pid]['publish_date']
+            except: publish_date = ''
+
+            try: product_url = catalog[pid]['product_url']
+            except: product_url = ''
+            
+            try:description = str(info['description'])
+            except:description = ''
+
+            try: page = info['頁數']
+            except: page = ''
+
+            try:
+                isbn = info['ISBN']
+                if isbn == '':
+                    continue
+            except: 
+                continue
+
+
+            info = BookInfo(
+                create_date = info['scrap_date'], 
+                title = info['title'],
+                author = author,
+                publisher = publisher,
+                publish_date = publish_date, 
+                table_of_content = info['table_of_contents'],
+                description = description,
+                author_intro = info['author_description'],
+                cover_photo = info['main_img'], 
+                page = info['頁數'],
+                product_url = product_url,
+                e_book_url = info['e_book'],
+                isbn = info['ISBN'],
+                category_id = subcate_id,
+                platform_id = 1
+                )
+            product_list.append(info)
+
+
+    t = len(product_list)
+    print(t)       
+    products = [] 
+    i = 0
+    for each in product_list:
+        products.append(each)
+        if i % 10000 == 0 and i > 0:
+            db.session.add_all(products)
+            db.session.commit()
+            products = []
+            print(t - i, 'to go')
+        i += 1
+    db.session.add_all(products)
+    db.session.commit()
+    """"""
+
+
+
+
+
+
+
+
+
+
 
     """
-    if book is None:
-        # Register new item
-        pass
-         
-    else:
-        pass
-    """
-    catalog = catalog_today.find({}, {'author': 1, 'publisher': 1})
+    catalog = catalog_today.find({}).distinct('author')
+    
     author_list = []
-    publisher_list = []
     for each in catalog:
-        if each['author'] not in author_list:
-            author_list.append(each['author'])
-        if each['publisher'] not in publisher_list:
-            publisher_list.append(each['publisher'])
+        author_list.append(Author(name=each, platform=1))
 
     t = len(author_list)
     print(t)
     i = 0
     authors = []
     for author in author_list:
-        authors.append(Author(name=author, platform=1))
-        if i % 5000 == 0 and i > 0:
+        authors.append(author)
+        if i % 10000 == 0 and i > 0:
             db.session.add_all(authors)
             db.session.commit()
+            authors = []
+            print(t - i, 'to go')
         i += 1
-        print(t - i, 'to go')
+    db.session.add_all(authors)
+    db.session.commit()
+    print('author done')
 
 
+    print('publisher begin')
+    catalog = catalog_today.find({}).distinct('publisher')
+    publisher_list = []
+    for each in catalog:
+        publisher_list.append(Publisher(name=each, platform=1))
     t = len(publisher_list)
     print(t)
     i = 0
     publishers = []
     for publisher in publisher_list:
-        publishers.append(Publisher(name=publisher, platform=1))
-        if i % 5000 == 0 and i > 0:
+        publishers.append(publisher)
+        if i % 10000 == 0 and i > 0:
             db.session.add_all(publishers)
             db.session.commit()
+            publishers = []
+            print(t - i, 'to go')
         i += 1
-        print(t - i, 'to go')
+    db.session.add_all(publishers)
+    db.session.commit()
+    print('publisher done')
+    """
