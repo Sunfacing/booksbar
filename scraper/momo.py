@@ -207,11 +207,12 @@ def get_product_info(url_to_scrape, sliced_list, target_id_key):
                     elif len(info) > 1:
                         data[label] = value.strip()
                 except:
-                    pass
+                    data[label] = ''
         except:
             not_found_list.append({'subcate_id': product['subcate_code'], 'product_id': product[target_id_key], 'track_date': TODAY})
         data['momo_pid'] = url.split('i_code=')[-1].split('&')[0]
         data['title'] = title
+        data['track_date'] = TODAY
         i += 1
         info_list.append(data)
     return info_list
@@ -262,7 +263,7 @@ if __name__=='__main__':
     for i in range(2):
         list_to_scrape = scan_category_for_scraping(catalog_tem_today, 'subcate_code', category_list, {}, 'subcate_code')
         multi_scrapers(
-            worker_num = 2, 
+            worker_num = 10, 
             list_to_scrape = list_to_scrape, 
             url_to_scrape = CATALOG_URL, 
             target_id_key = 'subcate_code', 
