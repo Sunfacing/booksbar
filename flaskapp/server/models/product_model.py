@@ -1,7 +1,6 @@
-from operator import index
 from server import db
 from sqlalchemy import ForeignKey
-
+from sqlalchemy.schema import UniqueConstraint
 
 
 class CategoryList(db.Model):
@@ -13,30 +12,26 @@ class CategoryList(db.Model):
     subcategory_id = db.Column(db.String(30))
     subcategory = db.Column(db.String(30))
 
-class EsliteToKingsCategory(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    category_id = db.Column(db.Integer)
-    category = db.Column(db.String(30))
-    kingstone_id = db.Column(db.Integer, ForeignKey('category_list.id'), nullable=False) 
-
-class MomoToKingsCategory(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    subcategory_id = db.Column(db.Integer)
-    subcategory = db.Column(db.String(30))
-    kingstone_id = db.Column(db.Integer, ForeignKey('category_list.id'), nullable=False) 
 
 class Platform(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
     platform = db.Column(db.String(30), primary_key=True)
 
-class BookInfo(db.Model):
-    id = db.Column(db.Integer, primary_key=True) 
-    isbn = db.Column(db.String(30), nullable=False, index=True)
-    show_priority = db.Column(db.Integer, nullable=False)
+
+class IsbnCatalog(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement = True) 
+    isbn = db.Column(db.String(30), primary_key=True)
+    category_id = db.Column(db.Integer, ForeignKey('category_list.id'), nullable=False)
     platform = db.Column(db.Integer, ForeignKey('platform.id'), nullable=False)
-    platform_product_id = db.Column(db.Integer, nullable=False)
-    create_date = db.Column(db.DateTime, nullable=False)
-    category_id = db.Column(db.Integer, ForeignKey('category_list.id'), nullable=False) 
+    __table_args__ = (UniqueConstraint('isbn', name='isbn'),)
+
+
+class BookInfo(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement = True) 
+    isbn_id = db.Column(db.Integer, ForeignKey('isbn_catalog.id'), nullable=False)
+    platform = db.Column(db.Integer, ForeignKey('platform.id'), nullable=False)
+    platform_product_id = db.Column(db.String(255), primary_key=True, nullable=False)
+    create_date = db.Column(db.DateTime, nullable=False) 
     title = db.Column(db.String(255), nullable=False)
     author = db.Column(db.Integer, ForeignKey('author.id'))
     publisher = db.Column(db.Integer, ForeignKey('publisher.id'))
@@ -48,7 +43,6 @@ class BookInfo(db.Model):
     cover_photo = db.Column(db.String(255))
     page = db.Column(db.Integer)
     product_url = db.Column(db.String(255))
-    e_book_url = db.Column(db.String(255))
 
 
 class Author(db.Model):
@@ -65,10 +59,8 @@ class Publisher(db.Model):
 
 class Picture(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
-    isbn_id = db.Column(db.Integer, ForeignKey('book_info.id')) 
-    platform = db.Column(db.Integer, ForeignKey('platform.id'))
-    pic_type = db.Column(db.String(30))
-    url = db.Column(db.String(30))
+    book_id = db.Column(db.Integer, ForeignKey('book_info.id')) 
+    url = db.Column(db.String(255))
 
 
 class PriceStatusInfo(db.Model):
@@ -88,22 +80,14 @@ class Status(db.Model):
     status = db.Column(db.String(30))   
 
 
-class DailyNewCount(db.Model):
+class DailyScrapeResult(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime)
     platform = db.Column(db.Integer, ForeignKey('platform.id'))
     total = db.Column(db.Integer)
     new = db.Column(db.Integer)
-    remove = db.Column(db.Integer)
-    time = db.Column(db.Integer)
+    phase_out = db.Column(db.Integer)
 
-
-class DailyCatalogChange(db.Model):
-    id = db.Column(db.Integer, primary_key=True) 
-    date = db.Column(db.DateTime)
-    platform = db.Column(db.Integer, ForeignKey('platform.id'))
-    book_id = db.Column(db.Integer, ForeignKey('book_info.id'))
-    reason = db.Column(db.Integer)
 
 class DailyScrapeTime(db.Model):
     id = db.Column(db.Integer, primary_key=True) 

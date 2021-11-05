@@ -24,7 +24,7 @@ class UserComment(db.Model):
     date = db.Column(db.DateTime)
     isbn = db.Column(db.Integer)
     platform = db.Column(db.Integer, ForeignKey('platform.id'))
-    comment = db.Column(db.String(255))
+    comment = db.Column(db.Text)
 
 
 

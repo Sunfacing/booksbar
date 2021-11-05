@@ -39,7 +39,9 @@
             <div class="row ">
               {% for book in subset %}
                 <div class="card mx-auto" style="width: 15rem; height:60%">
-                  <img class="card-img-top p-3" src="{{ book['cover_photo']}}" alt="Card image cap">
+                  <a href="{{ book['product_url'] }}" alt=''>
+                    <img class="card-img-top p-3" src="{{ book['cover_photo']}}" alt="Card image cap">
+                  </a>
                   <div class="card-body" style="height:10rem">
                     {% if book['title'].split('：')[0]| length <= 10 %}
                       <h5 class="card-title" >{{ book['title'].split('：')[0] }}<br><br></h5>

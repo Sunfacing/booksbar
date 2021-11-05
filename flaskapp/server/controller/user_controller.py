@@ -55,9 +55,14 @@ BUCKET = 'stylishproject'
 @app.route('/')
 # @limiter.limit("5/minute", error_message='chill!')
 def index(category=None):
-    books = db.session.execute('SELECT title, publish_date, cover_photo, a.name AS author FROM readbar.book_info AS b\
-                                INNER JOIN readbar.author AS a\
-                                ON a.id = b.author WHERE category_id = 16 ORDER BY publish_date DESC LIMIT 40')
+    books = db.session.execute("""SELECT category_id, b.title, b.cover_photo, b.publish_date, b.product_url, a.name FROM isbn_catalog AS i
+                                INNER JOIN book_info AS b
+                                ON i.id = b.isbn_id
+                                INNER JOIN author AS a
+                                ON b.author = a.id
+                                WHERE category_id = 163 AND b.platform = 1
+                                ORDER BY publish_date DESC
+                                LIMIT 40""")
     collections = []
     row = []
     i = 0
