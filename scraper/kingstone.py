@@ -13,7 +13,7 @@ from ip_list import ip_list, back_up_ip_list
 
 
 client = MongoClient('localhost', 27017)
-db = client.Bookstores
+db = client.bookbar
 
 TODAY = date.today().strftime("%Y-%m-%d")
 TODAY_FOR_COLLECTION_NAME = date.today().strftime("%m%d")
@@ -297,7 +297,7 @@ def get_product_info(url_to_scrape, sliced_list, target_id_key):
                     comments.append({date: comment})
                 data['reader_comments'] = comments
             else:
-                data['reader_comments'] = None
+                data['reader_comments'] = ''
 
             data['track_date'] = datetime.today().strftime('%Y-%m-%d')
             product_info.append(data)
@@ -364,7 +364,7 @@ def phased_out_checker(url_to_scrape, sliced_list, target_id_key):
 
 
 if __name__=='__main__':
-
+    """
     # # Step 1: Get all subcategory id and scrape, with batch insertion at subcategory level #
     # if not category_list.find_one():
     #     create_category_list()
@@ -372,10 +372,10 @@ if __name__=='__main__':
     # # Step 2. Scrap daily to get the price and looking for new items record error into [error_catalog]
     start = time.time()
     for i in range(2):
-        category_query = {'subcate_code': {'$regex': 'book'}}
-        list_to_scrape = scan_category_for_scraping(catalog_tem_today, 'subcate_id', category_list, category_query, 'subcate_code')
-        multi_scrapers(10, list_to_scrape, CATALOG_URL, 'subcate_code', catalog_tem_today, get_product_list, mongo_insert)
-    unfinished_list = scan_category_for_scraping(catalog_tem_today, 'subcate_id', category_list, category_query, 'subcate_code')
+        category_query = {'subcategory_id': {'$regex': 'book'}}
+        list_to_scrape = scan_category_for_scraping(catalog_tem_today, 'subcate_id', category_list, category_query, 'subcategory_id')
+        multi_scrapers(10, list_to_scrape, CATALOG_URL, 'subcategory_id', catalog_tem_today, get_product_list, mongo_insert)
+    unfinished_list = scan_category_for_scraping(catalog_tem_today, 'subcate_id', category_list, category_query, 'subcategory_id')
     if len(unfinished_list) > 0:
         unfinished_category_list = create_new_field(unfinished_list, error_date=TODAY)
         mongo_insert(category_error, unfinished_category_list)
@@ -383,7 +383,7 @@ if __name__=='__main__':
     timecounter.insert_one({'date': TODAY, 'platform': 'kingstone', 'step': 'scrape catalog', 'time': end - start, 'start': start, 'end': end})
 
 
-    # start = time.time()
+    start = time.time()
     # # Step 3. The raw catalog contains duplicate products; remove them from [catalog_tem_today] 
     # #         and copy cleaned catalog to [catalog_today] then delete [catalog_tem_today]
     copy_to_collection(catalog_tem_today, catalog_today, 'kingstone_pid')
@@ -391,7 +391,7 @@ if __name__=='__main__':
     end = time.time()
     timecounter.insert_one({'date': TODAY, 'platform': 'kingstone', 'step': 'remove duplicates', 'time': end - start, 'start': start, 'end': end})
 
-    
+    """
     # Step 4. Mutually compare[catalog_today] with [catalog_yesterday], 
     #         phase out product in [phase_out_product_catalog]
     #         new product in [unfound_product_catalog]
