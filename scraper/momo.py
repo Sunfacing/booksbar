@@ -16,14 +16,14 @@ DATE_SUBTRACT_7 = str(datetime.today() - timedelta(days=7)).split(' ')[0].split(
 DATE_FOR_DELETE_COLLECTION_NAME = ''.join(DATE_SUBTRACT_7)
 
 client = MongoClient('localhost', 27017)
-db = client.Bookstores
+db = client.bookbar
 
 # Set collection name with variable for auto addition / validation / deletion
 catalog_today = db['momo_catalog_' + TODAY_FOR_COLLECTION_NAME]
 catalog_yesterday = db['momo_catalog_' + YESTERDAY_FOR_EORROR_CHECKER]
 catalog_last_7_days = db['momo_catalog_' + DATE_FOR_DELETE_COLLECTION_NAME]
 
-category_list = db.momo_nomenclature  # Category List
+category_list = db.momo  # Category List
 catalog_tem_today = db.momo_catalog_tem_today
 page_error = db.kingstone_page_error
 category_error = db.momo_category_error
