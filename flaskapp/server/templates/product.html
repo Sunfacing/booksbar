@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <title>Bookbar</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    </head>
+    <body>
+        <nav class="navbar bg-dark"">
+            <a class="navbar-brand" href="{{ url_for('index')}}" style="color: #ffffff;"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/445/6331351445_00ba94c2-523c-42d8-9712-1924f4621988.png?cb=1636274980' style="width: 60%;"></a>
+            <button class="btn btn-dark" type="submit"><i class="material-icons large">account_circle</i></button> 
+        </nav>
+        <div id="mySidenav" class="sidenav bg-dark " >
+          <a class="navbar-brand" style="color: #ffffff;"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/445/6331351445_00ba94c2-523c-42d8-9712-1924f4621988.png?cb=1636274980' style="width: 100%;"></a>
+          <a href="javascript:void(0)" class="closebtn bg-dark" onclick="closeNav()">&times;</a>
+          {% for each in nav_sec%}
+            <a href="/{{ each }}"><h5 class="section_nav" style="color: #ffffff; font-size: medium;">{{each}}</h5></a>
+          {% endfor %}
+        </div>
+        <div style="margin-top:10px">
+        </div>
+        <span class="navbtn btn btn-dark my-2 my-sm-0" href="#" role="button" onclick="openNav()">&#9776;</span>
+
+        <div class="row">
+          <div class="container col-sm-2" style="margin-left:0px;"></div>
+          <div class="container col-sm-4" style="margin-left:0px;">
+            <div class="mySlides">
+              <div class="numbertext">1 / 6</div>
+              <img src="{{kingstone['cover_photo']}}" style="width:60%">
+            </div>          
+            {% for pic in pic_list %}
+            <div class="mySlides">
+              <div class="numbertext">{{ pic[1] }} / 6</div>
+              <img src="{{ pic[0] }}" style="width:60%">
+            </div> 
+            {% endfor %}
+            <div class="mySlides">
+              <div class="numbertext">2 / 6</div>
+              <img src="https://cdn.kingstone.com.tw/book/images/product/20156/2015630707005/2015630707005b.jpg" style="width:60%">
+            </div>         
+            <div class="mySlides">
+              <div class="numbertext">3 / 6</div>
+              <img src="https://cdn.kingstone.com.tw/book/images/product/20185/2018562644417/2018562644417b.jpg" style="width:60%">
+            </div>               
+            <div class="mySlides">
+              <div class="numbertext">4 / 6</div>
+              <img src="https://cdn.kingstone.com.tw/book/images/product/20181/2018120191377/2018120191377b.jpg" style="width:60%">
+            </div>           
+            <div class="mySlides">
+              <div class="numbertext">5 / 6</div>
+              <img src="https://cdn.kingstone.com.tw/book/images/product/20185/2018562644417/2018562644417b.jpg" style="width:60%">
+            </div>                
+            <div class="mySlides">
+              <div class="numbertext">6 / 6</div>
+              <img src="https://cdn.kingstone.com.tw/book/images/product/20181/2018120191377/2018120191377b.jpg" style="width:60%">
+            </div>
+            <div class="row">
+              <div class="container p-2">
+                <img class="demo cursor" src="{{kingstone['cover_photo']}}" style="width:10%" onclick="currentSlide(1)" alt="The Woods">
+                {% for pic in pic_list %}
+                  <img class="demo cursor" src="{{ pic[0] }}" style="width:10%" onclick="currentSlide({{ pic[1] }})" alt="">
+                {% endfor %}
+                <!-- <img class="demo cursor" src="https://cdn.kingstone.com.tw/book/images/product/20185/2018562644417/2018562644417b.jpg" style="width:10%" onclick="currentSlide(3)" alt="Mountains and fjords">
+                <img class="demo cursor" src="https://cdn.kingstone.com.tw/book/images/product/20185/2018562644417/2018562644417b.jpg" style="width:10%" onclick="currentSlide(4)" alt="Mountains and fjords">
+                <img class="demo cursor" src="https://cdn.kingstone.com.tw/book/images/product/20181/2018120191377/2018120191377b.jpg" style="width:10%" onclick="currentSlide(5)" alt="Northern Lights">
+                <img class="demo cursor" src="https://cdn.kingstone.com.tw/book/images/product/20185/2018562644417/2018562644417b.jpg" style="width:10%" onclick="currentSlide(6)" alt="Mountains and fjords">                     -->
+              </div>
+            </div>
+          </div>
+            
+          <div class="container col-sm-3" style="margin-left:0px;">
+            <div>
+              <h2 style="font-weight: bold; margin-top:20px">{{kingstone['title']}}</h2>
+              <h5>作者: {{kingstone['author']}}</h5>
+              <h5>出版社: {{kingstone['publisher']}}</h5>
+              <h5>出版日: {{kingstone['publish_date']}}</h5>
+              <h5>ISBN: {{kingstone['isbn_id']}}</h5>
+              <h5>頁數: {{kingstone['page']}}</h5>
+              <h5>尺寸: {{kingstone['size']}}</h5>
+            </div>
+            <br>
+            <div style="border-top: 5px;">
+              <a href="{{kingstone['product_url']}}"><h5>金石堂: {{kingstone['price']}}</h5></a>
+              <a href="{{eslite['product_url']}}"><h5>誠品: {{eslite['price']}}</h5></a>
+              <a href="{{momo['product_url']}}"><h5>Momo: {{momo['price']}}</h5></a>
+            </div>
+          </div>
+          <div class="container col-sm-2" style="margin-left:0px;">
+          </div>
+        </div>
+
+      </div>
+        
+        <div class="container col-sm-8">
+          <div class="bg-dark" style="margin-top:50px; background-color: black;">
+            <h5 style="padding:10px; color: whitesmoke;">目錄大綱</h5>
+          </div>
+          <div>
+            {{kingstone['table_of_content']}}
+          </div>
+        </div>
+        <div class="container col-sm-8">
+          <div class="bg-dark" style="margin-top:50px; background-color: black;">
+            <h5 style="padding:10px; color: whitesmoke;">內容簡介</h5>
+          </div>
+          <div>
+            {{kingstone['description']}}
+          </div>
+        </div>
+        <div class="container col-sm-8">
+          <div class="bg-dark" style="margin-top:50px; background-color: black;">
+            <h5 style="padding:10px; color: whitesmoke;">作者介紹</h5>
+          </div>
+          <div>
+            {{kingstone['author_intro']}}
+          </div>
+        </div>
+
+
+
+    </body>
+    <script>
+      var slideIndex = 1;
+      showSlides(slideIndex);
+      
+      function plusSlides(n) {
+        showSlides(slideIndex += n);
+      }
+      
+      function currentSlide(n) {
+        showSlides(slideIndex = n);
+      }
+      
+      function showSlides(n) {
+        var i;
+        var slides = document.getElementsByClassName("mySlides");
+        var dots = document.getElementsByClassName("demo");
+        var captionText = document.getElementById("caption");
+        if (n > slides.length) {slideIndex = 1}
+        if (n < 1) {slideIndex = slides.length}
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        for (i = 0; i < dots.length; i++) {
+            dots[i].className = dots[i].className.replace(" active", "");
+        }
+        slides[slideIndex-1].style.display = "block";
+        dots[slideIndex-1].className += " active";
+        captionText.innerHTML = dots[slideIndex-1].alt;
+      }
+    </script>
+    <style>
+      body {
+        font-family: Arial;
+        margin: 0;
+      }
+      
+      * {
+        box-sizing: border-box;
+      }
+      
+      img {
+        vertical-align: middle;
+      }
+      
+      /* Position the image container (needed to position the left and right arrows) */
+      .container {
+        position: relative;
+      }
+      
+      /* Hide the images by default */
+      .mySlides {
+        display: none;
+      }
+      
+      /* Add a pointer when hovering over the thumbnail images */
+      .cursor {
+        cursor: pointer;
+      }
+      
+      /* Next & previous buttons */
+      .prev,
+      .next {
+        cursor: pointer;
+        position: absolute;
+        top: 40%;
+        width: auto;
+        padding: 16px;
+        margin-top: -50px;
+        color: white;
+        font-weight: bold;
+        font-size: 20px;
+        border-radius: 0 3px 3px 0;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+      
+      /* Position the "next button" to the right */
+      .next {
+        right: 0;
+        border-radius: 3px 0 0 3px;
+      }
+      
+      /* On hover, add a black background color with a little bit see-through */
+      .prev:hover,
+      .next:hover {
+        background-color: rgba(0, 0, 0, 0.8);
+      }
+      
+      /* Number text (1/3 etc) */
+      .numbertext {
+        color: #f2f2f2;
+        font-size: 12px;
+        padding: 8px 12px;
+        position: absolute;
+        top: 0;
+      }
+      
+      /* Container for image text */
+      .caption-container {
+        text-align: center;
+        background-color: #222;
+        padding: 2px 16px;
+        color: white;
+      }
+      
+      .row:after {
+        content: "";
+        display: table;
+        clear: both;
+      }
+      
+      /* Six columns side by side */
+      .column {
+        float: left;
+        width: 16.66%;
+      }
+      
+      /* Add a transparency effect for thumnbail images */
+      .demo {
+        opacity: 0.6;
+      }
+      
+      .active,
+      .demo:hover {
+        opacity: 1;
+      }
+    </style>   
+    <style>
+      body {
+        font-family: "Lato", sans-serif;
+      }
+      
+      .sidenav {
+        height: 100%;
+        width: 0;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #111;
+        overflow-x: hidden;
+        transition: 0.5s;
+        padding-top: 60px;
+      }
+      
+      .sidenav a {
+        padding: 8px 8px 8px 32px;
+        text-decoration: none;
+        font-size: 25px;
+        color: #818181;
+        display: block;
+        transition: 0.3s;
+      }
+      
+      .sidenav a:hover {
+        color: #f1f1f1;
+      }
+      
+      .sidenav .closebtn {
+        position: absolute;
+        top: 0;
+        right: 25px;
+        font-size: 36px;
+        margin-left: 50px;
+      }
+      
+      @media screen and (max-height: 450px) {
+        .sidenav {padding-top: 15px;}
+        .sidenav a {font-size: 18px;}
+      }
+    </style>
+    <script>
+        function openNav() {
+          document.getElementById("mySidenav").style.width = "250px";
+        }
+        
+        function closeNav() {
+          document.getElementById("mySidenav").style.width = "0";
+        }
+    </script>
+</html>
