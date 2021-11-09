@@ -178,3 +178,13 @@ def get_book_info(isbn_id, date):
     ON u.id = b.publisher
     WHERE isbn_id = {} AND survey_date='{}'""".format(isbn_id, date))
     return info_list
+
+
+
+def get_book_pics(isbn_id):
+    pic_list = db.session.execute("""
+    SELECT b.cover_photo, p.url AS pics FROM book_info AS b
+    INNER JOIN picture AS p
+    ON b.id = p.book_id
+    WHERE isbn_id = {} and platform = 1""".format(isbn_id))
+    return pic_list
