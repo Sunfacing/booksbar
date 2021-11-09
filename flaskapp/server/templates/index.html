@@ -8,56 +8,63 @@
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+      <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/sandstone/bootstrap.min.css" integrity="sha384-zEpdAL7W11eTKeoBJK1g79kgl9qjP7g84KfK3AZsuonx38n8ad+f5ZgXtoSDxPOh" crossorigin="anonymous"> -->
+    
     </head>
     <body>
       <nav class="navbar bg-dark"">
-          <a class="navbar-brand" style="color: #ffffff;"><i class="material-icons large">book</i>書bar</a>
+          <a class="navbar-brand" style="color: #ffffff;"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/445/6331351445_00ba94c2-523c-42d8-9712-1924f4621988.png?cb=1636274980' style="width: 60%;"></a>
           <button class="btn btn-dark" type="submit"><i class="material-icons large">account_circle</i></button> 
       </nav>
       <main>
 
-          <div class="jumbotron" style="background: url('https://d3bu8utwyaxpsl.cloudfront.net/bookbar2.jpg') no-repeat center center fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover;">
+          <div class="jumbotron" style="height: 350px; background: url('https://d3bu8utwyaxpsl.cloudfront.net/bookbar2.jpg') no-repeat center center fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover;">
             <div class="mx-auto" style="width:80%">
               <form class="form-inline p-3">
                 <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
                 <button class="btn btn-dark my-2 my-sm-0" type="submit">搜尋書名</button>
               </form>
               <form class="form-inline p-3">
-                <a class="btn btn-dark my-2 my-sm-0" href="#" role="button">查看全部分類</a>
+                <a class="btn btn-dark my-2 my-sm-0" href="/文學?category=現代華文創作" role="button">查看全部分類</a>
               </form>
+              <br><br>
               <p class="text-xl-right" style="color: #ffffff;">你可能不知道自己要的是什麼，但是，要先知道自己，不要什麼。<br>                                  –《走在夢想的路上》．謝哲青</p>
             </div>
           </div>
         </div>
         <div class="btn-group justify-content-end" role="group" aria-label="Basic example" style="width: 90%;">
-          <button type="button" class="btn btn-light shadow-lg bg-white rounded">全部</button>
-          <button type="button" class="btn btn-dark shadow-lg rounded">依追蹤類別</button>
-          <button type="button" class="btn btn-light shadow-lg bg-white rounded">依追蹤作者</button>
+          <button type="button" class="btn btn-dark shadow-lg bg-dark rounded">全部</button>
+          <button type="button" class="btn btn-light ">依追蹤類別</button>
+          <button type="button" class="btn btn-light ">依追蹤作者</button>
         </div>
         {% for subset in collections %}
           <div class="container p-3" style="width: 70%;">
             <div class="row ">
               {% for book in subset %}
-                <div class="card mx-auto" style="width: 15rem; height:60%">
-                  <a href="{{ book['product_url'] }}" alt=''>
-                    <img class="card-img-top p-3" src="{{ book['cover_photo']}}" alt="Card image cap">
+                <div class="card mx-auto" style="width: 15rem; height:70%">
+                  <a href="product/{{ book['isbn_id'] }}" alt=''>
+                    <img class="card-img-top p-3" src="{{ book['cover_photo']}}" alt="Card image cap" onerror="this.onerror=null;this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/273/6331341273_aaf6d286-1736-4b10-acfa-95df264d860e.png?cb=1636274683';" >
                   </a>
-                  <div class="card-body" style="height:10rem">
+                  <div class="card-body" style="height:8rem; width:20em">
                     {% if book['title'].split('：')[0]| length <= 10 %}
-                      <h5 class="card-title" >{{ book['title'].split('：')[0] }}<br><br></h5>
+                      <h5 class="card-title">{{ book['title'].split('：')[0][:10] }}</h5>
                     {% else %}
-                      <h5 class="card-title">{{ book['title'].split('：')[0].split('（')[0] }}<br><br></h5>
+                      <h5 class="card-title">{{ book['title'].split('：')[0].split('（')[0][:10] }}</h5>
                     {% endif %}
-                    <p>{{ book['author']}}<br>
+                    <p>{{ book['author']}}</br>
                     {{ book['publish_date'].strftime("%Y-%m-%d")}}</p>                    
                   </div>
                 </div>
               {% endfor %} 
               </div> 
-            </div> 
-          {% endfor %}    
+          </div> 
+        {% endfor %}    
       </main>
-
+      <style>
+        .card:hover {
+          box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+        }
+        </style>
       <nav aria-label="..." >
         <ul class="pagination  justify-content-center">
           <li class="page-item disabled">

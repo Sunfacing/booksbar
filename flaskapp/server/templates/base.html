@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+<style>
+body {
+  font-family: "Lato", sans-serif;
+}
+
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+</style>
+</head>
+<body>
+  <nav class="navbar bg-dark"">
+    <a class="navbar-brand" style="color: #ffffff;" href="{{ url_for('index')}}"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/445/6331351445_00ba94c2-523c-42d8-9712-1924f4621988.png?cb=1636274980' style="width: 60%;"></a>
+    <button class="btn btn-dark" type="submit"><i class="material-icons large ">account_circle</i></button> 
+ </nav>
+<style>
+  body {
+    font-family: "Lato", sans-serif;
+  }
+  
+  .sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+  }
+  
+  .sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+  }
+  
+  .sidenav a:hover {
+    color: #f1f1f1;
+  }
+  
+  .sidenav .closebtn {
+    position: absolute;
+    background-color: gray;
+    top: 0;
+    /* right: 25px;
+    font-size: 36px;
+    margin-left: 50px; */
+  }
+  
+.navbtn {
+  width: 40px;
+  height: 40px; /* as the half of the width */
+  /* background-color: gray; */
+  border-bottom-right-radius: 10px;  /* 100px of height + 10px of border */
+  border-top-right-radius: 10px; /* 100px of height + 10px of border */
+  /* border: 10px solid gray; */
+  border-bottom: 0;
+
+}
+.section_nav{
+  font-size: medium;
+  margin: 0px;
+
+}
+
+  @media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+  }
+  </style>
+  </head>
+  <body>
+    <div id="mySidenav" class="sidenav bg-dark " >
+      <a class="navbar-brand" style="color: #ffffff;"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/445/6331351445_00ba94c2-523c-42d8-9712-1924f4621988.png?cb=1636274980' style="width: 100%;"></a>
+      <a href="javascript:void(0)" class="closebtn bg-dark" onclick="closeNav()">&times;</a>
+      {% for each in nav_sec%}
+        <a href="{{ each }}"><h5 class="section_nav" style="color: #ffffff; ">{{each}}</h5></a>
+      {% endfor %}
+    </div>
+    <div style="margin-top:10px">
+    </div>
+    <span class="navbtn btn btn-dark my-2 my-sm-0" href="#" role="button" onclick="openNav()">&#9776;</span>
+  <div class="row">
+    <div class="col-sm-2" style="margin-left:70px;">
+      <a href="{{ current_sec }}?category_nm=all"><h3 style="color: #020202; margin-bottom:20px; margin-top:0px; font-weight: bold;">{{ current_sec }}</h3></a>
+      {% for key in cate_list%}
+        {% if key != 'all' %}
+          <a href="?category_nm={{ key }}"><h5 class="section_nav" style="color: #020202;"><h5 class="section_nav" style="color: #000000; ">{{key}}</h5></a>
+          <br>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <div class="col-sm-7" style="margin-left:0px">
+      {% if current_cate != 'all' %}
+      <nav class="navbar navbar-expand-sm bg-light">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col " >
+              {% for subcate in subcate_list %}
+                {% if subcate == current_sub %}
+                  <a href="?category_nm={{ current_cate }}&subcate_nm={{ subcate }}" class="btn w3-red " style="margin:1px; color:#f1f1f1">{{ subcate }}</a>
+                {% else %}
+                  <a href="?category_nm={{ current_cate }}&subcate_nm={{ subcate }}"class="btn bg-dark" style="margin:1px; color:#f1f1f1">{{ subcate }}</a>                  
+                {% endif %}
+              {% endfor %}
+            </div>  
+        </div>
+      </nav>
+      {%endif%}
+      {% block content %}
+
+      {% endblock content%}
+    </div>
+    </div>
+  </body>
+
+  <script>
+  function openNav() {
+    document.getElementById("mySidenav").style.width = "250px";
+  }
+  
+  function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+  }
+  </script>
+
+
+  </html> 
