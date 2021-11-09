@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+    <div style="margin-top: 20px;"></div>
+    {% for product in product_list %}
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <div class="card mb-3  w3-animate-opacity" style="max-width: 100%;">
+            <div class="row no-gutters ">
+            <div class="col-md-3">
+                <a href="product/{{product['isbn_id']}}">
+                    <img src="{{product['cover_photo']}}" class="card-img" onerror="this.onerror=null;this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/690/6336618690_75f2170c-b776-469f-9d33-4050ff81a665.png?cb=1636362136'" style="height: 85%; width: 85%; margin-top: 15px; margin-left: 15px;">
+                </a>    
+            </div>
+            <div class="col-md-9">
+                <div class="card-body">
+                <a href="product/{{product['isbn_id']}}">
+                    <h5 class="card-title" style="font-weight: bold;">{{product['title']}}</h5>
+                </a>    
+                <p class="card-text">{{product['description'][:100]}}....</p>
+                <!-- <h5 class="card-text"><small class="text-muted">著作人: {{product['author']}}<br>出版社: {{product['publisher']}}</small></h5> -->
+                <p class="card-text"><small class="text-muted"></small>著作人: {{product['author']}}<br>出版社: {{product['publisher']}}<br>出版日: {{product['publish_date']}}</p>
+                </div>
+            </div>
+            </div>
+        </div>
+    {% endfor %}
+{%  endblock content %}
