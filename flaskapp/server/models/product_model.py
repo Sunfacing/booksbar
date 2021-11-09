@@ -160,3 +160,21 @@ def get_catalog_subcategory(subcategory):
             ORDER BY publish_date DESC 
             LIMIT 40""".format(subcategory))
     return product_list
+
+
+
+
+def get_book_info(isbn_id, date):
+    info_list = db.session.execute("""
+        SELECT title, a.name AS author, u.name AS publisher, publish_date, 
+        isbn_id, b.platform, size, page, p.status, p.price, table_of_content,
+        description, author_intro, product_url, cover_photo
+    FROM book_info AS b
+    LEFT JOIN price_status_info AS p
+    ON b.id = p.book_id 
+    INNER JOIN author AS a
+    ON a.id = b.author
+    INNER JOIN publisher AS u
+    ON u.id = b.publisher
+    WHERE isbn_id = {} AND survey_date='{}'""".format(isbn_id, date))
+    return info_list
