@@ -110,3 +110,28 @@ class DailyScrapeTime(db.Model):
 #     level = db.Column(db.String(30)) 
 #     ks_pid = db.Column(db.Integer, ForeignKey('ks_book_info.id'))
 #     es_pid = db.Column(db.Integer, ForeignKey('es_book_info.id'))
+
+
+
+def get_catalog_section(section):
+    product_list =db.session.execute("""
+        SELECT b.isbn_id,
+            b.id AS book_id,
+            publish_date,
+            title,
+            description,
+            cover_photo,
+            a.name AS author,
+            p.name AS publisher
+        FROM category_list AS c 
+        INNER JOIN isbn_catalog AS i
+        ON i.category_id = c.id
+        INNER JOIN book_info AS b
+        ON b.isbn_id = i.id
+        INNER JOIN author AS a
+        ON b.author = a.id
+        INNER JOIN publisher AS p
+        ON b.publisher = p.id
+        WHERE b.platform = 1 and c.section = '{}'  
+        LIMIT 9""".format(section))
+    return product_list
