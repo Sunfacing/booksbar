@@ -3,6 +3,7 @@ import pymysql
 import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
+from server.models.user_model import *
 from server.models.product_model import *
 from category_glossary import *
 
@@ -74,9 +75,28 @@ def register_status():
 
 
 
+
+def register_kingstone_commenter():
+    kingstone_user = UserInfo(username='kingstone_user')
+    db.session.add(kingstone_user)
+    db.session.commit()
+
+
+    email = db.Column(db.String(255)) 
+    password = db.Column(db.String(255)) 
+    username = db.Column(db.String(255))
+    source = db.Column(db.String(255)) 
+    token = db.Column(db.String(255))
+
+
+
+
+
+
 if __name__ == '__main__':
     if False:
         register_status()
         create_platform()
         register_price_type()
         create_category_list(ks_category_list)
+    register_kingstone_commenter()
