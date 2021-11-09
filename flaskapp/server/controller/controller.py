@@ -23,7 +23,7 @@ import boto3
 from collections import defaultdict
 
 
-
+from server.models.product_model import *
 from server.models.user_model import *
 from datetime import timedelta
 import datetime
@@ -116,6 +116,60 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', type=None)
                                 current_cate=category_nm,
                                 current_sub=subcate_nm,
                                 product_list=product_list)
+
+
+
+@app.route('/product/<isbn_id>')
+def product(isbn_id=None):
+    isbn_id = request.args.get('isbn_id', isbn_id)
+    books = db.session.execute("SELECT * FROM bookbar.category_list")
+    cate_list = defaultdict(list)
+    nav_sec = defaultdict(dict)
+    for book in books:
+        section = book['section']
+        nav_sec[section] = section
+
+    eslite = defaultdict(dict)
+    kingstone = defaultdict(dict)
+    momo = defaultdict(dict)
+    TODAY = datetime.datetime.now().strftime("%Y-%m-%d") 
+    # print(TODAY)
+    try:
+        info_list = get_book_info(isbn_id=isbn_id, date='2021-11-06')
+    except:
+        info_list = get_book_info(isbn_id=isbn_id, date='2021-11-06')
+    for info in info_list:
+        platform = info['platform']
+
+        if platform == 1:
+            # info['author_intro'] = html.escape(info['author_intro'] )
+            # @Html.Raw()
+            # print( html.unescape(info['author_intro'] ))
+            kingstone = info
+        elif platform == 2:
+            eslite  = info
+        else:
+            momo = info       
+        if not momo['price']:
+            momo['price'] = ''
+        if not eslite['price']:
+            eslite['price'] = ''
+        if not kingstone['price']:
+            kingstone['price'] = ''
+
+    pics = get_book_pics(isbn_id)
+    pic_list = []
+    i = 2
+    for pic in pics:
+        pic_list.append([pic['pics'], i])
+        i += 1
+    if len(pic_list) > 5:
+        pic_list = pic_list[:5]
+
+    return render_template('product.html', nav_sec=nav_sec, kingstone=kingstone, eslite=eslite, momo=momo, pic_list=pic_list)
+
+
+
 
 
 
