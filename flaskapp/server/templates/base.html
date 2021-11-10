@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <title>Booksbar | {{ current_sec }}</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -128,12 +129,13 @@ body {
       <a class="navbar-brand" style="color: #ffffff;"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/445/6331351445_00ba94c2-523c-42d8-9712-1924f4621988.png?cb=1636274980' style="width: 100%;"></a>
       <a href="javascript:void(0)" class="closebtn bg-dark" onclick="closeNav()">&times;</a>
       {% for each in nav_sec%}
-        <a href="{{ each }}"><h5 class="section_nav" style="color: #ffffff; ">{{each}}</h5></a>
+        <a href="{{ each }}"><h5 class="section_nav" style="color: #ffffff;">{{each}}</h5></a>
       {% endfor %}
     </div>
+    
     <div style="margin-top:10px">
     </div>
-    <span class="navbtn btn btn-dark my-2 my-sm-0" href="#" role="button" onclick="openNav()">&#9776;</span>
+    <span class="navbtn btn btn-dark my-2 my-sm-0" href="#" role="button" onclick="openNav()" style=" border-radius: 7px;">&#9776;</span>
   <div class="row">
     <div class="col-sm-2" style="margin-left:70px;">
       <a href="{{ current_sec }}?category_nm=all"><h3 style="color: #020202; margin-bottom:20px; margin-top:0px; font-weight: bold;">{{ current_sec }}</h3></a>
@@ -144,17 +146,17 @@ body {
         {% endif %}
       {% endfor %}
     </div>
-    <div class="col-sm-7" style="margin-left:0px">
+    <div class="col-sm-7" style="margin-left:0px;">
       {% if current_cate != 'all' %}
-      <nav class="navbar navbar-expand-sm bg-light">
+      <nav class="navbar navbar-expand-sm bg-light" style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px;">
         <div class="container-fluid">
           <div class="row">
             <div class="col " >
               {% for subcate in subcate_list %}
                 {% if subcate == current_sub %}
-                  <a href="?category_nm={{ current_cate }}&subcate_nm={{ subcate }}" class="btn w3-red " style="margin:1px; color:#f1f1f1">{{ subcate }}</a>
+                  <a href="?category_nm={{ current_cate }}&subcate_nm={{ subcate }}" class="btn w3-red " style="margin:1px; color:#f1f1f1; border-radius: 5px;" >{{ subcate }}</a>
                 {% else %}
-                  <a href="?category_nm={{ current_cate }}&subcate_nm={{ subcate }}"class="btn bg-dark" style="margin:1px; color:#f1f1f1">{{ subcate }}</a>                  
+                  <a href="?category_nm={{ current_cate }}&subcate_nm={{ subcate }}"class="btn bg-dark" style="margin:1px; color:#f1f1f1; border-radius: 5px;">{{ subcate }}</a>                  
                 {% endif %}
               {% endfor %}
             </div>  
@@ -165,7 +167,9 @@ body {
 
       {% endblock content%}
     </div>
-    </div>
+
+  </div>
+  <button onclick="topFunction()" id="myBtn" title="Go to top">▲</button>
   </body>
 
   <script>
@@ -177,6 +181,49 @@ body {
     document.getElementById("mySidenav").style.width = "0";
   }
   </script>
-
-
+  <style>
+    #myBtn {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 30px;
+      z-index: 99;
+      font-size: 18px;
+      border: none;
+      outline: none;
+      background-color: #343A40;
+      color: #ffffff;
+      cursor: pointer;
+      padding: 10px;
+      margin: 30px;
+      border-radius: 7px;
+      height: 50px;
+      width: 50px;
+    }
+    
+    #myBtn:hover {
+      background-color: #F44336;
+    }
+    </style>
+  <script>
+    //Get the button
+    var mybutton = document.getElementById("myBtn");
+    
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function() {scrollFunction()};
+    
+    function scrollFunction() {
+      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        mybutton.style.display = "block";
+      } else {
+        mybutton.style.display = "none";
+      }
+    }
+    
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    }
+  </script>
   </html> 
