@@ -79,11 +79,12 @@ def index():
     
 
 @app.route('/<section_nm>', methods=['GET'])
-def section(section_nm='文學', category_nm='all', subcate_nm='all', type=None):
+def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
     section_nm = request.args.get('section_nm', section_nm)
     category_nm = request.args.get('category_nm', category_nm)
-    subcate_nm= request.args.get('subcate_nm', subcate_nm)
+    subcate_nm = request.args.get('subcate_nm', subcate_nm)
     books = db.session.execute("SELECT * FROM bookbar.category_list")
+    current_page = request.args.get('page', page) 
     cate_list = defaultdict(list)
     nav_sec = defaultdict(dict)
 
@@ -96,7 +97,7 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', type=None)
             cate_list[category].append(subcategory)
     subcate_list = cate_list[category_nm]
     if category_nm != 'all' and subcate_nm != 'all':
-        product_list = get_catalog_subcategory(subcate_nm)
+        product_list = get_catalog_subcategory(subcate_nm, page=page)
         page = 'subcate.html'                                    
     elif category_nm != 'all' and subcate_nm == 'all':
         product_list = []   
@@ -115,7 +116,8 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', type=None)
                                 current_sec = section_nm,
                                 current_cate=category_nm,
                                 current_sub=subcate_nm,
-                                product_list=product_list)
+                                product_list=product_list,
+                                current_page=current_page)
 
 from bs4 import BeautifulSoup
 
@@ -173,7 +175,7 @@ def product(isbn_id=None):
     # if len(pic_list) > 10:
     #     pic_list = pic_list[:10]
 
-    return render_template('product2.html', nav_sec=nav_sec, 
+    return render_template('product.html', nav_sec=nav_sec, 
                                         kingstone=kingstone, 
                                         eslite=eslite, 
                                         momo=momo, 
