@@ -62,7 +62,7 @@ def index():
                                 ON i.id = b.isbn_id
                                 INNER JOIN author AS a
                                 ON b.author = a.id
-                                WHERE category_id IN(32, 108, 112) AND b.platform = 1 and b.publish_date > '2021-11-01'
+                                WHERE category_id IN(138, 90, 84) AND b.platform = 1 and b.publish_date > '2021-10-01'
                                 ORDER BY publish_date DESC
                                 LIMIT 8""")
     collections = []
@@ -117,6 +117,8 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', type=None)
                                 current_sub=subcate_nm,
                                 product_list=product_list)
 
+from bs4 import BeautifulSoup
+
 
 
 @app.route('/product/<isbn_id>')
@@ -133,19 +135,24 @@ def product(isbn_id=None):
     kingstone = defaultdict(dict)
     momo = defaultdict(dict)
     TODAY = datetime.datetime.now().strftime("%Y-%m-%d") 
-    # print(TODAY)
     try:
         info_list = get_book_info(isbn_id=isbn_id, date='2021-11-06')
     except:
         info_list = get_book_info(isbn_id=isbn_id, date='2021-11-06')
     for info in info_list:
         platform = info['platform']
-
         if platform == 1:
-            # info['author_intro'] = html.escape(info['author_intro'] )
-            # @Html.Raw()
-            # print( html.unescape(info['author_intro'] ))
-            kingstone = info
+            kingstone['title'] = info['title']
+            kingstone['publish_date']= info['publish_date'].date()
+            kingstone['author'] = info['author']
+            kingstone['isbn_id'] = info['isbn_id']
+            kingstone['ISBN'] = info['ISBN']
+            kingstone['page'] = info['page']
+            kingstone['publisher'] = info['publisher']
+            kingstone['size'] = info['size']
+            kingstone['price'] = info['price']
+            kingstone['cover_photo'] = info['cover_photo']
+            kingstone['product_url'] = info['product_url']
         elif platform == 2:
             eslite  = info
         else:
@@ -163,19 +170,35 @@ def product(isbn_id=None):
     for pic in pics:
         pic_list.append([pic['pics'], i])
         i += 1
-    if len(pic_list) > 5:
-        pic_list = pic_list[:5]
+    # if len(pic_list) > 10:
+    #     pic_list = pic_list[:10]
 
-    return render_template('product.html', nav_sec=nav_sec, kingstone=kingstone, eslite=eslite, momo=momo, pic_list=pic_list)
-
-
-
-
-
-
+    return render_template('product2.html', nav_sec=nav_sec, 
+                                        kingstone=kingstone, 
+                                        eslite=eslite, 
+                                        momo=momo, 
+                                        pic_list=pic_list)
 
 
 
 
 
+
+@app.route('/signup')
+def signup(category=None):
+    return render_template('signup.html')
+
+
+
+
+@app.route('/product/api/bookinfo/<isbn_id>')
+def book_info(isbn_id=None):
+    isbn_id = request.args.get('isbn_id', isbn_id)
+    result = api_book_info(isbn_id)
+    response = defaultdict(dict)
+    for key in result:
+        response['author_intro'] = key['author_intro']
+        response['description'] = key['description']
+        response['table_of_content'] = key['table_of_content']
+    return response
 
