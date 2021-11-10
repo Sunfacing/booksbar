@@ -23,4 +23,22 @@
             </div>
         </div>
     {% endfor %}
+
+    <div class="container">
+    <ul class="pagination justify-content-center" style="margin-top: 50px; margin-bottom: 20px;">
+        {% if shown_pages['pre'] == -1%}
+            <li class="page-item"><a class="page-link disabled" style="color: #343A40;"><</a></li>
+        {% else %}
+            <li class="page-item"><a class="page-link" href="/{{current_sec}}?category_nm={{current_cate}}&subcate_nm={{current_sub}}&page={{shown_pages['pre']}}" style="color: #343A40;"><</a></li>
+        {% endif %}
+        
+        <li class="page-item active"><a class="page-link" href="/{{current_sec}}?category_nm={{current_cate}}&subcate_nm={{current_sub}}" style="background-color: #343A40; border-color: #343A40;">{{shown_pages['current']}}</a></li>
+        
+        {% if shown_pages['next'] == -1%}
+            <li class="page-item"><a class="page-link disabled"  style="color: #343A40;">></a></li>
+        {% else %}
+            <li class="page-item"><a class="page-link disabled" href="/{{current_sec}}?category_nm={{current_cate}}&subcate_nm={{current_sub}}&page={{shown_pages['next']}}" style="color: #343A40;">></a></li>        
+        {% endif %}
+        </ul>
+    </div>    
 {%  endblock content %}
