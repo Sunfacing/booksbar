@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-    <title>Bookbar</title>
+    <title>Booksbar | {{kingstone['title']}}</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -29,8 +29,8 @@
           <div class="container col-sm-2" style="margin-left:0px;"></div>
           <div class="container col-sm-4" style="margin-left:0px;">
             <div class="mySlides">
-              <div class="numbertext">1 / 6</div>
-              <img src="{{kingstone['cover_photo']}}" style="width:60%">
+              <div class="numbertext thumbnail">1 / 6</div>
+              <img src="{{kingstone['cover_photo']}}" id="pop" style="width:60%">
             </div>          
             {% for pic in pic_list %}
             <div class="mySlides">
@@ -38,47 +38,29 @@
               <img src="{{ pic[0] }}" style="width:60%">
             </div> 
             {% endfor %}
-            <div class="mySlides">
-              <div class="numbertext">2 / 6</div>
-              <img src="https://cdn.kingstone.com.tw/book/images/product/20156/2015630707005/2015630707005b.jpg" style="width:60%">
-            </div>         
-            <div class="mySlides">
-              <div class="numbertext">3 / 6</div>
-              <img src="https://cdn.kingstone.com.tw/book/images/product/20185/2018562644417/2018562644417b.jpg" style="width:60%">
-            </div>               
-            <div class="mySlides">
-              <div class="numbertext">4 / 6</div>
-              <img src="https://cdn.kingstone.com.tw/book/images/product/20181/2018120191377/2018120191377b.jpg" style="width:60%">
-            </div>           
-            <div class="mySlides">
-              <div class="numbertext">5 / 6</div>
-              <img src="https://cdn.kingstone.com.tw/book/images/product/20185/2018562644417/2018562644417b.jpg" style="width:60%">
-            </div>                
-            <div class="mySlides">
-              <div class="numbertext">6 / 6</div>
-              <img src="https://cdn.kingstone.com.tw/book/images/product/20181/2018120191377/2018120191377b.jpg" style="width:60%">
-            </div>
+            <script>
+              $("#pop").on("click", function() {
+                $('#imagepreview').attr('src', $('#imageresource').attr('src')); // here asign the image to the modal when the user click the enlarge link
+                $('#imagemodal').modal('show'); // imagemodal is the id attribute assigned to the bootstrap modal, then i use the show function
+              });
+            </script>
             <div class="row">
               <div class="container p-2">
                 <img class="demo cursor" src="{{kingstone['cover_photo']}}" style="width:10%" onclick="currentSlide(1)" alt="The Woods">
                 {% for pic in pic_list %}
                   <img class="demo cursor" src="{{ pic[0] }}" style="width:10%" onclick="currentSlide({{ pic[1] }})" alt="">
                 {% endfor %}
-                <!-- <img class="demo cursor" src="https://cdn.kingstone.com.tw/book/images/product/20185/2018562644417/2018562644417b.jpg" style="width:10%" onclick="currentSlide(3)" alt="Mountains and fjords">
-                <img class="demo cursor" src="https://cdn.kingstone.com.tw/book/images/product/20185/2018562644417/2018562644417b.jpg" style="width:10%" onclick="currentSlide(4)" alt="Mountains and fjords">
-                <img class="demo cursor" src="https://cdn.kingstone.com.tw/book/images/product/20181/2018120191377/2018120191377b.jpg" style="width:10%" onclick="currentSlide(5)" alt="Northern Lights">
-                <img class="demo cursor" src="https://cdn.kingstone.com.tw/book/images/product/20185/2018562644417/2018562644417b.jpg" style="width:10%" onclick="currentSlide(6)" alt="Mountains and fjords">                     -->
               </div>
             </div>
           </div>
             
-          <div class="container col-sm-3" style="margin-left:0px;">
+          <div class="container col-sm-3" style="padding-right:10px;">
             <div>
-              <h2 style="font-weight: bold; margin-top:20px">{{kingstone['title']}}</h2>
+              <h4 style="font-weight: bold; margin-top:20px">{{kingstone['title']}}</h4>
               <h5>作者: {{kingstone['author']}}</h5>
               <h5>出版社: {{kingstone['publisher']}}</h5>
               <h5>出版日: {{kingstone['publish_date']}}</h5>
-              <h5>ISBN: {{kingstone['isbn_id']}}</h5>
+              <h5>ISBN: {{kingstone['ISBN']}}</h5>
               <h5>頁數: {{kingstone['page']}}</h5>
               <h5>尺寸: {{kingstone['size']}}</h5>
             </div>
@@ -99,30 +81,58 @@
           <div class="bg-dark" style="margin-top:50px; background-color: black;">
             <h5 style="padding:10px; color: whitesmoke;">目錄大綱</h5>
           </div>
-          <div>
-            {{kingstone['table_of_content']}}
+          <div id="table_of_content">
           </div>
         </div>
-        <div class="container col-sm-8">
+        <div class="container col-sm-8" >
           <div class="bg-dark" style="margin-top:50px; background-color: black;">
             <h5 style="padding:10px; color: whitesmoke;">內容簡介</h5>
           </div>
-          <div>
-            {{kingstone['description']}}
+          <div id="description" >
+            <script>
+              function render(productList){
+                  var table_of_content = document.createElement('ul');
+                  var li_table_of_content = document.createElement('li');
+                  li_table_of_content.innerHTML = productList.table_of_content
+                  table_of_content.appendChild(li_table_of_content); 
+                  document.getElementById('table_of_content').append(table_of_content);
+                 
+                  var description = document.createElement('ul');
+                  var li_description = document.createElement('li');
+                  li_description.innerHTML = '<span>' + productList.description + '</span>'
+                  description.appendChild(li_description); 
+                  document.getElementById('description').append(description);
+
+                  var author_intro = document.createElement('ul');
+                  var li_author_intro = document.createElement('li');
+                  li_author_intro.innerHTML = productList.author_intro
+                  author_intro.appendChild(li_author_intro); 
+                  document.getElementById('author_intro').append(author_intro);
+              };
+                      
+              fetch("http://127.0.0.1:5000/product/api/bookinfo/{{kingstone['isbn_id']}}")
+                  .then( response => response.json())
+                  .then(render)
+                  // .finally(() => alert('Hey'))
+
+            </script>
+            
           </div>
         </div>
         <div class="container col-sm-8">
           <div class="bg-dark" style="margin-top:50px; background-color: black;">
             <h5 style="padding:10px; color: whitesmoke;">作者介紹</h5>
           </div>
-          <div>
-            {{kingstone['author_intro']}}
+          <div id="author_intro">
           </div>
         </div>
 
 
 
     </body>
+
+
+    
     <script>
       var slideIndex = 1;
       showSlides(slideIndex);
