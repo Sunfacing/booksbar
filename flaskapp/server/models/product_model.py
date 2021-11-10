@@ -167,9 +167,10 @@ def get_catalog_subcategory(subcategory):
 def get_book_info(isbn_id, date):
     info_list = db.session.execute("""
         SELECT title, a.name AS author, u.name AS publisher, publish_date, 
-        isbn_id, b.platform, size, page, p.status, p.price, table_of_content,
-        description, author_intro, product_url, cover_photo
+        isbn_id, i.isbn AS ISBN, b.platform, size, page, p.status, p.price, product_url, cover_photo
     FROM book_info AS b
+    INNER JOIN isbn_catalog AS i
+    ON i.id = b.isbn_id
     LEFT JOIN price_status_info AS p
     ON b.id = p.book_id 
     INNER JOIN author AS a
@@ -188,3 +189,16 @@ def get_book_pics(isbn_id):
     ON b.id = p.book_id
     WHERE isbn_id = {} and platform = 1""".format(isbn_id))
     return pic_list
+
+
+
+def api_book_info(isbn_id):
+    info_list = db.session.execute("""
+        SELECT table_of_content, description, author_intro
+    FROM book_info AS b
+    LEFT JOIN price_status_info AS p
+    ON b.id = p.book_id 
+    INNER JOIN author AS a
+    ON a.id = b.author
+    WHERE isbn_id = {} and b.platform = 1""".format(isbn_id))
+    return info_list
