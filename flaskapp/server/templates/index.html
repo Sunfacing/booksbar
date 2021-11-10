@@ -1,7 +1,7 @@
 <!DOCTYPE html>
   <html lang="en">
     <head>
-      <title>Bookbar</title>
+      <title>Booksbar</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -41,17 +41,17 @@
           <div class="container p-3" style="width: 70%;">
             <div class="row ">
               {% for book in subset %}
-                <div class="card mx-auto" style="width: 15rem; height:70%">
+                <div class="card mx-auto" style="width: 15rem; height:70%; border:0px; border-radius: 7px;">
                   <a href="product/{{ book['isbn_id'] }}" alt=''>
                     <img class="card-img-top p-3" src="{{ book['cover_photo']}}" alt="Card image cap" onerror="this.onerror=null;this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/273/6331341273_aaf6d286-1736-4b10-acfa-95df264d860e.png?cb=1636274683';" >
                   </a>
                   <div class="card-body" style="height:8rem; width:20em">
                     {% if book['title'].split('：')[0]| length <= 10 %}
-                      <h5 class="card-title">{{ book['title'].split('：')[0][:10] }}</h5>
+                      <h5 class="card-title" style="font-weight: bold">{{ book['title'].split('：')[0][:10] }}</h5>
                     {% else %}
-                      <h5 class="card-title">{{ book['title'].split('：')[0].split('（')[0][:10] }}</h5>
+                      <h5 class="card-title" style="font-weight: bold">{{ book['title'].split('：')[0].split('（')[0][:10] }}</h5>
                     {% endif %}
-                    <p>{{ book['author']}}</br>
+                    <p>{{ book['author'][:15]}}</br>
                     {{ book['publish_date'].strftime("%Y-%m-%d")}}</p>                    
                   </div>
                 </div>
@@ -61,8 +61,8 @@
         {% endfor %}    
       </main>
       <style>
-        .card:hover {
-          box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+        .card {
+          box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2);
         }
         </style>
       <nav aria-label="..." >
