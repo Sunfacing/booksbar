@@ -9,13 +9,20 @@ class UserInfo(db.Model):
     password = db.Column(db.String(255)) 
     username = db.Column(db.String(255))
     source = db.Column(db.String(255)) 
-    token = db.Column(db.String(255))
+    token = db.Column(db.Text)
 
 
 class UserFavorite(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
-    user_id = db.Column(db.Integer, ForeignKey('user_info.id')) 
-    isbn = db.Column(db.Integer) 
+    user_id = db.Column(db.Integer, ForeignKey('user_info.id'))
+    track_type = db.Column(db.Integer, ForeignKey('track_type.id'))
+    type_id = db.Column(db.Integer) 
+
+
+class TrackType(db.Model):
+    id = db.Column(db.Integer, primary_key=True) 
+    type = db.Columndb.Column(db.String(255)) 
+
 
 
 class UserComment(db.Model):
