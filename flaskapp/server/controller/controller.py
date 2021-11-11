@@ -159,13 +159,18 @@ def product(isbn_id=None):
     for info in info_list:
         platform = info['platform']
         if platform == 1:
+            kingstone['section'] = info['section']
+            kingstone['category'] = info['category']
+            kingstone['subcategory'] = info['subcategory']
             kingstone['category_id'] = info['category_id']
             kingstone['title'] = info['title']
             kingstone['publish_date']= info['publish_date'].date()
             kingstone['author'] = info['author']
+            kingstone['author_id'] = info['author_id']
             kingstone['isbn_id'] = info['isbn_id']
             kingstone['ISBN'] = info['ISBN']
             kingstone['page'] = info['page']
+            kingstone['publisher_id'] = info['publisher_id']
             kingstone['publisher'] = info['publisher']
             kingstone['size'] = info['size']
             kingstone['price'] = info['price']
@@ -176,11 +181,11 @@ def product(isbn_id=None):
         else:
             momo = info       
         if not momo['price']:
-            momo['price'] = ''
+            momo['price'] = 0
         if not eslite['price']:
-            eslite['price'] = ''
+            eslite['price'] = 0
         if not kingstone['price']:
-            kingstone['price'] = ''
+            kingstone['price'] = 0
 
     pics = get_book_pics(isbn_id)
     pic_list = []
@@ -188,24 +193,51 @@ def product(isbn_id=None):
     for pic in pics:
         pic_list.append([pic['pics'], i])
         i += 1
+
+    comment_list = get_book_comments(isbn_id)
+    comments = []
+    for each in comment_list:       
+        comments.append([each['date'].date(), each['comment']])
     return render_template('product.html', nav_sec=nav_sec, 
                                         kingstone=kingstone, 
                                         eslite=eslite, 
                                         momo=momo, 
-                                        pic_list=pic_list)
+                                        pic_list=pic_list,
+                                        comment_list=comments)
 
 
 
-@app.route('/product/api/bookinfo/<isbn_id>')
+@app.route('/api/product/bookinfo/<isbn_id>')
 def book_info(isbn_id=None):
     isbn_id = request.args.get('isbn_id', isbn_id)
     result = api_book_info(isbn_id)
     response = defaultdict(dict)
     for key in result:
+        
         response['author_intro'] = key['author_intro']
+
         response['description'] = key['description']
         response['table_of_content'] = key['table_of_content']
+        if key['table_of_content'] == 'None':
+            response['table_of_content'] = ''
+
     return response
+
+
+# @app.route('/api/product/comment/<isbn_id>')
+# def comment(isbn_id=None):
+#     isbn_id = request.args.get('isbn_id', isbn_id)
+#     result = get_book_comments(isbn_id)
+#     response = defaultdict(dict)
+#     comment_list = []
+#     for comment in result:
+#         response['date'] = comment['date'].date()
+#         response['comment'] = comment['date']
+#         comment_list.append(response)
+#     return comment_list
+
+
+
 
 
 
@@ -272,19 +304,19 @@ def signup():
 
 
 @app.route('/api/favorite', methods=['POST'])
-def add_to_favorite(subcate=None, author=None, product=None):
+def add_to_favorite(subcate=None, author=None, price=None):
     response = defaultdict(dict)
     if 'loggedin' in session:
         user_id = session['id']
         subcate = request.args.get('subcate', subcate)
         author = request.args.get('author', author)
-        product = request.args.get('product', product)
+        price = request.args.get('price', price)
         if subcate: 
             track_type = 1
             type_id = subcate
-        elif product: 
+        elif price: 
             track_type = 2
-            type_id = product
+            type_id = price
         elif author: 
             track_type = 3
             type_id = author
