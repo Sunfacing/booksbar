@@ -4,7 +4,7 @@ import datetime
 import plotly.express as px
 import plotly
 import json
-from flask import Flask, render_template, request, redirect, send_from_directory, jsonify, abort, current_app
+from flask import Flask, render_template, request, redirect, session, jsonify
 from flask.helpers import url_for
 from flask_bcrypt  import Bcrypt
 from flask_jwt_extended import create_access_token, create_refresh_token
@@ -15,7 +15,7 @@ from flask_jwt_extended import JWTManager
 
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
-
+import re
 import redis
 from server import app, bcrypt
 from server import db
@@ -84,10 +84,9 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
     category_nm = request.args.get('category_nm', category_nm)
     subcate_nm = request.args.get('subcate_nm', subcate_nm)
     books = db.session.execute("SELECT * FROM bookbar.category_list")
-    current_page = request.args.get('page', page) 
+    page = request.args.get('page', page) 
     cate_list = defaultdict(list)
     nav_sec = defaultdict(dict)
-
     for book in books:
         section = book['section']
         nav_sec[section] = section
@@ -98,28 +97,44 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
     subcate_list = cate_list[category_nm]
     if category_nm != 'all' and subcate_nm != 'all':
         product_list = get_catalog_subcategory(subcate_nm, page=page)
-        page = 'subcate.html'                                    
+        html_page = 'subcate.html'                                    
     elif category_nm != 'all' and subcate_nm == 'all':
         product_list = []   
-        page = 'subcate.html'  
+        html_page = 'subcate.html'  
     else:
         return_list = get_catalog_section(section_nm)
         product_list = []
         for product in return_list:
             product_list.append(product)
-        page = 'section.html'
+        html_page = 'section.html'
 
-    # print(product_list[:3])
-    return render_template(page, nav_sec=nav_sec, 
+    book_counts = get_subcate_book_counts(subcate_nm)
+    ttl_pages = 0
+    shown_pages = defaultdict(dict)
+    for book in book_counts:
+        ttl_pages = (book[0] / 20) 
+    if int(page) - 1 == 0:
+        shown_pages['pre'] = -1
+    else:
+        shown_pages['pre'] = int(page) - 1
+
+    if ttl_pages - int(page) < 0 :
+        shown_pages['next'] = -1
+    else:
+        shown_pages['next'] = int(page) + 1
+
+    shown_pages['current'] = page
+
+    return render_template(html_page, nav_sec=nav_sec, 
                                 cate_list=cate_list,
                                 subcate_list=subcate_list,
-                                current_sec = section_nm,
+                                current_sec=section_nm,
                                 current_cate=category_nm,
                                 current_sub=subcate_nm,
                                 product_list=product_list,
-                                current_page=current_page)
+                                shown_pages=shown_pages)
 
-from bs4 import BeautifulSoup
+
 
 
 
@@ -172,24 +187,11 @@ def product(isbn_id=None):
     for pic in pics:
         pic_list.append([pic['pics'], i])
         i += 1
-    # if len(pic_list) > 10:
-    #     pic_list = pic_list[:10]
-
     return render_template('product.html', nav_sec=nav_sec, 
                                         kingstone=kingstone, 
                                         eslite=eslite, 
                                         momo=momo, 
                                         pic_list=pic_list)
-
-
-
-
-
-
-@app.route('/signup')
-def signup(category=None):
-    return render_template('signup.html')
-
 
 
 
@@ -204,3 +206,32 @@ def book_info(isbn_id=None):
         response['table_of_content'] = key['table_of_content']
     return response
 
+
+
+
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    form = request.form
+    msg = ''
+    if request.method == 'POST' and 'email' in form and 'password' in form:
+        email = form['email']
+        password = form['password']
+        user = UserInfo.query.filter_by(email=email).first()
+        if user:
+            msg = 'Account already exists!'
+        elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
+            msg = 'Invalid email address!'
+        elif not re.match(r'[A-Za-z0-9]+', password):
+            msg = 'Username must contain only characters and numbers!'
+        elif not password or not email:
+            msg = 'Please fill out the form!'
+        else:
+            password = bcrypt.generate_password_hash(password)
+            user = UserInfo(email=email, password=password, username='test', source='native', token='')
+            db.session.add(user)
+            db.session.commit()
+        return render_template('signup.html', msg=msg)
+    elif request.method == 'POST':
+        msg = 'Please fill out the form'
+    return render_template('signup.html', msg=msg) 
