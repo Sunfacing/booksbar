@@ -209,6 +209,14 @@ def get_book_pics(isbn_id):
 
 
 
+def get_book_comments(isbn_id):
+    comment_list = db.session.execute("""
+    SELECT * FROM bookbar.user_comment WHERE isbn = {}""".format(isbn_id))
+    return comment_list
+
+
+
+
 def api_book_info(isbn_id):
     info_list = db.session.execute("""
         SELECT table_of_content, description, author_intro
