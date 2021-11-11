@@ -137,7 +137,9 @@ def get_catalog_section(section):
     return product_list
 
 
-def get_catalog_subcategory(subcategory):
+def get_catalog_subcategory(subcategory, page):
+    # Page begins at 1, so must deduct to 1 to get the fisrt 20 books
+    offset = (int(page) - 1) * 20
     product_list =db.session.execute("""
         SELECT b.isbn_id,
                 b.id AS book_id,
@@ -158,19 +160,34 @@ def get_catalog_subcategory(subcategory):
             ON b.publisher = p.id
             WHERE b.platform = 1 and c.subcategory = '{}'  
             ORDER BY publish_date DESC 
-            LIMIT 40""".format(subcategory))
+            LIMIT 20 offset {}""".format(subcategory, offset))
     return product_list
+
+
+def get_subcate_book_counts(subcategory):
+    book_counts = db.session.execute("""
+        SELECT COUNT(i.category_id)
+        FROM category_list AS c 
+        INNER JOIN isbn_catalog AS i
+        ON i.category_id = c.id
+        WHERE c.subcategory = '{}'""".format(subcategory))
+    return book_counts
+
+
 
 
 
 
 def get_book_info(isbn_id, date):
     info_list = db.session.execute("""
-        SELECT title, a.name AS author, u.name AS publisher, publish_date, 
-        isbn_id, i.isbn AS ISBN, b.platform, size, page, p.status, p.price, product_url, cover_photo
+    SELECT title, a.name AS author, a.id AS author_id, u.name AS publisher, u.id AS publisher_id, publish_date, 
+        i.category_id AS category_id, c.section, c.category, c.subcategory, isbn_id, 
+        i.isbn AS ISBN, b.platform, size, page, p.status, p.price, product_url, cover_photo
     FROM book_info AS b
     INNER JOIN isbn_catalog AS i
     ON i.id = b.isbn_id
+    INNER JOIN category_list AS c
+    ON i.category_id = c.id
     LEFT JOIN price_status_info AS p
     ON b.id = p.book_id 
     INNER JOIN author AS a
