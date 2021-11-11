@@ -35,7 +35,22 @@
         <div style="margin-top:10px">
         </div>
         <span class="navbtn btn btn-dark my-2 my-sm-0" href="#" role="button" onclick="openNav()" style=" border-radius: 7px;">&#9776;</span>
-        
+        <div class="row">
+          <div class="container col-sm-2" style="margin-left:0px;"></div>
+          <div class="container col-sm-8" style="margin-left:0px;">
+            <ul class="breadcrumb bg-light" style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px;">
+              <li style="margin-right: 10px; font-weight: bolder;">分類: </li>
+              <li><a href="http://127.0.0.1:5000/{{kingstone['section']}}" style="margin-right: 10px; font-weight: bold; color:#343A40">{{kingstone['section']}}</a></li>
+              <li style="margin-right: 10px; font-weight: bold;">⯈</li>
+              <li><a href="http://127.0.0.1:5000/{{kingstone['section']}}?category_nm={{kingstone['category']}}" style="margin-right: 10px; font-weight: bold; color:#343A40">{{kingstone['category']}}</a></li>
+              <li style="margin-right: 10px; font-weight: bold;">⯈</li>
+              <li><a href="http://127.0.0.1:5000/{{kingstone['section']}}?category_nm={{kingstone['category']}}&subcate_nm={{kingstone['subcategory']}}" style="margin-right: 10px; font-weight: bold; color:#343A40">{{kingstone['subcategory']}}</a></li>
+            </ul>       
+          </div>
+          
+          <div class="container col-sm-2" style="margin-left:0px;"></div>
+          
+        </div>
         <div class="row">
           <div class="container col-sm-2" style="margin-left:0px;"></div>
           <div class="container col" style="margin-left:0px;" >
@@ -73,7 +88,6 @@
             </div>
             <div class="row" style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; padding: 20px; margin-top: 20px; border-radius: 7px;">
               <div>
-              <h5 style="font-size: medium; font-weight: bold;">分類: {{kingstone['category_id']}}</h5>
               <h5 style="font-size: medium; font-weight: bold;">作者: {{kingstone['author']}}</h5>
               <h5 style="font-size: medium; font-weight: bold;">出版社: {{kingstone['publisher']}}</h5>
               <h5 style="font-size: medium; font-weight: bold;">出版日: {{kingstone['publish_date']}}</h5>
@@ -97,10 +111,10 @@
             <button type="button" class="btn btn-basic row" id="subcategory" value="?subcate={{kingstone['category_id']}}" onclick="add_to_favorite()"><i class="fas fa-heart" id="heart" style="color:#000000"> 追蹤分類</i></button>
             </div>
             <div style="height: 10%;">
-            <button type="button" class="btn btn-danger row" value="?author={{kingstone['author_id']}}" onclick="cancel_favorite()"><i class="fas fa-pen-nib"> 追蹤作者</i></button>
+            <button type="button" class="btn btn-basic row" value="?author={{kingstone['author_id']}}" onclick="cancel_favorite()"><i class="fas fa-pen-nib"> 追蹤作者</i></button>
            </div>
            <div style="height: 10%;">
-            <button type="button" class="btn btn-danger row" value="?price={{kingstone['book_id']}}" onclick="add_to_favorit()"><i class="fas fa-tag"> 追蹤價格</i></button>
+            <button type="button" class="btn btn-basic row" value="?price={{kingstone['isbn_id']}}" onclick="add_to_favorit()"><i class="fas fa-tag"> 追蹤價格</i></button>
           </div>
           <script>
             var tracker = document.getElementById('tracker')
@@ -120,9 +134,8 @@
               }
               if ( value != 0) {
               var api = "http://127.0.0.1:5000/api/favorite"+ value;
-              alert(api)
 
-              fetch("http://127.0.0.1:5000/api/favorite", {method:'POST'})
+              fetch(api, {method:'POST'})
                     .then(response => response.json())
                     .then(set_favorite)}
             })
@@ -139,39 +152,11 @@
                   alert('請先登入')
                 }
             }
-
-            // function remove_favorite(result) {
-            //     if (result.response == 'yes') {
-            //       fav_sub.className = fav_sub.className.replace("btn-danger", "btn-basic");
-            //       document.querySelector('.fas fa-heart')
-            //       fav_sub.className = fav_sub.className.replace("btn-danger", "btn-basic");
-            //       document.getElementById('heart').style.color = "#000000"
-            //     } else {
-            //       alert('請先登入')
-            //     }
-            // }
-            // function add_to_favorite() {
-            //     fetch("http://127.0.0.1:5000/api/favorite", {method:'POST'})
-            //       .then(response => response.json())
-            //       .then(set_favorite)
-            // }    
-            
-            // function cancel_favorite() {
-            //     fetch("http://127.0.0.1:5000/api/favorite", {method:'POST'})
-            //       .then(response => response.json())
-            //       .then(remove_favorite)
-            // }             
-
-
           </script>
-
-
-
           </div>
         </div>
         
         <div class="container col-sm-8" style="margin-top: 30px;">
-
           <div id="naver">
           <ul  class="nav nav-pills navbar navbar-expand-sm bg-light" style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px;">
             <li><a data-toggle="pill" href="#table_of_content" class="btn active" style="margin:1px; color:#f1f1f1; border-radius: 5px; font-weight: bold;">目錄大綱</a></li>
