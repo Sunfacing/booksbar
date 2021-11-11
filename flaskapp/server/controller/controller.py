@@ -159,6 +159,7 @@ def product(isbn_id=None):
     for info in info_list:
         platform = info['platform']
         if platform == 1:
+            kingstone['category_id'] = info['category_id']
             kingstone['title'] = info['title']
             kingstone['publish_date']= info['publish_date'].date()
             kingstone['author'] = info['author']
@@ -239,6 +240,7 @@ def logout():
     session.pop('password', None)
     return redirect(url_for('login'))
 
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = request.form
@@ -265,3 +267,40 @@ def signup():
     elif request.method == 'POST':
         msg = 'Please fill out the form'
     return render_template('signup.html', msg=msg) 
+
+
+
+
+@app.route('/api/favorite', methods=['POST'])
+def add_to_favorite(subcate=None, author=None, product=None):
+    response = defaultdict(dict)
+    if 'loggedin' in session:
+        user_id = session['id']
+        subcate = request.args.get('subcate', subcate)
+        author = request.args.get('author', author)
+        product = request.args.get('product', product)
+        if subcate: 
+            track_type = 1
+            type_id = subcate
+        elif product: 
+            track_type = 2
+            type_id = product
+        elif author: 
+            track_type = 3
+            type_id = author
+
+        user = db.session.execute("SELECT * FROM user_favorite WHERE user_id={} AND track_type={} AND type_id={}".format(user_id, track_type, type_id))
+        for data in user:
+            if data['user_id']:
+                db.session.execute("DELETE FROM user_favorite WHERE user_id={} AND track_type={} AND type_id={}".format(user_id, track_type, type_id))
+                db.session.commit()
+                response['response'] = 'cancelled'
+                return response
+        db.session.add(UserFavorite(user_id=user_id, track_type=track_type, type_id=type_id))
+        db.session.commit()
+        response['response'] = 'added'
+        return response
+
+    else:
+        response['response'] = 'no'
+        return response
