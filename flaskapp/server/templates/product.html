@@ -175,7 +175,7 @@
             <li><a data-toggle="pill" href="#table_of_content" class="btn active" style="margin:1px; color:#f1f1f1; border-radius: 5px; font-weight: bold;">目錄大綱</a></li>
             <li><a data-toggle="pill" href="#description" class="btn" style="margin:1px; color:#f1f1f1; border-radius: 5px; font-weight: bold;">內容簡介</a></li>
             <li><a data-toggle="pill" href="#author_intro" class="btn" style="margin:1px; color:#f1f1f1; border-radius: 5px; font-weight: bold;">作者介紹</a></li>
-            <li><a data-toggle="pill" href="#menu3" class="btn" style="margin:1px; color:#f1f1f1; border-radius: 5px; font-weight: bold;">讀者評論</a></li>
+            <li><a data-toggle="pill" href="#comment" class="btn" style="margin:1px; color:#f1f1f1; border-radius: 5px; font-weight: bold;">讀者評論</a></li>
           </ul>
         </div>
         <style>
@@ -195,7 +195,13 @@
             </div>
             <div id="author_intro" class="tab-pane fade" style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; padding: 40px;">
             </div>
-            <div id="menu3" class="tab-pane fade" style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; padding: 40px;">
+            <div id="comment" class="tab-pane fade" style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; padding: 40px;">
+              {% for each in comment_list %}
+                <div style="margin-bottom: 30px;">
+                  {{ each[0] }}
+                  <p>{{ each[1][1:-1] }}</p>
+                </div>
+              {% endfor %}
             </div>
           </div>
         </div> 
@@ -218,12 +224,28 @@
               li_author_intro.innerHTML = productList.author_intro
               author_intro.appendChild(li_author_intro); 
               document.getElementById('author_intro').append(author_intro);
-          };
+            };
                   
-          fetch("http://127.0.0.1:5000/product/api/bookinfo/{{kingstone['isbn_id']}}")
+          fetch("http://127.0.0.1:5000/api/product/bookinfo/{{kingstone['isbn_id']}}")
               .then( response => response.json())
               .then(render)
-              // .finally(() => alert('Hey'))
+
+          // function render_comment(comment_list) {
+          //   var comments = document.createElement('ul');
+          //   for (let i =0; i < comment_list.length; i++){
+          //     var li_author_intro = document.createElement('li');
+          //     li_comment.innerHTML = comment_list[i].comment_list
+          //     comments.appendChild(li_comment); 
+          //   document.getElementById('comment').append(comments);
+          //   }
+          // }   
+
+          // fetch("http://127.0.0.1:5000/api/product/comment/{{kingstone['isbn_id']}}")
+          //     .then( response => response.json())
+          //     .then(render_comment)
+
+
+
         </script>        
     </body>
 
