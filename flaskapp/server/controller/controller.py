@@ -210,6 +210,35 @@ def book_info(isbn_id=None):
 
 
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = request.form
+    if request.method == 'POST' and 'email' in form and 'password' in form:
+        email = form['email']
+        password = form['password']
+        user = UserInfo.query.filter_by(email=email).first()
+        if bcrypt.check_password_hash(user.password, password):
+            print(email, user.password, password)
+        if user:
+            session['loggedin'] = True
+            session['id'] = user.id
+            session['email'] = user.email
+            msg =  "Logged In, Welcome"
+            return f"hi {user.id}"
+        else:
+            msg = "Oops! Incorrect email / password"
+            return msg
+    return render_template('login.html')
+
+
+
+@app.route('/logout')
+def logout():
+    session.pop('loggedin', None)
+    session.pop('email', None)
+    session.pop('password', None)
+    return redirect(url_for('login'))
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = request.form
@@ -231,7 +260,8 @@ def signup():
             user = UserInfo(email=email, password=password, username='test', source='native', token='')
             db.session.add(user)
             db.session.commit()
-        return render_template('signup.html', msg=msg)
+            return 'done'
+        # return render_template('member.html', msg=msg)
     elif request.method == 'POST':
         msg = 'Please fill out the form'
     return render_template('signup.html', msg=msg) 
