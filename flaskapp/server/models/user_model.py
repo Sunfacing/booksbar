@@ -21,7 +21,7 @@ class UserFavorite(db.Model):
 
 class TrackType(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
-    type = db.Columndb.Column(db.String(255)) 
+    track_type = db.Column(db.String(255)) 
 
 
 

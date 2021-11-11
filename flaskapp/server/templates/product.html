@@ -98,12 +98,25 @@
             </div>
             <div class="row" style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; padding: 10px; margin-top: 10px;  border-radius: 10px;">
               <div class="container col-3" style="text-align: center;">
-                <img src="https://linepaytw-cms.line-scdn.net/v0/fc8cb09e193cc3f5a8e7ebc6910debd296aacb3d84e1f1a2891dd45444a03855.png" style="width: 90px; height: 90px;"><h4 style="color: #D52536; font-weight: bold;">{{kingstone['price']}} 元</h4><a href="{{kingstone['product_url']}}" class="btn bg-dark" style="color:white; font-weight: bold;">前往網站</a>
+                <img src="https://linepaytw-cms.line-scdn.net/v0/fc8cb09e193cc3f5a8e7ebc6910debd296aacb3d84e1f1a2891dd45444a03855.png" style="width: 90px; height: 90px;">
+                {% if kingstone['price'] > 0 %} 
+                  <h4 style="color: #D52536; font-weight: bold;">{{kingstone['price']}} 元</h4><a href="{{kingstone['product_url']}}" class="btn bg-dark" style="color:white; font-weight: bold;">前往網站</a>
+                {% endif %}
               </div>
+
               <div class="container col-4" style="text-align: center;">
-                <img src="https://meet.eslite.com/Content/Images/ThemePavilion/eslite-logo.jpg" style="width: 90px; height: 90px; "><h4 style="color: #D52536; font-weight: bold;">{{eslite['price']}} 元</h4><a href="{{eslite['product_url']}}" class="btn bg-dark" style="color:white; font-weight: bold;">前往網站</a></div>
-              <div class="container col-3" style="text-align: center;">                              
-              <img src="https://www.esunbank.com.tw/bank/-/media/esunbank-mobile/images/discount/shops/b_onlineshop/2008.jpg" style="width: 90px; height: 90px;"><h4 style="color: #D52536; font-weight: bold;">{{momo['price']}} 元</h4><a href="{{momo['product_url']}}" class="btn bg-dark" style="color:white; font-weight: bold;">前往網站</a></div>
+                <img src="https://meet.eslite.com/Content/Images/ThemePavilion/eslite-logo.jpg" style="width: 90px; height: 90px; ">
+                {% if eslite['price'] > 0 %}  
+                  <h4 style="color: #D52536; font-weight: bold;">{{eslite['price']}} 元</h4><a href="{{eslite['product_url']}}" class="btn bg-dark" style="color:white; font-weight: bold;">前往網站</a>
+                {% endif %}
+              </div>
+              
+              <div class="container col-3" style="text-align: center;">
+                <img src="https://www.esunbank.com.tw/bank/-/media/esunbank-mobile/images/discount/shops/b_onlineshop/2008.jpg" style="width: 90px; height: 90px;">
+                {% if momo['price'] > 0 %}                              
+                  <h4 style="color: #D52536; font-weight: bold;">{{momo['price']}} 元</h4><a href="{{momo['product_url']}}" class="btn bg-dark" style="color:white; font-weight: bold;">前往網站</a>
+                {% endif %}
+              </div>
             </div>
           </div>
           <div class="container col-sm-2" style="margin-left:0px;" id='tracker'>

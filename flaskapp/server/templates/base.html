@@ -129,7 +129,7 @@ body {
       <a class="navbar-brand" style="color: #ffffff;"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/445/6331351445_00ba94c2-523c-42d8-9712-1924f4621988.png?cb=1636274980' style="width: 100%;"></a>
       <a href="javascript:void(0)" class="closebtn bg-dark" onclick="closeNav()">&times;</a>
       {% for each in nav_sec%}
-        <a href="{{ each }}"><h5 class="section_nav" style="color: #ffffff;">{{each}}</h5></a>
+        <a href="{{ each }}"><h5 class="section_nav" style="color: #ffffff; font-weight: bold;">{{each}}</h5></a>
       {% endfor %}
     </div>
     
@@ -141,7 +141,7 @@ body {
       <a href="{{ current_sec }}?category_nm=all"><h3 style="color: #020202; margin-bottom:20px; margin-top:0px; font-weight: bold;">{{ current_sec }}</h3></a>
       {% for key in cate_list%}
         {% if key != 'all' %}
-          <a href="?category_nm={{ key }}"><h5 class="section_nav" style="color: #020202;"><h5 class="section_nav" style="color: #000000; ">{{key}}</h5></a>
+          <a href="?category_nm={{ key }}"><h5 class="section_nav" style="color: #020202;"><h5 class="section_nav" style="color: #000000; font-weight: bold;">{{key}}</h5></a>
           <br>
         {% endif %}
       {% endfor %}
@@ -154,9 +154,9 @@ body {
             <div class="col " >
               {% for subcate in subcate_list %}
                 {% if subcate == current_sub %}
-                  <a href="?category_nm={{ current_cate }}&subcate_nm={{ subcate }}" class="btn w3-red " style="margin:1px; color:#f1f1f1; border-radius: 5px;" >{{ subcate }}</a>
+                  <a href="?category_nm={{ current_cate }}&subcate_nm={{ subcate }}" class="btn w3-red " style="margin:1px; color:#f1f1f1; border-radius: 5px; font-weight: bold;" >{{ subcate }}</a>
                 {% else %}
-                  <a href="?category_nm={{ current_cate }}&subcate_nm={{ subcate }}"class="btn bg-dark" style="margin:1px; color:#f1f1f1; border-radius: 5px;">{{ subcate }}</a>                  
+                  <a href="?category_nm={{ current_cate }}&subcate_nm={{ subcate }}"class="btn bg-dark" style="margin:1px; color:#f1f1f1; border-radius: 5px; font-weight: bold;">{{ subcate }}</a>                  
                 {% endif %}
               {% endfor %}
             </div>  
