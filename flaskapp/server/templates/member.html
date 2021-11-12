@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <title>Booksbar</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+      <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/sandstone/bootstrap.min.css" integrity="sha384-zEpdAL7W11eTKeoBJK1g79kgl9qjP7g84KfK3AZsuonx38n8ad+f5ZgXtoSDxPOh" crossorigin="anonymous"> -->
+    
+    </head>
+    <body>
+        <nav class="navbar bg-dark"">
+          <a href="{{ url_for('index')}}" class="navbar-brand" style="color: #ffffff;"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/445/6331351445_00ba94c2-523c-42d8-9712-1924f4621988.png?cb=1636274980' style="width: 60%;"></a>
+          <button class="btn btn-dark" type="submit"><i class="material-icons large">account_circle</i></button> 
+        </nav>
+        <main>
+
+            <div class="row" style="margin-top: 50px;">
+                <div class="container col-sm-1" style="margin-left:0px;">
+                </div>
+                <div class="container col-sm-2" style="margin-left:0px; text-align: center;" >
+                    <div class="card mb-3 w3-animate-opacity " style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px; align-items: center;">
+                        <div class="col-md-7">
+                                <img class="rounded-circle mx-auto d-block" src="https://scontent.ftpe8-1.fna.fbcdn.net/v/t1.6435-9/123170294_10215203154466887_7689355505377168200_n.jpg?_nc_cat=109&ccb=1-5&_nc_sid=09cbfe&_nc_ohc=4KRZpiKo2goAX9lpJOn&tn=II_4rJlWQ-2PArOd&_nc_ht=scontent.ftpe8-1.fna&oh=b7d9430600258fc16687a9ad4562e020&oe=61B3CCC9" style="height: 100%; width: 100%; margin-top: 20px; margin-left: 15px;" > 
+                        </div>
+                        <div class="col-md-7" style="margin-top: 15px; margin-bottom: 15px;">
+                            <h4 style="font-weight: bold;">Sunless</h4>
+                        </div>
+                    </div>
+                    <div class="card mb-3 w3-animate-opacity " style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px; align-items: center; margin-top: 30px;">
+                        <div class="col-md-7" style="margin-top: 30px; color:#343A40">
+                            <p style="font-weight: bold;">活動紀錄</p>
+                        </div>
+                        <div class="col-md-7" style="margin-top: 15px;">
+                            <a href="/member?track_type=1" style="color:#343A40">
+                                <p style="font-weight: bold;">追蹤分類</p>
+                            </a>
+                        </div>
+                        <div class="col-md-7" style="margin-top: 15px;">
+                            <a href="/member?track_type=1" style="color:#343A40">
+                                <p style="font-weight: bold;">追蹤作者</p>
+                            </a>
+                        </div>
+                        <div class="col-md-7" style="margin-top: 15px; color:#343A40">
+                            <p style="font-weight: bold;">追蹤書籍</p>
+                        </div>
+                        <div class="col-md-7" style="margin-top: 15px; margin-bottom: 15px;">
+                            <a href="{{ url_for('logout') }}">
+                            <button class="btn btn-dark" type="submit" style="font-weight: bold;">登出</button>
+                        </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="container col-sm-6" style="margin-left:0px;">
+                    {% block content %}
+
+                    {% endblock content%}
+                </div>  
+                <div class="container col-sm-2" style="margin-left:0px;">
+                    
+                </div>
+              </div>
+
+
+
+
+
+
+        </main>
+    </body>

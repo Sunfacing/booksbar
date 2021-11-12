@@ -224,18 +224,26 @@ def book_info(isbn_id=None):
     return response
 
 
-# @app.route('/api/product/comment/<isbn_id>')
-# def comment(isbn_id=None):
-#     isbn_id = request.args.get('isbn_id', isbn_id)
-#     result = get_book_comments(isbn_id)
-#     response = defaultdict(dict)
-#     comment_list = []
-#     for comment in result:
-#         response['date'] = comment['date'].date()
-#         response['comment'] = comment['date']
-#         comment_list.append(response)
-#     return comment_list
+@app.route('/member')
+def member(track_type=0):
+    if 'loggedin' in session:
+        user_id = session['id']
+        track_type = request.args.get('track_type', track_type)
+        if track_type == '1':
+            cate_list = defaultdict(dict)
+            result = get_user_favor_category(user_id)
+            for cate in result:
+                section = cate['section']
+                categroy = cate['category']
+                subcategory = cate['subcategory']
+                if not cate_list[section]: cate_list[section] = [[categroy, subcategory]]
+                else: cate_list[section].append([categroy, subcategory])
+            print(cate_list)
+            return render_template('favor_cate.html', content=cate_list)
 
+        return render_template('member.html')
+    else:
+        return render_template('login.html')
 
 
 
@@ -256,8 +264,7 @@ def login():
             session['loggedin'] = True
             session['id'] = user.id
             session['email'] = user.email
-            msg =  "Logged In, Welcome"
-            return f"hi {user.id}"
+            return redirect(url_for('index'))
         else:
             msg = "Oops! Incorrect email / password"
             return msg
@@ -270,7 +277,7 @@ def logout():
     session.pop('loggedin', None)
     session.pop('email', None)
     session.pop('password', None)
-    return redirect(url_for('login'))
+    return redirect(url_for('index'))
 
 
 @app.route('/signup', methods=['GET', 'POST'])
