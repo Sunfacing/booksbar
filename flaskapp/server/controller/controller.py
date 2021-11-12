@@ -238,8 +238,19 @@ def member(track_type=0):
                 subcategory = cate['subcategory']
                 if not cate_list[section]: cate_list[section] = [[categroy, subcategory]]
                 else: cate_list[section].append([categroy, subcategory])
-            print(cate_list)
             return render_template('favor_cate.html', content=cate_list)
+        elif track_type == '3':
+            authors = get_user_favor_author(user_id)
+            author_list = defaultdict(dict)
+            for author in authors:
+                isbn_id = author['isbn_id']
+                name = author['name']
+                title = author['title']
+                publish_date = author['publish_date'].date()
+                if not author_list[name]: author_list[name] = [[isbn_id, title, publish_date]]
+                else: author_list[name].append([isbn_id, title, publish_date])
+            return render_template('favor_author.html', contents=author_list)
+
 
         return render_template('member.html')
     else:

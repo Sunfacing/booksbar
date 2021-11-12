@@ -1,0 +1,19 @@
+{% extends "member.html" %}
+
+{% block content %}
+    {% for author_name, books in contents.items() %}
+        <div style="margin-bottom: 30px;">
+        <ul class="breadcrumb bg-dark" style="background-color: #ffffff; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; margin-bottom: 8px;">
+            <li><a href="" style="margin-right: 10px; font-weight: bold; color:#ffffff">{{ author_name }}</a></li>
+        </ul>
+        {% for book in books %}
+            <ul class="breadcrumb" style="background-color: #ffffff; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px;">
+                <li style="margin-right: 10px; font-weight: bold; color:#343A40">{{ book[2] }}</li>
+                <li><a href="/product/{{ book[0] }}" style="margin-right: 10px; font-weight: bold; color:#343A40">{{ book[1] }} </a></li>
+            </ul>
+        {% endfor %} 
+        </div>
+    {% endfor %}
+{% endblock content%}
+
+
