@@ -198,12 +198,18 @@ def product(isbn_id=None):
     comments = []
     for each in comment_list:       
         comments.append([each['date'].date(), each['comment']])
+
+    if 'loggedin' in session:
+        tracking_hash = check_user_track_by_product(kingstone['category_id'], kingstone['isbn_id'], kingstone['author_id'])
+    else:
+        tracking_hash = {}
     return render_template('product.html', nav_sec=nav_sec, 
                                         kingstone=kingstone, 
                                         eslite=eslite, 
                                         momo=momo, 
                                         pic_list=pic_list,
-                                        comment_list=comments)
+                                        comment_list=comments,
+                                        tracking_hash=tracking_hash)
 
 
 

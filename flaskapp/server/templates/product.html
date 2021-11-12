@@ -21,10 +21,15 @@
     
       </head>
     <body>
-        <nav class="navbar bg-dark">
-            <a class="navbar-brand" href="{{ url_for('index')}}" style="color: #ffffff;"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/445/6331351445_00ba94c2-523c-42d8-9712-1924f4621988.png?cb=1636274980' style="width: 60%;"></a>
-            <button class="btn btn-dark" type="submit" ><i class="material-icons large">account_circle</i></button> 
-        </nav>
+      <nav class="navbar bg-dark"">
+        <a class="navbar-brand" style="color: #ffffff;" href="{{ url_for('index')}}"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/445/6331351445_00ba94c2-523c-42d8-9712-1924f4621988.png?cb=1636274980' style="width: 60%;"></a>
+        
+        {% if session['id'] %}
+        <a href="http://127.0.0.1:5000/member" ><i class="fas fa-user-circle navbar-brand" style="color: #ffffff;"></i></a>
+        {% else %}
+        <button class="btn btn-dark" type="submit"><i class="material-icons large">account_circle</i></button>
+        {% endif %}
+    </nav>
         <div id="mySidenav" class="sidenav bg-dark" >
           <a class="navbar-brand" style="color: #ffffff;"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/445/6331351445_00ba94c2-523c-42d8-9712-1924f4621988.png?cb=1636274980' style="width: 100%;"></a>
           <a href="javascript:void(0)" class="closebtn bg-dark" onclick="closeNav()">&times;</a>
@@ -46,8 +51,7 @@
               <li style="margin-right: 10px; font-weight: bold;">⯈</li>
               <li><a href="http://127.0.0.1:5000/{{kingstone['section']}}?category_nm={{kingstone['category']}}&subcate_nm={{kingstone['subcategory']}}" style="margin-right: 10px; font-weight: bold; color:#343A40">{{kingstone['subcategory']}}</a></li>
             </ul>       
-          </div>
-          
+          </div>  
           <div class="container col-sm-2" style="margin-left:0px;"></div>
           
         </div>
@@ -82,7 +86,7 @@
               </div>
             </div>
           </div>
-          <div class="container col" style="padding-right:10px;">
+          <div class="container col" style="padding-right:20px;">
             <div class="row bg-dark" style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; padding: 30px; border-radius: 7px; color: #ffffff;">
               <h4 style="font-weight: bold;">{{kingstone['title']}}</h4>
             </div>
@@ -121,13 +125,25 @@
           </div>
           <div class="container col-sm-2" style="margin-left:0px;" id='tracker'>
             <div style="height: 10%;">
-            <button type="button" class="btn btn-basic row" id="subcategory" value="?subcate={{kingstone['category_id']}}" onclick="add_to_favorite()"><i class="fas fa-heart" id="heart" style="color:#000000"> 追蹤分類</i></button>
+              {% if tracking_hash[1] %}
+                <button type="button" class="btn btn-danger row" id="subcategory" value="?subcate={{kingstone['category_id']}}" onclick="add_to_favorite()"><i class="fas fa-heart" id="heart" style="color:#ffffff"> 追蹤分類</i></button>
+              {% else %}
+                <button type="button" class="btn btn-basic row" id="subcategory" value="?subcate={{kingstone['category_id']}}" onclick="add_to_favorite()"><i class="fas fa-heart" id="heart" style="color:#000000"> 追蹤分類</i></button>
+              {% endif %}
             </div>
             <div style="height: 10%;">
-            <button type="button" class="btn btn-basic row" value="?author={{kingstone['author_id']}}" onclick="cancel_favorite()"><i class="fas fa-pen-nib"> 追蹤作者</i></button>
-           </div>
+              {% if tracking_hash[3] %}
+                <button type="button" class="btn btn-danger row" value="?author={{kingstone['author_id']}}" onclick="cancel_favorite()"><i class="fas fa-pen-nib" style="color:#ffffff"> 追蹤作者</i></button>
+              {% else %}  
+                <button type="button" class="btn btn-basic row" value="?author={{kingstone['author_id']}}" onclick="cancel_favorite()"><i class="fas fa-pen-nib" style="color:#000000"> 追蹤作者</i></button>
+              {% endif %}  
+            </div>
            <div style="height: 10%;">
-            <button type="button" class="btn btn-basic row" value="?price={{kingstone['isbn_id']}}" onclick="add_to_favorit()"><i class="fas fa-tag"> 追蹤價格</i></button>
+            {% if tracking_hash[2] %}
+              <button type="button" class="btn btn-danger row" value="?price={{kingstone['isbn_id']}}" onclick="add_to_favorit()"><i class="fas fa-tag" style="color:#ffffff"> 追蹤價格</i></button>
+            {% else %}  
+              <button type="button" class="btn btn-basic row" value="?price={{kingstone['isbn_id']}}" onclick="add_to_favorit()"><i class="fas fa-tag" style="color:#000000"> 追蹤價格</i></button>
+            {% endif %}  
           </div>
           <script>
             var tracker = document.getElementById('tracker')
@@ -229,23 +245,6 @@
           fetch("http://127.0.0.1:5000/api/product/bookinfo/{{kingstone['isbn_id']}}")
               .then( response => response.json())
               .then(render)
-
-          // function render_comment(comment_list) {
-          //   var comments = document.createElement('ul');
-          //   for (let i =0; i < comment_list.length; i++){
-          //     var li_author_intro = document.createElement('li');
-          //     li_comment.innerHTML = comment_list[i].comment_list
-          //     comments.appendChild(li_comment); 
-          //   document.getElementById('comment').append(comments);
-          //   }
-          // }   
-
-          // fetch("http://127.0.0.1:5000/api/product/comment/{{kingstone['isbn_id']}}")
-          //     .then( response => response.json())
-          //     .then(render_comment)
-
-
-
         </script>        
     </body>
 
