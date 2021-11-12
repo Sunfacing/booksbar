@@ -200,7 +200,7 @@ def product(isbn_id=None):
         comments.append([each['date'].date(), each['comment']])
 
     if 'loggedin' in session:
-        tracking_hash = check_user_track_by_product(kingstone['category_id'], kingstone['isbn_id'], kingstone['author_id'])
+        tracking_hash = check_user_track_by_product(session['id'], kingstone['category_id'], kingstone['isbn_id'], kingstone['author_id'])
     else:
         tracking_hash = {}
     return render_template('product.html', nav_sec=nav_sec, 
@@ -293,7 +293,7 @@ def member(track_type=0):
         else:
             return render_template('member.html')
     else:
-        return render_template('login.html')
+        return redirect(url_for('login'))
 
 
 
@@ -307,18 +307,20 @@ def login():
     if request.method == 'POST' and 'email' in form and 'password' in form:
         email = form['email']
         password = form['password']
-        user = UserInfo.query.filter_by(email=email).first()
-        if bcrypt.check_password_hash(user.password, password):
-            print(email, user.password, password)
-        if user:
+        try:
+            user = UserInfo.query.filter_by(email=email).first()
+        except Exception as e:
+            print(e)
+
+        if user and bcrypt.check_password_hash(user.password, password):
             session['loggedin'] = True
             session['id'] = user.id
-            session['email'] = user.email
+            session['username'] = user.username
             return redirect(url_for('index'))
         else:
-            msg = "Oops! Incorrect email / password"
-            return msg
-    return render_template('login.html')
+            msg = "帳號或密碼有誤, 請重新嘗試"
+            return render_template('login.html', msg=msg)
+    return render_template('login.html', msg='')
 
 
 
@@ -336,25 +338,19 @@ def signup():
     msg = ''
     if request.method == 'POST' and 'email' in form and 'password' in form:
         email = form['email']
+        username = email.split('@')[0]
         password = form['password']
         user = UserInfo.query.filter_by(email=email).first()
         if user:
-            msg = 'Account already exists!'
-        elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
-            msg = 'Invalid email address!'
-        elif not re.match(r'[A-Za-z0-9]+', password):
-            msg = 'Username must contain only characters and numbers!'
-        elif not password or not email:
-            msg = 'Please fill out the form!'
+            msg = '此帳號已註冊'
         else:
             password = bcrypt.generate_password_hash(password)
-            user = UserInfo(email=email, password=password, username='test', source='native', token='')
+            user = UserInfo(email=email, password=password, username=username, source='native', token='')
             db.session.add(user)
             db.session.commit()
-            return 'done'
-        # return render_template('member.html', msg=msg)
-    elif request.method == 'POST':
-        msg = 'Please fill out the form'
+            session['id'] = user.id
+            session['username'] = user.username
+            return redirect(url_for('index'))
     return render_template('signup.html', msg=msg) 
 
 

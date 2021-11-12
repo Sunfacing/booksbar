@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Bootstrap Example</title>
+  <title>Booksbar | 新會員註冊</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -10,21 +10,29 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
-
-<div class="container">
-  <h2>Signup</h2>
+  <nav class="navbar bg-dark"">
+    <a class="navbar-brand" style="color: #ffffff;" href="{{ url_for('index')}}"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/445/6331351445_00ba94c2-523c-42d8-9712-1924f4621988.png?cb=1636274980' style="width: 60%;"></a>
+ </nav>
+<div class="container" style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; margin-top: 50px; padding: 30px; width: 40%;" >
+  {% if msg != '' %}
+    <div class="alert " style="background-color: #f55969; color: #ffffff;">
+      <strong>{{msg}}</strong>
+    </div>
+  {% endif %}  
+  <h3 style="font-weight: bold;">新會員註冊</h3>
   <form action="{{ url_for('signup')}}" method="post">
     <div class="form-group">
       <label for="email">Email:</label>
-      <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+      <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" required>
     </div>
     <div class="form-group">
       <label for="pwd">Password:</label>
-      <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="password">
+      <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="password" required>
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" class="btn bg-dark" style="color:white; font-weight: bold; margin-right: 30px;">註冊</button>
+    <a style="color: #343A40; font-weight: bold; " href="{{ url_for('login')}}">會員登入</a>
   </form>
 </div>
-{{msg}}
+
 </body>
 </html>
