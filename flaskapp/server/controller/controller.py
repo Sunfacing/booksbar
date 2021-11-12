@@ -238,7 +238,40 @@ def member(track_type=0):
                 subcategory = cate['subcategory']
                 if not cate_list[section]: cate_list[section] = [[categroy, subcategory]]
                 else: cate_list[section].append([categroy, subcategory])
-            return render_template('favor_cate.html', content=cate_list)
+            return render_template('favor_cate.html', cates=cate_list)
+        elif track_type == '2':
+            user_id = session['id'] 
+            date = '2021-11-06'
+            books = get_user_favor_book(user_id, date)
+            book_list = defaultdict(dict)
+            final_list = defaultdict(dict)
+            for book in books:
+                category = book['category']
+                try:
+                    isbn_id = book['isbn_id']
+                    if book['platform'] == 1:                        
+                        book_list[isbn_id]['title'] = book['title']
+                        book_list[isbn_id]['cover_photo'] = book['cover_photo']
+                        book_list[isbn_id]['ks_product_url'] = book['product_url']
+                        book_list[isbn_id]['ks_price'] = int(book['price'])
+                        if not book['price']:
+                            book_list[isbn_id]['ks_price'] = 0
+                    if book['platform'] == 2:
+                        book_list[isbn_id]['es_product_url'] = book['product_url']
+                        book_list[isbn_id]['es_price'] = int(book['price'])
+                        if not book_list[isbn_id]['es_price']:
+                            book_list[isbn_id]['es_price'] = 0
+                    if book['platform'] == 3:
+                        book_list[isbn_id]['mm_product_url'] = book['product_url']
+                        book_list[isbn_id]['mm_price'] = int(book['price'])
+                        if not book_list[isbn_id]['mm_price']:
+                            book_list[isbn_id]['mm_price'] = 0
+                    final_list[category][isbn_id] = book_list[isbn_id]
+                    
+                except Exception as e:
+                    print(e)
+            return render_template('favor_book.html', books=final_list)
+
         elif track_type == '3':
             authors = get_user_favor_author(user_id)
             author_list = defaultdict(dict)
@@ -249,10 +282,10 @@ def member(track_type=0):
                 publish_date = author['publish_date'].date()
                 if not author_list[name]: author_list[name] = [[isbn_id, title, publish_date]]
                 else: author_list[name].append([isbn_id, title, publish_date])
-            return render_template('favor_author.html', contents=author_list)
-
-
-        return render_template('member.html')
+            return render_template('favor_author.html', authors=author_list)
+        
+        else:
+            return render_template('member.html')
     else:
         return render_template('login.html')
 

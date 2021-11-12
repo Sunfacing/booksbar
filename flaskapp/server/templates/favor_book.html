@@ -1,0 +1,52 @@
+{% extends "member.html" %}
+
+{% block content %}
+    {% for category, products in books.items() %}
+        <div style="margin-bottom: 30px;">
+            <ul class="breadcrumb bg-dark" style="background-color: #ffffff; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; margin-bottom: 8px;">
+                <li><a href="" style="margin-right: 10px; font-weight: bold; color:#ffffff">{{ category }}</a></li>
+            </ul>    
+            {% for isbn_id, info in products.items() %}
+            <div class="row no-gutters"  style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px;">
+                <div class="col-md-3" >
+                    <a href="product/{{ isbn_id }}">
+                        <img src="{{info['cover_photo']}}" class="card-img" onerror="this.onerror=null;this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/690/6336618690_75f2170c-b776-469f-9d33-4050ff81a665.png?cb=1636362136'" style="height: 82%; width: 100%; margin-top: 30px; margin-left: 15px;">
+                    </a>    
+                </div>
+                <div class="col-md-9">
+                    <div class="row">
+                        <div class="card-body" style="padding-bottom: 0px; margin-left: 30px; margin-right: 30px; margin-top: 20px;">
+                            <a href="product/{{ isbn_id }}">
+                                <h5 class="card-title" style="font-weight: bold; color: #343A40;">{{info['title']}}</h5>
+                            </a>    
+                        </div>
+                    </div>
+                    <div class="row" style="margin-bottom: 20px;">
+                        <div class="container col-3" style="text-align: center;">
+                            <img src="https://linepaytw-cms.line-scdn.net/v0/fc8cb09e193cc3f5a8e7ebc6910debd296aacb3d84e1f1a2891dd45444a03855.png" style="width: 50%; height: 50%;">
+                            {% if info['ks_price']%} 
+                            <h4 style="color: #D52536; font-weight: bold;">{{info['ks_price']}} 元</h4><a href="{{info['ks_product_url']}}" class="btn bg-dark" style="color:white; font-weight: bold;">前往網站</a>
+                            {% endif %}
+                        </div>
+        
+                        <div class="container col-4" style="text-align: center;">
+                            <img src="https://meet.eslite.com/Content/Images/ThemePavilion/eslite-logo.jpg" style="width: 50%; height: 50%; ">
+                            {% if info['es_price'] %}  
+                                <h4 style="color: #D52536; font-weight: bold;">{{info['es_price']}} 元</h4><a href="{{info['es_product_url']}}" class="btn bg-dark" style="color:white; font-weight: bold;">前往網站</a>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="container col-3" style="text-align: center;">
+                            <img src="https://www.esunbank.com.tw/bank/-/media/esunbank-mobile/images/discount/shops/b_onlineshop/2008.jpg" style="width: 50%; height: 50%;">
+                            {% if info['mm_price'] %}                              
+                                <h4 style="color: #D52536; font-weight: bold;">{{info['mm_price']}} 元</h4><a href="{{info['mm_product_url']}}" class="btn bg-dark" style="color:white; font-weight: bold;">前往網站</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+{% endblock content%}
