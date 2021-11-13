@@ -200,7 +200,11 @@ def product(isbn_id=None):
         comments.append([each['date'].date(), each['comment']])
 
     if 'loggedin' in session:
-        tracking_hash = check_user_track_by_product(session['id'], kingstone['category_id'], kingstone['isbn_id'], kingstone['author_id'])
+        user_id = session['id']
+        isbn_id = kingstone['isbn_id'] 
+        db.session.add(UserFavorite(user_id=user_id, track_type=4, type_id=isbn_id))
+        db.session.commit()
+        tracking_hash = check_user_track_by_product(user_id, kingstone['category_id'], isbn_id, kingstone['author_id'])
     else:
         tracking_hash = {}
     return render_template('product.html', nav_sec=nav_sec, 
@@ -291,7 +295,9 @@ def member(track_type=0):
             return render_template('favor_author.html', authors=author_list)
         
         else:
-            return render_template('member.html')
+            activity_counts = summerize_user_activity(user_id)
+            browse_history = check_user_browsing_history(user_id)
+            return render_template('member.html', activity_counts=activity_counts, browse_history=browse_history)
     else:
         return redirect(url_for('login'))
 

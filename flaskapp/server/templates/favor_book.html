@@ -1,6 +1,9 @@
 {% extends "member.html" %}
 
 {% block content %}
+    {% if books | length == 0 %}
+        <h2 class="d-flex justify-content-center" style="font-weight: bold; margin-top: 30vh; color:#343A40">目前尚未追蹤任何書籍</h2>
+    {% endif %}
     {% for category, products in books.items() %}
         <div style="margin-bottom: 30px;">
             <ul class="breadcrumb bg-dark" style="background-color: #ffffff; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; margin-bottom: 8px;">
@@ -10,7 +13,7 @@
             <div class="row no-gutters"  style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px;">
                 <div class="col-md-3" >
                     <a href="product/{{ isbn_id }}">
-                        <img src="{{info['cover_photo']}}" class="card-img" onerror="this.onerror=null;this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/690/6336618690_75f2170c-b776-469f-9d33-4050ff81a665.png?cb=1636362136'" style="height: 82%; width: 100%; margin-top: 30px; margin-left: 15px;">
+                        <img src="{{info['cover_photo']}}" class="card-img" onerror="this.onerror=null;this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/690/6336618690_75f2170c-b776-469f-9d33-4050ff81a665.png?cb=1636362136'" style="height:80%; width: 100%; margin-top: 35px; margin-left: 15px;">
                     </a>    
                 </div>
                 <div class="col-md-9">
