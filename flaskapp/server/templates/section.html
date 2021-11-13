@@ -57,7 +57,7 @@
             </button>
         </div>
         <!-- Inner -->
-        <div class="carousel-inner py-4">
+        <div class="carousel-inner py-4  w3-animate-opacity ">
             <!-- Single item -->
             <div class="carousel-item active">
             <div class="container">
@@ -78,7 +78,7 @@
                                     <h5 class="card-title " style="font-weight: bold; color: #000000;">{{ product['title'][:10]}}</h5>
                                 </a>
                                 <p class="card-text">
-                                    {{ product['description'][:30]}}....
+                                    {{ product['description'][:20]}}....
                                 </p>
                                 <a href="product/{{ product['isbn_id']}}" class="btn bg-dark" style="color:white; ">點擊查看</a>
                             </div>
@@ -110,9 +110,9 @@
                                 <h5 class="card-title" style="font-weight: bold; color: #000000;">{{ product['title'][:10]}}</h5>
                             </a>
                             <p class="card-text">
-                                {{ product['description'][:30]}}....
+                                {{ product['description'][:20]}}....
                             </p>
-                            <a href="product/{{ product['isbn_id']}}" class="btn bg-dark" style="color:white;">點擊查看</a>
+                            <a href="product/{{ product['isbn_id']}}" class="btn bg-dark" style="color:white; position:relative; ">點擊查看</a>
                         </div>
                         </div>
                     </div>
@@ -140,7 +140,7 @@
                                     <h5 class="card-title" style="font-weight: bold; color: #000000;">{{ product['title'][:10]}}</h5>
                                 </a>
                                 <p class="card-text">
-                                    {{ product['description'][:30]}}....
+                                    {{ product['description'][:25]}}....
                                 </p>
                                 <a href="product/{{ product['isbn_id']}}" class="btn bg-dark" style="color:white; position:relative;">點擊查看</a>
                             </div>

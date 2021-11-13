@@ -2,13 +2,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-  {% if current_cate == 'all' %}
-  <title>Booksbar | {{ current_sec }}</title>
-  {% elif current_sub == 'all' %}
-  <title>Booksbar | {{ current_cate }}</title>
-  {% else %}
-  <title>Booksbar | {{ current_sub }}</title>
-  {% endif %}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -17,7 +10,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
 
 <style>
 body {
@@ -67,8 +60,8 @@ body {
 <body>
   <nav class="navbar bg-dark"">
     <a class="navbar-brand" style="color: #ffffff;" href="{{ url_for('index')}}"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/445/6331351445_00ba94c2-523c-42d8-9712-1924f4621988.png?cb=1636274980' style="width: 60%;"></a>
-    <a href="{{ url_for('member') }}" ><i class="fas fa-user-circle navbar-brand" style="color: #ffffff;"></i></a>
-</nav>
+    <button class="btn btn-dark" type="submit"><i class="material-icons large ">account_circle</i></button> 
+ </nav>
 <style>
   body {
     font-family: "Lato", sans-serif;
@@ -136,47 +129,58 @@ body {
       <a class="navbar-brand" style="color: #ffffff;"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/445/6331351445_00ba94c2-523c-42d8-9712-1924f4621988.png?cb=1636274980' style="width: 100%;"></a>
       <a href="javascript:void(0)" class="closebtn bg-dark" onclick="closeNav()">&times;</a>
       {% for each in nav_sec%}
-        <a href="{{ each }}"><h5 class="section_nav" style="color: #ffffff; font-weight: bold;">{{each}}</h5></a>
+        <a href="{{ each }}"><h5 class="section_nav" style="color: #ffffff; ">{{each}}</h5></a>
       {% endfor %}
     </div>
-    
     <div style="margin-top:10px">
     </div>
-    <span class="navbtn btn btn-dark my-2 my-sm-0" href="#" role="button" onclick="openNav()" style=" border-radius: 7px;">&#9776;</span>
+    <span class="navbtn btn btn-dark my-2 my-sm-0" href="#" role="button" onclick="openNav()">&#9776;</span>
   <div class="row">
-    <div class="col-sm-2 " style="margin-left:70px;">
+    <div class="col-sm-2" style="margin-left:70px;">
       <a href="{{ current_sec }}?category_nm=all"><h3 style="color: #020202; margin-bottom:20px; margin-top:0px; font-weight: bold;">{{ current_sec }}</h3></a>
       {% for key in cate_list%}
         {% if key != 'all' %}
-          <a href="?category_nm={{ key }}"><h5 class="section_nav " style="color: #020202;"><h5 class="section_nav" style="color: #000000; font-weight: bold;">{{key}}</h5></a>
+          <a href="?category_nm={{ key }}"><h5 class="section_nav" style="color: #020202;"><h5 class="section_nav" style="color: #000000; ">{{key}}</h5></a>
           <br>
         {% endif %}
       {% endfor %}
     </div>
-    <div class="col-sm-7  w3-animate-opacity" style="margin-left:0px;">
+    <div class="col-sm-7" style="margin-left:0px">
       {% if current_cate != 'all' %}
-      <nav class="navbar navbar-expand-sm bg-light" style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px;">
+      <nav class="navbar navbar-expand-sm bg-light">
         <div class="container-fluid">
           <div class="row">
             <div class="col " >
               {% for subcate in subcate_list %}
                 {% if subcate == current_sub %}
-                  <a href="?category_nm={{ current_cate }}&subcate_nm={{ subcate }}" class="btn w3-red " style="margin:1px; color:#f1f1f1; border-radius: 5px; font-weight: bold;" >{{ subcate }}</a>
+                  <a href="?category_nm={{ current_cate }}&subcate_nm={{ subcate }}" class="btn w3-red" style="margin:1px; color:#f1f1f1">{{ subcate }}</a>
                 {% else %}
-                  <a href="?category_nm={{ current_cate }}&subcate_nm={{ subcate }}"class="btn bg-dark" style="margin:1px; color:#f1f1f1; border-radius: 5px; font-weight: bold;">{{ subcate }}</a>                  
+                  <a href="?category_nm={{ current_cate }}&subcate_nm={{ subcate }}"class="btn bg-dark" style="margin:1px; color:#f1f1f1">{{ subcate }}</a>                  
                 {% endif %}
               {% endfor %}
             </div>  
         </div>
       </nav>
       {%endif%}
-      {% block content %}
-
-      {% endblock content%}
+      {% for product in product_list %}
+      <div class="card mb-3" style="max-width: 100%;">
+        <div class="row no-gutters">
+          <div class="col-md-3">
+            <img src="{{product['cover_photo']}}" class="card-img" onerror="this.onerror=null;this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/690/6336618690_75f2170c-b776-469f-9d33-4050ff81a665.png?cb=1636362136'" style="height: 85%; width: 85%; margin-top: 15px; margin-left: 15px;">
+          </div>
+          <div class="col-md-9">
+            <div class="card-body">
+              <h5 class="card-title" style="font-weight: bold;">{{product['title']}}</h5>
+              <p class="card-text">{{product['description'][:100]}}....</p>
+              <!-- <h5 class="card-text"><small class="text-muted">著作人: {{product['author']}}<br>出版社: {{product['publisher']}}</small></h5> -->
+              <p class="card-text"><small class="text-muted"></small>著作人: {{product['author']}}<br>出版社: {{product['publisher']}}<br>出版日: {{product['publish_date']}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
     </div>
-
-  </div>
-  <button onclick="topFunction()" id="myBtn" title="Go to top">▲</button>
+    </div>
   </body>
 
   <script>
@@ -188,49 +192,8 @@ body {
     document.getElementById("mySidenav").style.width = "0";
   }
   </script>
-  <style>
-    #myBtn {
-      display: none;
-      position: fixed;
-      bottom: 20px;
-      right: 30px;
-      z-index: 99;
-      font-size: 18px;
-      border: none;
-      outline: none;
-      background-color: #343A40;
-      color: #ffffff;
-      cursor: pointer;
-      padding: 10px;
-      margin: 30px;
-      border-radius: 7px;
-      height: 50px;
-      width: 50px;
-    }
-    
-    #myBtn:hover {
-      background-color: #F44336;
-    }
-    </style>
-  <script>
-    //Get the button
-    var mybutton = document.getElementById("myBtn");
-    
-    // When the user scrolls down 20px from the top of the document, show the button
-    window.onscroll = function() {scrollFunction()};
-    
-    function scrollFunction() {
-      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-        mybutton.style.display = "block";
-      } else {
-        mybutton.style.display = "none";
-      }
-    }
-    
-    // When the user clicks on the button, scroll to the top of the document
-    function topFunction() {
-      document.body.scrollTop = 0;
-      document.documentElement.scrollTop = 0;
-    }
-  </script>
+
+
   </html> 
+
+
