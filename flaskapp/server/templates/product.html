@@ -29,7 +29,7 @@
         {% else %}
         <button class="btn btn-dark" type="submit"><i class="material-icons large">account_circle</i></button>
         {% endif %}
-    </nav>
+      </nav>
         <div id="mySidenav" class="sidenav bg-dark" >
           <a class="navbar-brand" style="color: #ffffff;"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/445/6331351445_00ba94c2-523c-42d8-9712-1924f4621988.png?cb=1636274980' style="width: 100%;"></a>
           <a href="javascript:void(0)" class="closebtn bg-dark" onclick="closeNav()">&times;</a>
@@ -40,7 +40,7 @@
         <div style="margin-top:10px">
         </div>
         <span class="navbtn btn btn-dark my-2 my-sm-0" href="#" role="button" onclick="openNav()" style=" border-radius: 7px;">&#9776;</span>
-        <div class="row">
+        <div class="row  w3-animate-opacity ">
           <div class="container col-sm-2" style="margin-left:0px;"></div>
           <div class="container col-sm-8" style="margin-left:0px;">
             <ul class="breadcrumb bg-light" style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px;">
@@ -55,7 +55,7 @@
           <div class="container col-sm-2" style="margin-left:0px;"></div>
           
         </div>
-        <div class="row">
+        <div class="row  w3-animate-opacity ">
           <div class="container col-sm-2" style="margin-left:0px;"></div>
           <div class="container col" style="margin-left:0px;" >
             <div id="demo" class="carousel slide" data-ride="carousel" style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; ">
@@ -69,11 +69,11 @@
               <!-- The slideshow -->
               <div class="carousel-inner "  >
                 <div class="carousel-item active">
-                  <img src="{{kingstone['cover_photo']}}" alt="Los Angeles" width="100%" height="100%">
+                  <img class="zoom " src="{{kingstone['cover_photo']}}" alt="Los Angeles" width="100%" height="100%">
                 </div>
                 {% for pic in pic_list %}
-                <div class="carousel-item">
-                  <img src="{{ pic[0] }}" alt="Chicago" width="100%" height="100%" >
+                <div class="carousel-item ">
+                  <img class="zoom " src="{{ pic[0] }}" alt="Chicago" width="100%" height="100%" >
                 </div>
                 {% endfor %}
                 <!-- Left and right controls -->
@@ -84,6 +84,25 @@
                   <span class="carousel-control-next-icon bg-dark"></span>
                 </a>
               </div>
+              <style>
+                .zoom {
+                  padding: 50px;
+                  background-color: white;
+                  transition: transform .2s; /* Animation */
+                  width: 200px;
+                  height: 200px;
+                  margin: 0 auto;
+                }
+                
+                .zoom:hover {
+                  transform: scale(1.5); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+                }
+                </style>
+                
+
+
+
+
             </div>
           </div>
           <div class="container col" style="padding-right:20px;">
@@ -185,9 +204,9 @@
           </div>
         </div>
         
-        <div class="container col-sm-8" style="margin-top: 30px;">
+        <div class="container col-sm-8  w3-animate-opacity " style="margin-top: 30px;">
           <div id="naver">
-          <ul  class="nav nav-pills navbar navbar-expand-sm bg-light" style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px;">
+          <ul  class="nav nav-pills navbar navbar-expand-sm bg-light " style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px;">
             <li><a data-toggle="pill" href="#table_of_content" class="btn active" style="margin:1px; color:#f1f1f1; border-radius: 5px; font-weight: bold;">目錄大綱</a></li>
             <li><a data-toggle="pill" href="#description" class="btn" style="margin:1px; color:#f1f1f1; border-radius: 5px; font-weight: bold;">內容簡介</a></li>
             <li><a data-toggle="pill" href="#author_intro" class="btn" style="margin:1px; color:#f1f1f1; border-radius: 5px; font-weight: bold;">作者介紹</a></li>
