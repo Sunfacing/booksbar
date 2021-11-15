@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Booksbar | Search: {{ term }}</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    </head>
+    <body>
+        <nav class="navbar bg-dark">
+            <a class="navbar-brand" style="color: #ffffff;" href="{{ url_for('index')}}"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/134/6374881134_593a507b-3f0f-498b-bfbe-445b6ef123d8.png?cb=1636943581' style="width: 60%;"></a>
+            <a href="{{ url_for('member') }}" ><i class="fas fa-user-circle navbar-brand" style="color: #ffffff;"></i></a>
+        </nav>
+        <main>
+            <div class="row" style="margin-top: 5vh;">
+                <div class="container col-sm-2">
+                    {% if count > 0 %}
+                        <h3 style="font-weight: bold; color:#343A40">關鍵字: {{ term }}</h3><br> 
+                        <h3 style="font-weight: bold; color:#343A40">查詢結果: {{ count }} 筆</h3>
+                    {% endif %}
+                </div>
+
+                <div class="container col-sm-6" style="margin-left:0px;">  
+                {% if count == 0 %}
+                    <h2 class="d-flex justify-content-center" style="font-weight: bold; margin-top: 30vh; color:#343A40; margin-bottom: 30px;">找不到搜尋的關鍵字: {{ term }}</h2>
+                    <form class="form-inline d-flex justify-content-center" action="/api/product">
+                        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search" required>
+                        <button class="btn btn-dark my-2 my-sm-0" type="submit" style="background-color:#454b50; border-color: #454b50; font-weight:bold">搜尋書名</button>
+                    </form>
+                {% endif %}            
+                {% for category, products in product_list.items() %}
+                    <div style="margin-top: 10px; margin-bottom: 10px;">
+                        <ul class="breadcrumb bg-dark" style="background-color: #ffffff; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; margin-bottom: 8px;">
+                            <li><a href="" style="margin-right: 10px; font-weight: bold; color:#ffffff">{{ category }}</a></li>
+                        </ul>
+                    </div>
+                    {% for product in products %}
+                        <div class="row no-gutters" style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px; padding: 0px; ">
+                            <div class="col-md-3 " >
+                                <a href="/product/{{ product['isbn_id'] }}">
+                                    <img src="{{product['cover_photo']}}" class="card-img" onerror="this.onerror=null;this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/690/6336618690_75f2170c-b776-469f-9d33-4050ff81a665.png?cb=1636362136'" style="height: 85%; width: 85%; margin-top: 15px; margin-left: 15px;">
+                                </a>    
+                            </div>
+                            <div class="col-md-9">
+                                <div class="card-body" >
+                                <a href="/product/{{ product['isbn_id'] }}">
+                                    <h5 class="card-title" style="font-weight: bold;">{{product['title']}}</h5>
+                                </a>    
+                                <p class="card-text">{{product['description'][:100]}}....</p>
+                            </div>
+                            </div>
+                        </div>    
+                    {% endfor %}
+                {% endfor %}
+                </div>
+                <div class="container col-sm-2" style="margin-left:0px;">
+
+                </div>
+
+
+            </div>
+        </main>

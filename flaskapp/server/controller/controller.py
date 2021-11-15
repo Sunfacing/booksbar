@@ -140,73 +140,78 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
 
 @app.route('/product/<isbn_id>')
 def product(isbn_id=None):
-    isbn_id = request.args.get('isbn_id', isbn_id)
-    books = db.session.execute("SELECT * FROM bookbar.category_list")
-    cate_list = defaultdict(list)
-    nav_sec = defaultdict(dict)
-    for book in books:
-        section = book['section']
-        nav_sec[section] = section
-
-    eslite = defaultdict(dict)
-    kingstone = defaultdict(dict)
-    momo = defaultdict(dict)
-    TODAY = datetime.datetime.now().strftime("%Y-%m-%d") 
     try:
-        info_list = get_book_info(isbn_id=isbn_id, date='2021-11-06')
-    except:
-        info_list = get_book_info(isbn_id=isbn_id, date='2021-11-06')
-    for info in info_list:
-        platform = info['platform']
-        if platform == 1:
-            kingstone['section'] = info['section']
-            kingstone['category'] = info['category']
-            kingstone['subcategory'] = info['subcategory']
-            kingstone['category_id'] = info['category_id']
-            kingstone['title'] = info['title']
-            kingstone['publish_date']= info['publish_date'].date()
-            kingstone['author'] = info['author']
-            kingstone['author_id'] = info['author_id']
-            kingstone['isbn_id'] = info['isbn_id']
-            kingstone['ISBN'] = info['ISBN']
-            kingstone['page'] = info['page']
-            kingstone['publisher_id'] = info['publisher_id']
-            kingstone['publisher'] = info['publisher']
-            kingstone['size'] = info['size']
-            kingstone['price'] = info['price']
-            kingstone['cover_photo'] = info['cover_photo']
-            kingstone['product_url'] = info['product_url']
-        elif platform == 2:
-            eslite  = info
+        isbn_id = request.args.get('isbn_id', isbn_id)
+        books = db.session.execute("SELECT * FROM bookbar.category_list")
+        cate_list = defaultdict(list)
+        nav_sec = defaultdict(dict)
+        for book in books:
+            section = book['section']
+            nav_sec[section] = section
+
+        eslite = defaultdict(dict)
+        kingstone = defaultdict(dict)
+        momo = defaultdict(dict)
+        TODAY = datetime.datetime.now().strftime("%Y-%m-%d") 
+        try:
+            info_list = get_book_info(isbn_id=isbn_id, date='2021-11-06')
+        except:
+            info_list = get_book_info(isbn_id=isbn_id, date='2021-11-06')
+        for info in info_list:
+            platform = info['platform']
+            if platform == 1:
+                kingstone['section'] = info['section']
+                kingstone['category'] = info['category']
+                kingstone['subcategory'] = info['subcategory']
+                kingstone['category_id'] = info['category_id']
+                kingstone['title'] = info['title']
+                kingstone['publish_date']= info['publish_date'].date()
+                kingstone['author'] = info['author']
+                kingstone['author_id'] = info['author_id']
+                kingstone['isbn_id'] = info['isbn_id']
+                kingstone['ISBN'] = info['ISBN']
+                kingstone['page'] = info['page']
+                kingstone['publisher_id'] = info['publisher_id']
+                kingstone['publisher'] = info['publisher']
+                kingstone['size'] = info['size']
+                kingstone['price'] = info['price']
+                kingstone['cover_photo'] = info['cover_photo']
+                kingstone['product_url'] = info['product_url']
+            elif platform == 2:
+                eslite  = info
+            else:
+                momo = info       
+            if not momo['price']:
+                momo['price'] = 0
+            if not eslite['price']:
+                eslite['price'] = 0
+            if not kingstone['price']:
+                kingstone['price'] = 0
+
+        pics = get_book_pics(isbn_id)
+        pic_list = []
+        i = 2
+        for pic in pics:
+            pic_list.append([pic['pics'], i])
+            i += 1
+
+        comment_list = get_book_comments(isbn_id)
+        comments = []
+        for each in comment_list:       
+            comments.append([each['date'].date(), each['comment']])
+
+        if 'loggedin' in session:
+            user_id = session['id']
+            isbn_id = kingstone['isbn_id'] 
+            db.session.add(UserFavorite(user_id=user_id, track_type=4, type_id=isbn_id))
+            db.session.commit()
+            tracking_hash = check_user_track_by_product(user_id, kingstone['category_id'], isbn_id, kingstone['author_id'])
         else:
-            momo = info       
-        if not momo['price']:
-            momo['price'] = 0
-        if not eslite['price']:
-            eslite['price'] = 0
-        if not kingstone['price']:
-            kingstone['price'] = 0
+            tracking_hash = {}
+    except Exception as e:
+        print(e)
 
-    pics = get_book_pics(isbn_id)
-    pic_list = []
-    i = 2
-    for pic in pics:
-        pic_list.append([pic['pics'], i])
-        i += 1
 
-    comment_list = get_book_comments(isbn_id)
-    comments = []
-    for each in comment_list:       
-        comments.append([each['date'].date(), each['comment']])
-
-    if 'loggedin' in session:
-        user_id = session['id']
-        isbn_id = kingstone['isbn_id'] 
-        db.session.add(UserFavorite(user_id=user_id, track_type=4, type_id=isbn_id))
-        db.session.commit()
-        tracking_hash = check_user_track_by_product(user_id, kingstone['category_id'], isbn_id, kingstone['author_id'])
-    else:
-        tracking_hash = {}
     return render_template('product.html', nav_sec=nav_sec, 
                                         kingstone=kingstone, 
                                         eslite=eslite, 
@@ -362,7 +367,7 @@ def signup():
 
 
 
-@app.route('/api/favorite', methods=['POST'])
+@app.route('/favorite', methods=['POST'])
 def add_to_favorite(subcate=None, author=None, price=None):
     response = defaultdict(dict)
     if 'loggedin' in session:
@@ -395,3 +400,24 @@ def add_to_favorite(subcate=None, author=None, price=None):
     else:
         response['response'] = 'no'
         return response
+
+
+@app.route('/api/product')
+def search(search=None):
+    term = request.args.get('search', search)
+    result = search_by_term(term)
+    product_list = defaultdict(dict)
+    count = 0
+    for product in result:
+        categroy = product['category']
+        data = {
+        'isbn_id': product['isbn_id'],
+        'title': product['title'],
+        'cover_photo': product['cover_photo'],
+        'author': product['author'],
+        'description': product['description'],
+        }
+        if not product_list[categroy]: product_list[categroy] = [data]
+        else: product_list[categroy].append(data)
+        count += 1
+    return render_template('search.html', product_list=product_list, term=term, count=count)
