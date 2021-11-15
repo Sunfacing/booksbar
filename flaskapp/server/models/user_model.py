@@ -116,7 +116,7 @@ def check_user_browsing_history(user_id):
     FROM user_favorite AS u
     INNER JOIN book_info AS b
     ON b.isbn_id = u.type_id
-    WHERE user_id = 5 AND track_type = 4 AND b.platform = 1
+    WHERE user_id = {} AND track_type = 4 AND b.platform = 1
     ORDER BY u.id DESC
     LIMIT 20""".format(user_id))
     hash_table = defaultdict(dict)
