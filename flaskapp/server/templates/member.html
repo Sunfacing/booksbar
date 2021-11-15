@@ -15,8 +15,7 @@
     </head>
     <body>
         <nav class="navbar bg-dark"">
-          <a href="{{ url_for('index')}}" class="navbar-brand" style="color: #ffffff;"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/445/6331351445_00ba94c2-523c-42d8-9712-1924f4621988.png?cb=1636274980' style="width: 60%;"></a>
-          <button class="btn btn-dark" type="submit"><i class="material-icons large">account_circle</i></button> 
+          <a href="{{ url_for('index')}}" class="navbar-brand" style="color: #ffffff;"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/134/6374881134_593a507b-3f0f-498b-bfbe-445b6ef123d8.png?cb=1636943581' style="width: 60%;"></a>
         </nav>
         <main>
 
@@ -26,7 +25,7 @@
                 <div class="container col-sm-2" style="margin-left:0px; text-align: center;" >
                     <div class="card mb-3" style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px; align-items: center;">
                         <div class="col-md-7">
-                                <img class="rounded-circle mx-auto d-block" src="https://scontent.ftpe8-1.fna.fbcdn.net/v/t1.6435-9/123170294_10215203154466887_7689355505377168200_n.jpg?_nc_cat=109&ccb=1-5&_nc_sid=09cbfe&_nc_ohc=4KRZpiKo2goAX9lpJOn&tn=II_4rJlWQ-2PArOd&_nc_ht=scontent.ftpe8-1.fna&oh=b7d9430600258fc16687a9ad4562e020&oe=61B3CCC9" style="height: 100%; width: 100%; margin-top: 20px; margin-left: 15px;" > 
+                                <img class="rounded mx-auto d-block" src="https://cdn-icons-png.flaticon.com/128/171/171322.png" style="height: 100%; width: 100%; margin-top: 20px; margin-left: 15px;" > 
                         </div>
                         <div class="col-md-9" style="margin-top: 15px; margin-bottom: 15px;">
                             <h4 style="font-weight: bold;">{{ session['username']}}</h4>
@@ -62,20 +61,21 @@
                 </div>
                 <div class="container col-sm-6  w3-animate-opacity " style="margin-left:0px;">
                     {% block content %}
+                    <h5 style="background-color: #343A40; color: white; text-align: center; font-weight: bold; padding: 15px; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px;">各項活動統計</h5>
                     {% if activity_counts | length == 0 %}
                         <h2 class="d-flex justify-content-center" style="font-weight: bold; margin-top: 30vh; color:#343A40">目前尚未有任何活動紀錄</h2>
                     {% else %}            
                         <div class="row d-flex justify-content-center" style="margin-bottom: 30px;">
                         {% for type_name, counts in activity_counts.items() %}
-                          <div class="" style="width: 22%; height: 197px; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px; padding: 0px; margin-left:10px; margin-right:10px">
-                            <div class="flex-column" style="font-weight: bold; padding: 0px; margin-top: 50px;">
+                          <div class="" style="width: 22%; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px; padding: 0px; margin-left:10px; margin-right:10px">
+                            <div class="" style="font-weight: bold; padding: 0px; margin-top: 10px;">
                                 <h1 class="card-title d-flex justify-content-center counter" style="font-weight: bold; padding: 0px; font-size: 4rem;" data-target="{{ counts }}">0</h1>            
-                                <h5 class="card-title d-flex justify-content-center" style="font-weight: bold; padding: 0px; margin-top: 30px;">{{ type_name }}</h5>                       
+                                <h5 class="card-title d-flex justify-content-center" style="font-weight: bold; padding: 0px; margin-top: 10px; ">{{ type_name }}</h5>                       
                             </div>
                           </div>
                         {% endfor %} 
                         </div> 
-                           <h5 style="background-color: #343A40; color: white; text-align: center; font-weight: bold; padding: 20px; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px;">最近20筆閱覽紀錄</h5>
+                        <h5 style="background-color: #343A40; color: white; text-align: center; font-weight: bold; padding: 15px; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px;">最近20筆閱覽紀錄</h5>
 
                         <div class="row d-flex justify-content-center">
                             {% for isbn_id, product in browse_history.items() %}
@@ -93,7 +93,7 @@
                                     <p class="card-text">{{product['description'][:100]}}....</p>
                                    </div>
                                 </div>
-                                </div>
+                            </div>
                           {% endfor %}                             
                         </div>
 
