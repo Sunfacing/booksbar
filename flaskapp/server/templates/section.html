@@ -41,10 +41,10 @@
             data-mdb-slide="prev"
             style="background-color: white; border: 0px; cursor: pointer; "
             >
-            <span class="carousel-control-prev-icon bg-dark" aria-hidden="true"></span>
+            <span class="carousel-control-prev-icon" aria-hidden="true" style="background-color: #5e6472;"></span>
             <span class="visually-hidden">Prev</span>
             </button>
-            <h3 style="font-weight: bold; margin-right: 30px;">近期熱門新書</h3>
+            <h3 style="font-weight: bold; margin-right: 30px; color: #5e6472;">近期熱門新書</h3>
             <button
             class="carousel-control-next position-relative"
             type="button"
@@ -64,7 +64,7 @@
                 <div class="row">
                     {% for product in product_list[:3] %}
                     <div class="col-lg-4">
-                            <a href="product/{{ product['isbn_id']}}" style="text-decoration: none; color: #000000;" >
+                            <a href="product/{{ product['isbn_id']}}" style="text-decoration: none; color: #5e6472;" >
                             <div class="card" style="height: 100%; border: 0px; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border-radius: 7px;">
                                 <img
                                     src="{{ product['cover_photo']}}"
@@ -73,7 +73,7 @@
                                     style="margin-top: 15px;"
                                 />
                                 <div class="card-body ">
-                                    <h5 class="card-title " style="font-weight: bold; color: #000000;">{{ product['title'][:10]}}</h5>
+                                    <h5 class="card-title " style="font-weight: bold; color: #5e6472;">{{ product['title'][:10]}}</h5>
                                     <p class="card-text" style="margin-bottom:30px">
                                         {{ product['description'][:60]}}....
                                     </p>
@@ -93,7 +93,7 @@
                 <div class="row">
                 {% for product in product_list[3:6] %}
                     <div class="col-lg-4 d-none d-lg-block">
-                        <a href="product/{{ product['isbn_id']}}" style="text-decoration: none; color: #000000;">
+                        <a href="product/{{ product['isbn_id']}}" style="text-decoration: none; color: #5e6472;">
                         <div class="card" style="height: 100%; border: 0px; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border-radius: 7px;">  
                             <img
                                 src="{{ product['cover_photo']}}"
@@ -102,7 +102,7 @@
                                 style="margin-top: 15px;"
                             />
                             <div class="card-body">
-                                <h5 class="card-title" style="font-weight: bold; color: #000000;">{{ product['title'][:10]}}</h5>
+                                <h5 class="card-title" style="font-weight: bold; color: #5e6472;">{{ product['title'][:10]}}</h5>
                                 <p class="card-text" style="margin-bottom:30px">
                                     {{ product['description'][:60]}}....
                                 </p>
@@ -122,7 +122,7 @@
                     <div class="row">
                     {% for product in product_list[6:] %}
                         <div class="col-lg-4 d-none d-lg-block">
-                            <a href="product/{{ product['isbn_id']}}" style="text-decoration: none; color: #000000;">
+                            <a href="product/{{ product['isbn_id']}}" style="text-decoration: none; color: #5e6472;">
                             <div class="card" style="height: 100%; border: 0px; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border-radius: 7px;">
                                 <img
                                     src="{{ product['cover_photo']}}"
@@ -131,7 +131,7 @@
                                     style="margin-top: 15px;"
                                 />
                                 <div class="card-body">
-                                    <h5 class="card-title" style="font-weight: bold; color: #000000;">{{ product['title'][:10]}}</h5>
+                                    <h5 class="card-title" style="font-weight: bold; color: #5e6472;">{{ product['title'][:10]}}</h5>
                                     <p class="card-text" style="margin-bottom:30px">
                                         {{ product['description'][:60]}}....
                                     </p>

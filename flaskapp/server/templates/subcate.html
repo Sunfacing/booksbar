@@ -4,17 +4,17 @@
     <div style="margin-top: 20px;"></div>
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     {% for product in product_list %}
-        <div class="card mb-3 w3-animate-opacity " style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px;">
-            <a href="product/{{product['isbn_id']}}" style="text-decoration: none; color: #000000;">
+        <div class="card mb-3 w3-animate-opacity" style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px;">
+            <a href="product/{{product['isbn_id']}}" style="text-decoration: none; color: #5e6472;">
             <div class="row no-gutters" >
             <div class="col-md-3 " >
-                <img src="{{product['cover_photo']}}" class="card-img" onerror="this.onerror=null;this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/690/6336618690_75f2170c-b776-469f-9d33-4050ff81a665.png?cb=1636362136'" style="height: 85%; width: 85%; margin-top: 15px; margin-left: 15px;">
+                <img src="{{product['cover_photo']}}" class="card-img" onerror="this.onerror=null;this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/331/6386236331_d0f703de-22e1-44c0-89e4-d49fc78d8899.png?cb=1637118063'" style="height: 85%; width: 85%; margin-top: 15px; margin-left: 15px;">
                 </div>
                 <div class="col-md-9">
                     <div class="card-body" >
-                        <h5 class="card-title" style="font-weight: bold;">{{product['title']}}</h5>
-                        <p class="card-text">{{product['description'][:100]}}....</p>
-                        <p class="card-text"><small class="text-muted"></small>著作人: {{product['author']}}<br>出版社: {{product['publisher']}}<br>出版日: {{product['publish_date']}}</p>
+                        <h5 class="card-title" style="font-weight: bold; color: #5e6472;">{{product['title']}}</h5>
+                        <p class="card-text" style="color: #5e6472;">{{product['description'][:100]}}....</p>
+                        <p class="card-text" style="color: #5e6472;"><small class="text-muted"></small>著作人: {{product['author']}}<br>出版社: {{product['publisher']}}<br>出版日: {{product['publish_date']}}</p>
                     </div>
                 </div>
             </div>
@@ -28,21 +28,21 @@
     <div class="container">
     <ul class="pagination justify-content-center" style="margin-top: 50px; margin-bottom: 20px;">
         {% if shown_pages['pre'] == -1%}
-            <li class="page-item"><a class="page-link disabled" style="color: #343A40;"><</a></li>
+            <li class="page-item"><a class="page-link disabled" style="color: #5e6472;"><</a></li>
         {% else %}
-            <li class="page-item"><a class="page-link" href="/{{current_sec}}?category_nm={{current_cate}}&subcate_nm={{current_sub}}&page={{shown_pages['pre']}}" style="color: #343A40;"><</a></li>
+            <li class="page-item"><a class="page-link" href="/{{current_sec}}?category_nm={{current_cate}}&subcate_nm={{current_sub}}&page={{shown_pages['pre']}}" style="color: #5e6472;"><</a></li>
         {% endif %}
         
-        <li class="page-item active"><a class="page-link" href="/{{current_sec}}?category_nm={{current_cate}}&subcate_nm={{current_sub}}" style="background-color: #343A40; border-color: #343A40;">{{shown_pages['current']}}</a></li>
+        <li class="page-item active"><a class="page-link" href="/{{current_sec}}?category_nm={{current_cate}}&subcate_nm={{current_sub}}" style="background-color: #5e6472; border-color: #5e6472;">{{shown_pages['current']}}</a></li>
         
         {% if shown_pages['next'] == -1%}
-            <li class="page-item"><a class="page-link disabled"  style="color: #343A40;">></a></li>
+            <li class="page-item"><a class="page-link disabled"  style="color: #5e6472;">></a></li>
         {% else %}
-            <li class="page-item"><a class="page-link disabled" href="/{{current_sec}}?category_nm={{current_cate}}&subcate_nm={{current_sub}}&page={{shown_pages['next']}}" style="color: #343A40;">></a></li>        
+            <li class="page-item"><a class="page-link disabled" href="/{{current_sec}}?category_nm={{current_cate}}&subcate_nm={{current_sub}}&page={{shown_pages['next']}}" style="color: #5e6472;">></a></li>        
         {% endif %}
         </ul>
     </div>
     {% else%}
-        <h2 class="d-flex justify-content-center w3-animate-opacity" style="font-weight: bold; margin-top: 30vh; color:#343A40">點選小分類開始閱覽</h2>
+        <h2 class="d-flex justify-content-center w3-animate-opacity" style="font-weight: bold; margin-top: 30vh; color:#5e6472">點選小分類開始閱覽</h2>
     {% endif %}
 {%  endblock content %}

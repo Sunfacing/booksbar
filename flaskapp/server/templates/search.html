@@ -13,7 +13,7 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     </head>
     <body>
-        <nav class="navbar bg-dark">
+        <nav class="navbar" style="background-color: #5e6472;">
             <a class="navbar-brand" style="color: #ffffff;" href="{{ url_for('index')}}"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/134/6374881134_593a507b-3f0f-498b-bfbe-445b6ef123d8.png?cb=1636943581' style="width: 60%;"></a>
             <a href="{{ url_for('member') }}" ><i class="fas fa-user-circle fa-2x" style="color: #ffffff;"></i></a>
         </nav>
@@ -23,28 +23,28 @@
             <div class="row" style="margin-top: 5vh;">
                 <div class="container col-sm-2">
                     {% if count > 0 %}
-                        <h3 style="font-weight: bold; color:#343A40">關鍵字: {{ term }}</h3><br> 
-                        <h3 style="font-weight: bold; color:#343A40">查詢結果: {{ count }} 筆</h3>
+                        <h3 style="font-weight: bold; color:#89B0AE">關鍵字: {{ term }}</h3><br> 
+                        <h3 style="font-weight: bold; color:#89B0AE">查詢結果: {{ count }} 筆</h3>
                     {% endif %}
                 </div>
 
                 <div class="container col-sm-6" style="margin-left:0px;">  
                 {% if count == 0 %}
-                    <h2 class="d-flex justify-content-center" style="font-weight: bold; margin-top: 30vh; color:#343A40; margin-bottom: 30px;">找不到搜尋的關鍵字: {{ term }}</h2>
+                    <h2 class="d-flex justify-content-center" style="font-weight: bold; margin-top: 30vh; color:#5e6472; margin-bottom: 30px;">找不到搜尋的關鍵字: {{ term }}</h2>
                     <form class="form-inline d-flex justify-content-center" action="/product">
                         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search" required>
-                        <button class="btn btn-dark my-2 my-sm-0" type="submit"  onclick="loading();" style="background-color:#454b50; border-color: #454b50; font-weight:bold">搜尋書名</button>
+                        <button class="btn btn-dark my-2 my-sm-0" type="submit"  onclick="loading();" style="background-color:#5e6472; border-color: #5e6472; font-weight:bold">搜尋書名</button>
                     </form>
                 {% endif %}            
                 {% for category, products in product_list.items() %}
                     <div style="margin-top: 10px; margin-bottom: 10px;">
-                        <ul class="breadcrumb bg-dark" style="background-color: #ffffff; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; margin-bottom: 8px;">
-                            <li style="margin-right: 10px; font-weight: bold; color:#ffffff">{{ category }}</li>
+                        <ul class="breadcrumb" style="background-color: #5e6472; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; margin-bottom: 8px;">
+                            <li style="margin-right: 10px; font-weight: bold; color:#ffffff; background-color: #5e6472;">{{ category }}</li>
                         </ul>
                     </div>
                     {% for product in products %}
                         <div class="card mb-3 w3-animate-opacity" style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px;">
-                            <a href="product/{{product['isbn_id']}}" style="text-decoration: none; color: #000000;">
+                            <a href="product/{{product['isbn_id']}}" style="text-decoration: none; color: #5e6472;">
                             <div class="row no-gutters" >
                             <div class="col-md-3 " >
                                 <img src="{{product['cover_photo']}}" class="card-img" onerror="this.onerror=null;this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/690/6336618690_75f2170c-b776-469f-9d33-4050ff81a665.png?cb=1636362136'" style="height: 85%; width: 85%; margin-top: 15px; margin-left: 15px;">
