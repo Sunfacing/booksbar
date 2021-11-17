@@ -16,13 +16,17 @@
         <a class="navbar-brand" style="color: #ffffff;" href="{{ url_for('index')}}"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/134/6374881134_593a507b-3f0f-498b-bfbe-445b6ef123d8.png?cb=1636943581' style="width: 60%;"></a>
         <a href="{{ url_for('member') }}" ><i class="fas fa-user-circle navbar-brand" style="color: #ffffff;"></i></a>
     </nav>
-      <main>   
+      <main>
+          <div id="loading" style="margin: auto; margin-top: 120px;"></div>
+          <div id="content">
           <div class="jumbotron" style="height: 65vh; background: url('https://d3bu8utwyaxpsl.cloudfront.net/bookbar.jpg') no-repeat center center fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover;">
-            <div class="mx-auto" style="width:80%; position:absolute; top: 32%; left:10%">
-              <form class="form-inline p-3" action="/product">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search" required>
-                <button class="btn btn-dark my-2 my-sm-0" type="submit" style="background-color:#454b50; border-color: #454b50; font-weight:bold">搜尋書名</button>
+            <div class="mx-auto" style="width:80%; position:absolute; top: 32%; left:10%" >
+              
+              <form class="form-inline p-3" action="/product" >
+                <input id="question" class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="search" required />
+                <button class="btn btn-dark my-2 my-sm-0" type="submit" onclick="loading(); " style="background-color:#454b50; border-color: #454b50; font-weight:bold">搜尋書名</button>
               </form>
+
               <form class="form-inline p-3">
                 <a class="btn btn-dark my-2 my-sm-0" href="/文學?category=現代華文創作" role="button" style="background-color:#454b50; border-color: #454b50; font-weight:bold">查看全部分類</a>
               </form>
@@ -30,19 +34,23 @@
               <p class="text-xl-right" style="color: #ffffff; font-weight: bold; font-size:large;">你可能不知道自己要的是什麼，但是，要先知道自己，不要什麼。<br>                                  –《走在夢想的路上》．謝哲青</p>
             </div>
           </div>
-        </div>
+        
         <div class="btn-group justify-content-end" role="group" aria-label="Basic example" style="width: 90%;">
-          <button type="button" class="btn btn-dark shadow-lg bg-dark rounded">全部</button>
-          <button type="button" class="btn btn-light ">依追蹤類別</button>
-          <button type="button" class="btn btn-light ">依追蹤作者</button>
+          <a class="btn btn-dark my-2 my-sm-0" href="/?period=month" role="button" onclick="loading2();" style="background-color:#454b50; border-color: #454b50; font-weight:bold; border-radius: 7px;">近一個月出版</a>
+          <div style="color:white"> | </div>
+          <a class="btn btn-dark my-2 my-sm-0" href="/?period=new" role="button"  onclick="loading2();" style="background-color:#454b50; border-color: #454b50; font-weight:bold; border-radius: 7px;">即將出版</a>
         </div>
+        <div id="loading2" style="margin: auto;"></div>
+        <div id="content2">
         {% for subset in collections %}
           <div class="container p-3" style="width: 70%;">
             <div class="row ">
               {% for book in subset %}
                 <div class="card mx-auto" style="width: 15rem; height:70%; border:0px; border-radius: 7px;">
                   <a href="product/{{ book['isbn_id'] }}" alt=''>
-                    <img class="card-img-top p-3" src="{{ book['cover_photo']}}" alt="Card image cap" onerror="this.onerror=null;this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/273/6331341273_aaf6d286-1736-4b10-acfa-95df264d860e.png?cb=1636274683';" >
+
+                    <img class="card-img-top p-3" src="{{ book['cover_photo']}}" alt="Card image cap" onerror="this.onerror=null; this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/273/6331341273_aaf6d286-1736-4b10-acfa-95df264d860e.png?cb=1636274683';"">
+
                   </a>
                   <div class="card-body" style="height:8rem; width:20em">
                     {% if book['title'].split('：')[0]| length <= 10 %}
@@ -50,19 +58,59 @@
                     {% else %}
                       <h5 class="card-title" style="font-weight: bold">{{ book['title'].split('：')[0].split('（')[0][:10] }}</h5>
                     {% endif %}
-                    <p>{{ book['author'][:15]}}</br>
+                    <p>{{ book['author'][:10]}}</br>
                     {{ book['publish_date'].strftime("%Y-%m-%d")}}</p>                    
                   </div>
                 </div>
               {% endfor %} 
               </div> 
           </div> 
-        {% endfor %}    
+        {% endfor %} 
+        </div>
+      </div>
       </main>
+
       <style>
         .card {
           box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2);
         }
-        </style> 
+      </style>
+
+      <script type="text/javascript">
+        function loading(){
+          if(document.getElementById("question").value.length <= 1)
+                    {
+                      // do nothing
+                    } else {
+                      $("#loading").show();
+                      $("#content").hide();
+                  }       
+                }
+      </script>
+      <style>
+        div#loading {
+            width: 700px;
+            height: 600px;
+            display: none;
+            background: url(/static/loadingimage.gif) no-repeat;
+            cursor: wait;
+            }
+      </style> 
+      <script type="text/javascript">
+        function loading2(){
+            $("#loading2").show();
+            $("#content2").hide();       
+        }
+      </script>
+      <style>
+        div#loading2 {
+            width: 700px;
+            height: 600px;
+            display: none;
+            background: url(/static/loadingimage.gif) no-repeat;
+            cursor: wait;
+            }
+      </style>       
+
     </body>
   </html>

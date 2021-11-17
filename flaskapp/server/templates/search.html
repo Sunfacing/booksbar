@@ -18,6 +18,8 @@
             <a href="{{ url_for('member') }}" ><i class="fas fa-user-circle navbar-brand" style="color: #ffffff;"></i></a>
         </nav>
         <main>
+            <div id="loading" style="margin: auto; margin-top: 120px;"></div>
+            <div id="content">
             <div class="row" style="margin-top: 5vh;">
                 <div class="container col-sm-2">
                     {% if count > 0 %}
@@ -29,9 +31,9 @@
                 <div class="container col-sm-6" style="margin-left:0px;">  
                 {% if count == 0 %}
                     <h2 class="d-flex justify-content-center" style="font-weight: bold; margin-top: 30vh; color:#343A40; margin-bottom: 30px;">找不到搜尋的關鍵字: {{ term }}</h2>
-                    <form class="form-inline d-flex justify-content-center" action="/api/product">
+                    <form class="form-inline d-flex justify-content-center" action="/product">
                         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search" required>
-                        <button class="btn btn-dark my-2 my-sm-0" type="submit" style="background-color:#454b50; border-color: #454b50; font-weight:bold">搜尋書名</button>
+                        <button class="btn btn-dark my-2 my-sm-0" type="submit"  onclick="loading();" style="background-color:#454b50; border-color: #454b50; font-weight:bold">搜尋書名</button>
                     </form>
                 {% endif %}            
                 {% for category, products in product_list.items() %}
@@ -65,4 +67,21 @@
 
 
             </div>
+            <script type="text/javascript">
+                function loading(){
+                    $("#loading").show();
+                    $("#content").hide();       
+                }
+              </script>
+              <style>
+                div#loading {
+                    width: 700px;
+                    height: 600px;
+                    display: none;
+                    background: url(/static/loadingimage.gif) no-repeat;
+                    cursor: wait;
+                    }
+              </style>     
+
+            </div>  
         </main>
