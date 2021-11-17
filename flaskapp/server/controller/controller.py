@@ -27,7 +27,7 @@ from server.models.product_model import *
 from server.models.user_model import *
 from datetime import timedelta
 import datetime
-import html
+import pytz
 
 
 
@@ -50,21 +50,37 @@ r= redis.Redis.from_url('redis://flaskproject.gtlinm.0001.use2.cache.amazonaws.c
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'jfif'])
 EXPIRE = 3600
-TODAY = datetime.datetime.today().strftime('%Y-%m-%d')
+# TODAY = datetime.datetime.now(pytz.timezone('US/Pacific')).strftime("%Y-%m-%d")
+TODAY = '2021-11-15'
 BUCKET = 'stylishproject'
 
 
 
 @app.route('/')
-def index():
-    books = db.session.execute("""SELECT isbn_id, category_id, b.title, b.cover_photo, b.publish_date, b.product_url, a.name AS author FROM isbn_catalog AS i
-                                INNER JOIN book_info AS b
-                                ON i.id = b.isbn_id
-                                INNER JOIN author AS a
-                                ON b.author = a.id
-                                WHERE category_id IN(138, 90, 84) AND b.platform = 1 and b.publish_date > '2021-10-01'
-                                ORDER BY publish_date DESC
-                                LIMIT 8""")
+def index(period='month'):
+    period = request.args.get('period', period)
+    import random
+    random.sample(range(900), 10)
+    month_ago = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=30)).strftime("%Y-%m-%d")
+    data = tuple(random.sample(range(900), 30))
+    if period == 'month':
+        books = db.session.execute("""SELECT isbn_id, category_id, b.title, b.cover_photo, b.publish_date, b.product_url, a.name AS author FROM isbn_catalog AS i
+                                    INNER JOIN book_info AS b
+                                    ON i.id = b.isbn_id
+                                    INNER JOIN author AS a
+                                    ON b.author = a.id
+                                    WHERE category_id IN {} AND b.platform = 1 and b.publish_date BETWEEN '{}' AND '{}'
+                                    ORDER BY publish_date DESC
+                                    LIMIT 40""".format(data, month_ago, TODAY))
+    else:
+        books = db.session.execute("""SELECT isbn_id, category_id, b.title, b.cover_photo, b.publish_date, b.product_url, a.name AS author FROM isbn_catalog AS i
+                                    INNER JOIN book_info AS b
+                                    ON i.id = b.isbn_id
+                                    INNER JOIN author AS a
+                                    ON b.author = a.id
+                                    WHERE b.platform = 1 and b.publish_date > '{}'
+                                    LIMIT 30""".format(TODAY))
+
     collections = []
     row = []
     i = 0
@@ -152,9 +168,8 @@ def product(isbn_id=None):
         eslite = defaultdict(dict)
         kingstone = defaultdict(dict)
         momo = defaultdict(dict)
-        TODAY = datetime.datetime.now().strftime("%Y-%m-%d") 
         try:
-            info_list = get_book_info(isbn_id=isbn_id, date='2021-11-06')
+            info_list = get_book_info(isbn_id=isbn_id, date=TODAY)
         except:
             info_list = get_book_info(isbn_id=isbn_id, date='2021-11-06')
         for info in info_list:
@@ -328,8 +343,12 @@ def login():
             session['id'] = user.id
             session['username'] = user.username
             return redirect(url_for('index'))
-        else:
+        elif user and bcrypt.check_password_hash(user.password, password):
             msg = "帳號或密碼有誤, 請重新嘗試"
+            return render_template('login.html', msg=msg)
+
+        else:
+            msg = "請先註冊"
             return render_template('login.html', msg=msg)
     return render_template('login.html', msg='')
 
@@ -355,19 +374,24 @@ def signup():
         if user:
             msg = '此帳號已註冊'
         else:
-            password = bcrypt.generate_password_hash(password)
-            user = UserInfo(email=email, password=password, username=username, source='native', token='')
-            db.session.add(user)
-            db.session.commit()
-            session['id'] = user.id
-            session['username'] = user.username
+            try:
+                password = bcrypt.generate_password_hash(password)
+                user = UserInfo(email=email, password=password, username=username, source='native', token='')
+                db.session.add(user)
+                db.session.commit()
+                user = UserInfo.query.filter_by(email=email).first()
+                session['loggedin'] = True
+                session['id'] = user.id
+                session['username'] = user.username
+            except Exception as e:
+                print(e)
             return redirect(url_for('index'))
     return render_template('signup.html', msg=msg) 
 
 
 
 
-@app.route('/favorite', methods=['POST'])
+@app.route('/api/favorite', methods=['POST'])
 def add_to_favorite(subcate=None, author=None, price=None):
     response = defaultdict(dict)
     if 'loggedin' in session:
@@ -402,7 +426,7 @@ def add_to_favorite(subcate=None, author=None, price=None):
         return response
 
 
-@app.route('/api/product')
+@app.route('/product')
 def search(search=None):
     term = request.args.get('search', search)
     result = search_by_term(term)
