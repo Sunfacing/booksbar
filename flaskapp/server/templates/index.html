@@ -17,7 +17,7 @@
         <a href="{{ url_for('member') }}" ><i class="fas fa-user-circle navbar-brand" style="color: #ffffff;"></i></a>
     </nav>
       <main>
-          <div id="loading" style="margin: auto; margin-top: 120px;"></div>
+          <div id="loading" style="margin: auto;"></div>
           <div id="content">
           <div class="jumbotron" style="height: 65vh; background: url('https://d3bu8utwyaxpsl.cloudfront.net/bookbar.jpg') no-repeat center center fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover;">
             <div class="mx-auto" style="width:80%; position:absolute; top: 32%; left:10%" >
@@ -58,8 +58,8 @@
                     {% else %}
                       <h5 class="card-title" style="font-weight: bold">{{ book['title'].split('：')[0].split('（')[0][:10] }}</h5>
                     {% endif %}
-                    <p>{{ book['author'][:10]}}</br>
-                    {{ book['publish_date'].strftime("%Y-%m-%d")}}</p>                    
+                    <p>作者: {{ book['author'][:10]}}</br>
+                    出版日: {{ book['publish_date'].strftime("%Y-%m-%d")}}</p>                    
                   </div>
                 </div>
               {% endfor %} 
@@ -78,7 +78,7 @@
 
       <script type="text/javascript">
         function loading(){
-          if(document.getElementById("question").value.length <= 1)
+          if(document.getElementById("question").value.length == 0)
                     {
                       // do nothing
                     } else {
