@@ -145,9 +145,9 @@
           <div class="container col-sm-2" style="margin-left:0px;" id='tracker'>
             <div style="height: 10%;">
               {% if tracking_hash[1] %}
-                <button type="button" class="btn btn-danger row" id="subcategory" value="?subcate={{kingstone['category_id']}}" onclick="add_to_favorite()"><i class="fas fa-heart" id="heart" style="color:#ffffff"> 追蹤分類</i></button>
+                <button type="button" class="btn btn-danger row" id="subcategory" value="?subcate={{kingstone['category_id']}}" onclick="add_to_favorite()"><i class="fas fa-heart" id="heart" style="color:#ffffff"> 追蹤分類 - {{kingstone['subcategory']}}</i></button>
               {% else %}
-                <button type="button" class="btn btn-basic row" id="subcategory" value="?subcate={{kingstone['category_id']}}" onclick="add_to_favorite()"><i class="fas fa-heart" id="heart" style="color:#000000"> 追蹤分類</i></button>
+                <button type="button" class="btn btn-basic row" id="subcategory" value="?subcate={{kingstone['category_id']}}" onclick="add_to_favorite()"><i class="fas fa-heart" id="heart" style="color:#000000"> 追蹤分類 - {{kingstone['subcategory']}}</i></button>
               {% endif %}
             </div>
             <div style="height: 10%;">
