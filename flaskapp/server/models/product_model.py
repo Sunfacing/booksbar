@@ -79,22 +79,20 @@ class Status(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
     status = db.Column(db.String(30))   
 
-
-class DailyScrapeResult(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.DateTime)
-    platform = db.Column(db.Integer, ForeignKey('platform.id'))
-    total = db.Column(db.Integer)
-    new = db.Column(db.Integer)
-    phase_out = db.Column(db.Integer)
-
-
-class DailyScrapeTime(db.Model):
-    id = db.Column(db.Integer, primary_key=True) 
-    date = db.Column(db.DateTime)
-    platform = db.Column(db.Integer, ForeignKey('platform.id'))
+class PipelineStep(db.Model):
     step = db.Column(db.String(30))
-    time = db.Column(db.Time)
+    id = db.Column(db.Integer, primary_key=True) 
+
+class PipelineTrack(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.Date)
+    platform = db.Column(db.Integer, ForeignKey('platform.id'))
+    step = db.Column(db.Integer, ForeignKey('pipeline_step.id'))
+    quantity = db.Column(db.Integer)
+    minutes = db.Column(db.Integer)
+
+
+
 
 
 
@@ -143,7 +141,7 @@ def get_catalog_subcategory(subcategory, page):
     product_list =db.session.execute("""
         SELECT b.isbn_id,
                 b.id AS book_id,
-                publish_date,
+                DATE_FORMAT(publish_date,'%Y-%m-%d') AS publish_date,
                 title,
                 description,
                 cover_photo,
@@ -219,7 +217,7 @@ def get_book_comments(isbn_id):
 
 def api_book_info(isbn_id):
     info_list = db.session.execute("""
-        SELECT table_of_content, description, author_intro
+    SELECT table_of_content, description, author_intro
     FROM book_info AS b
     LEFT JOIN price_status_info AS p
     ON b.id = p.book_id 
@@ -227,3 +225,31 @@ def api_book_info(isbn_id):
     ON a.id = b.author
     WHERE isbn_id = {} and b.platform = 1""".format(isbn_id))
     return info_list
+
+
+def search_by_term(term):
+    result = db.session.execute("""
+    SELECT c.category, isbn_id, title, cover_photo, a.name AS author, description 
+    FROM book_info AS b
+    INNER JOIN isbn_catalog AS i
+    ON b.isbn_id = i.id
+    INNER JOIN category_list AS c
+    ON i.category_id = c.id
+    INNER JOIN author AS a
+    ON b.author = a.id
+	WHERE b.id IN (SELECT id FROM book_info WHERE platform = 1 AND title LIKE "%{}%")""".format(term))
+
+    return result
+
+
+
+def daily_result(date):
+    result = db.session.execute("""
+    SELECT t.step, s.step, t.*, p.platform 
+    FROM pipeline_step AS s
+    LEFT JOIN pipeline_track AS t
+    ON t.step = s.id
+    LEFT JOIN platform AS p
+    ON t.platform = p.id
+    WHERE p.platform not IN ('original', 'promotional')""".format(date))
+    return result
