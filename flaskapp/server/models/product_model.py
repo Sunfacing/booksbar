@@ -1,3 +1,4 @@
+from collections import defaultdict
 from server import db
 from sqlalchemy import ForeignKey
 from sqlalchemy.schema import UniqueConstraint
@@ -111,7 +112,7 @@ class PipelineTrack(db.Model):
 
 
 
-def get_catalog_section(section):
+def get_catalog_section(section, date_1, date_2):
     product_list =db.session.execute("""
         SELECT b.isbn_id,
             b.id AS book_id,
@@ -130,8 +131,9 @@ def get_catalog_section(section):
         ON b.author = a.id
         INNER JOIN publisher AS p
         ON b.publisher = p.id
-        WHERE b.platform = 1 and c.section = '{}'  
-        LIMIT 9""".format(section))
+        WHERE b.platform = 1 AND c.section = '{}'  
+        AND publish_date BETWEEN '{}' AND '{}'
+        ORDER BY publish_date DESC LIMIT 9""".format(section, date_1, date_2))
     return product_list
 
 
@@ -178,9 +180,10 @@ def get_subcate_book_counts(subcategory):
 
 def get_book_info(isbn_id, date):
     info_list = db.session.execute("""
-    SELECT title, a.name AS author, a.id AS author_id, u.name AS publisher, u.id AS publisher_id, publish_date, 
-        i.category_id AS category_id, c.section, c.category, c.subcategory, isbn_id, 
-        i.isbn AS ISBN, b.platform, size, page, p.status, p.price, product_url, cover_photo
+    SELECT title, a.name AS author, a.id AS author_id, u.name AS publisher, u.id AS publisher_id,
+        DATE_FORMAT(publish_date,'%Y-%m-%d') AS publish_date, i.category_id AS category_id, 
+        c.section, c.category, c.subcategory, isbn_id, i.isbn AS ISBN, b.platform, size, page, 
+        p.status, p.price, product_url, cover_photo
     FROM book_info AS b
     INNER JOIN isbn_catalog AS i
     ON i.id = b.isbn_id
@@ -216,7 +219,7 @@ def get_book_comments(isbn_id):
 
 
 def api_book_info(isbn_id):
-    info_list = db.session.execute("""
+    result = db.session.execute("""
     SELECT table_of_content, description, author_intro
     FROM book_info AS b
     LEFT JOIN price_status_info AS p
@@ -224,7 +227,8 @@ def api_book_info(isbn_id):
     INNER JOIN author AS a
     ON a.id = b.author
     WHERE isbn_id = {} and b.platform = 1""".format(isbn_id))
-    return info_list
+
+    return result
 
 
 def search_by_term(term):
