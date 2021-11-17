@@ -133,10 +133,10 @@ body {
   <body>
     <div id="mySidenav" class="sidenav bg-dark " >
       <a class="navbar-brand" style="color: #ffffff;"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/134/6374881134_593a507b-3f0f-498b-bfbe-445b6ef123d8.png?cb=1636943581' style="width: 100%;"></a>
-      <a href="javascript:void(0)" class="closebtn bg-dark" onclick="closeNav()">&times;</a>
       {% for each in nav_sec%}
-        <a href="{{ each }}"><h5 class="section_nav" style="color: #ffffff; font-weight: bold;">{{each}}</h5></a>
+      <a href="{{ each }}"><h5 class="section_nav" style="color: #ffffff; font-weight: bold;">{{each}}</h5></a>
       {% endfor %}
+      <a href="javascript:void(0)" class="closebtn bg-dark" onclick="closeNav()">&times;</a>
     </div>
     
     <div style="margin-top:10px">
