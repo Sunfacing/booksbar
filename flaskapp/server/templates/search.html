@@ -15,7 +15,7 @@
     <body>
         <nav class="navbar bg-dark">
             <a class="navbar-brand" style="color: #ffffff;" href="{{ url_for('index')}}"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/134/6374881134_593a507b-3f0f-498b-bfbe-445b6ef123d8.png?cb=1636943581' style="width: 60%;"></a>
-            <a href="{{ url_for('member') }}" ><i class="fas fa-user-circle navbar-brand" style="color: #ffffff;"></i></a>
+            <a href="{{ url_for('member') }}" ><i class="fas fa-user-circle fa-2x" style="color: #ffffff;"></i></a>
         </nav>
         <main>
             <div id="loading" style="margin: auto; margin-top: 120px;"></div>
@@ -39,25 +39,25 @@
                 {% for category, products in product_list.items() %}
                     <div style="margin-top: 10px; margin-bottom: 10px;">
                         <ul class="breadcrumb bg-dark" style="background-color: #ffffff; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; margin-bottom: 8px;">
-                            <li><a href="" style="margin-right: 10px; font-weight: bold; color:#ffffff">{{ category }}</a></li>
+                            <li style="margin-right: 10px; font-weight: bold; color:#ffffff">{{ category }}</li>
                         </ul>
                     </div>
                     {% for product in products %}
-                        <div class="row no-gutters" style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px; padding: 0px; ">
+                        <div class="card mb-3 w3-animate-opacity" style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px;">
+                            <a href="product/{{product['isbn_id']}}" style="text-decoration: none; color: #000000;">
+                            <div class="row no-gutters" >
                             <div class="col-md-3 " >
-                                <a href="/product/{{ product['isbn_id'] }}">
-                                    <img src="{{product['cover_photo']}}" class="card-img" onerror="this.onerror=null;this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/690/6336618690_75f2170c-b776-469f-9d33-4050ff81a665.png?cb=1636362136'" style="height: 85%; width: 85%; margin-top: 15px; margin-left: 15px;">
-                                </a>    
+                                <img src="{{product['cover_photo']}}" class="card-img" onerror="this.onerror=null;this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/690/6336618690_75f2170c-b776-469f-9d33-4050ff81a665.png?cb=1636362136'" style="height: 85%; width: 85%; margin-top: 15px; margin-left: 15px;">
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="card-body" >
+                                        <h5 class="card-title" style="font-weight: bold;">{{product['title']}}</h5>
+                                        <p class="card-text">{{product['description'][:100]}}....</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-9">
-                                <div class="card-body" >
-                                <a href="/product/{{ product['isbn_id'] }}">
-                                    <h5 class="card-title" style="font-weight: bold;">{{product['title']}}</h5>
-                                </a>    
-                                <p class="card-text">{{product['description'][:100]}}....</p>
-                            </div>
-                            </div>
-                        </div>    
+                            </a>    
+                        </div>   
                     {% endfor %}
                 {% endfor %}
                 </div>
@@ -81,7 +81,12 @@
                     background: url(/static/loadingimage.gif) no-repeat;
                     cursor: wait;
                     }
-              </style>     
+              </style>   
+                <style>
+                    .card:hover {
+                        transform: scale(1.05);
+                        }
+                </style>       
 
             </div>  
         </main>
