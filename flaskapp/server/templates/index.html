@@ -44,14 +44,15 @@
         <div id="content2">
         {% for subset in collections %}
           <div class="container p-3" style="width: 70%;">
-            <div class="row ">
+            <div class="row justify-content-left">
               {% for book in subset %}
-                <div class="card mx-auto" style="width: 15rem; height:70%; border:0px; border-radius: 7px;">
-                  <a href="product/{{ book['isbn_id'] }}" alt=''>
-
-                    <img class="card-img-top p-3" src="{{ book['cover_photo']}}" alt="Card image cap" onerror="this.onerror=null; this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/273/6331341273_aaf6d286-1736-4b10-acfa-95df264d860e.png?cb=1636274683';"">
-
-                  </a>
+              <div class="card" style="width: 15rem; height:70%; border:0px; border-radius: 7px; margin: 10px;">
+                <a href="product/{{ book['isbn_id'] }}" alt='' style="color: #454b50; text-decoration:none">
+                  
+                  <div class="mx-auto d-block" style="vertical-align: middle; height: 240px;">
+                    <img class="card-img-top p-3" src="{{ book['cover_photo']}}" alt="cover_photo" onerror="this.onerror=null; this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/331/6386236331_d0f703de-22e1-44c0-89e4-d49fc78d8899.png?cb=1637118063';">
+                  </div>
+                  
                   <div class="card-body" style="height:8rem; width:20em">
                     {% if book['title'].split('：')[0]| length <= 10 %}
                       <h5 class="card-title" style="font-weight: bold">{{ book['title'].split('：')[0][:10] }}</h5>
@@ -61,6 +62,7 @@
                     <p>作者: {{ book['author'][:10]}}</br>
                     出版日: {{ book['publish_date'].strftime("%Y-%m-%d")}}</p>                    
                   </div>
+                </a>
                 </div>
               {% endfor %} 
               </div> 
