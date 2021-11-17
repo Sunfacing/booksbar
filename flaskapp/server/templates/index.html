@@ -18,7 +18,7 @@
       <main>
           <div id="loading" style="margin: auto;"></div>
           <div id="content">
-          <div class="jumbotron" style="height: 65vh; background: url('https://d3bu8utwyaxpsl.cloudfront.net/bookbar.jpg') no-repeat center center fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover;">
+          <div class="jumbotron " style="height: 65vh; background: url('https://d3bu8utwyaxpsl.cloudfront.net/bookbar.jpg') no-repeat center center fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover;">
             <div class="mx-auto" style="width:80%; position:absolute; top: 32%; left:10%" >
               
               <form class="form-inline p-3" action="/product" >
@@ -35,9 +35,17 @@
           </div>
         
         <div class="btn-group justify-content-end" role="group" aria-label="Basic example" style="width: 90%;">
-          <a class="btn btn-dark my-2 my-sm-0" href="/?period=month" role="button" onclick="loading2();" style="background-color:#454b50; border-color: #454b50; font-weight:bold; border-radius: 7px;">近一個月出版</a>
+          {% if period == 'month' %}
+            <a class="btn btn-dark my-2 my-sm-0" href="/?period=month" role="button" onclick="loading2();" style="background-color:#D52536; border-color: #D52536; font-weight:bold; border-radius: 7px;">近一個月出版</a>
+          {% else %}
+            <a class="btn btn-dark my-2 my-sm-0" href="/?period=month" role="button" onclick="loading2();" style="background-color:#454b50; border-color: #454b50; font-weight:bold; border-radius: 7px;">近一個月出版</a>
+          {% endif %}
           <div style="color:white"> | </div>
+          {% if period == 'new' %}
+            <a class="btn btn-dark my-2 my-sm-0" href="/?period=new" role="button"  onclick="loading2();" style="background-color:#D52536; border-color: #D52536; font-weight:bold; border-radius: 7px;">即將出版</a>
+          {% else %}
           <a class="btn btn-dark my-2 my-sm-0" href="/?period=new" role="button"  onclick="loading2();" style="background-color:#454b50; border-color: #454b50; font-weight:bold; border-radius: 7px;">即將出版</a>
+          {% endif %}
         </div>
         <div id="loading2" style="margin: auto;"></div>
         <div id="content2">
