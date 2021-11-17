@@ -28,7 +28,7 @@ from server.models.user_model import *
 from datetime import timedelta
 import datetime
 import pytz
-
+import random
 
 
 client = boto3.client('s3', region_name='us-east-2')
@@ -53,16 +53,14 @@ EXPIRE = 3600
 # TODAY = datetime.datetime.now(pytz.timezone('US/Pacific')).strftime("%Y-%m-%d")
 TODAY = '2021-11-15'
 BUCKET = 'stylishproject'
-
+MONTH_AGO = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=30)).strftime("%Y-%m-%d")
 
 
 @app.route('/')
 def index(period='month'):
     period = request.args.get('period', period)
-    import random
     random.sample(range(900), 10)
-    month_ago = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=30)).strftime("%Y-%m-%d")
-    data = tuple(random.sample(range(900), 30))
+    data = tuple(random.sample(range(900), 40))
     if period == 'month':
         books = db.session.execute("""SELECT isbn_id, category_id, b.title, b.cover_photo, b.publish_date, b.product_url, a.name AS author FROM isbn_catalog AS i
                                     INNER JOIN book_info AS b
@@ -71,7 +69,7 @@ def index(period='month'):
                                     ON b.author = a.id
                                     WHERE category_id IN {} AND b.platform = 1 and b.publish_date BETWEEN '{}' AND '{}'
                                     ORDER BY publish_date DESC
-                                    LIMIT 40""".format(data, month_ago, TODAY))
+                                    LIMIT 20""".format(data, MONTH_AGO, TODAY))
     else:
         books = db.session.execute("""SELECT isbn_id, category_id, b.title, b.cover_photo, b.publish_date, b.product_url, a.name AS author FROM isbn_catalog AS i
                                     INNER JOIN book_info AS b
@@ -79,7 +77,7 @@ def index(period='month'):
                                     INNER JOIN author AS a
                                     ON b.author = a.id
                                     WHERE b.platform = 1 and b.publish_date > '{}'
-                                    LIMIT 30""".format(TODAY))
+                                    LIMIT 20""".format(TODAY))
 
     collections = []
     row = []
@@ -111,14 +109,12 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
             subcategory = book['subcategory']
             cate_list[category].append(subcategory)
     subcate_list = cate_list[category_nm]
-    if category_nm != 'all' and subcate_nm != 'all':
+    if category_nm != 'all':
         product_list = get_catalog_subcategory(subcate_nm, page=page)
         html_page = 'subcate.html'                                    
-    elif category_nm != 'all' and subcate_nm == 'all':
-        product_list = []   
-        html_page = 'subcate.html'  
+  
     else:
-        return_list = get_catalog_section(section_nm)
+        return_list = get_catalog_section(section_nm, MONTH_AGO, TODAY)
         product_list = []
         for product in return_list:
             product_list.append(product)
@@ -159,7 +155,6 @@ def product(isbn_id=None):
     try:
         isbn_id = request.args.get('isbn_id', isbn_id)
         books = db.session.execute("SELECT * FROM bookbar.category_list")
-        cate_list = defaultdict(list)
         nav_sec = defaultdict(dict)
         for book in books:
             section = book['section']
@@ -180,7 +175,7 @@ def product(isbn_id=None):
                 kingstone['subcategory'] = info['subcategory']
                 kingstone['category_id'] = info['category_id']
                 kingstone['title'] = info['title']
-                kingstone['publish_date']= info['publish_date'].date()
+                kingstone['publish_date']= info['publish_date']
                 kingstone['author'] = info['author']
                 kingstone['author_id'] = info['author_id']
                 kingstone['isbn_id'] = info['isbn_id']
@@ -242,14 +237,18 @@ def book_info(isbn_id=None):
     isbn_id = request.args.get('isbn_id', isbn_id)
     result = api_book_info(isbn_id)
     response = defaultdict(dict)
-    for key in result:
-        
-        response['author_intro'] = key['author_intro']
 
-        response['description'] = key['description']
-        response['table_of_content'] = key['table_of_content']
-        if key['table_of_content'] == 'None':
-            response['table_of_content'] = ''
+
+    for info in result:
+        if info['table_of_content'] == 'None': response['table_of_content'] = "目前無目錄大綱"
+        else: response['table_of_content'] = info['table_of_content']
+
+        if not info['description']: response['description'] = "目前無內容簡介"
+        else: response['description'] = info['description']
+
+        if not info['author_intro']: response['author_intro'] = "目前無作者介紹"
+        else: response['author_intro'] = info['author_intro']
+    
 
     return response
 

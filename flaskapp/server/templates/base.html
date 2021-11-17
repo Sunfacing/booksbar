@@ -146,8 +146,8 @@ body {
     <div class="col-sm-2 " style="margin-left:70px;">
       <a href="{{ current_sec }}?category_nm=all"><h3 style="color: #020202; margin-bottom:20px; margin-top:0px; font-weight: bold;">{{ current_sec }}</h3></a>
       {% for key in cate_list%}
-        {% if key != 'all' %}
-          <a href="?category_nm={{ key }}"><h5 class="section_nav " style="color: #020202;"><h5 class="section_nav" style="color: #000000; font-weight: bold;">{{key}}</h5></a>
+        {% if key != 'all' %}         
+          <a href="?category_nm={{ key }}&subcate_nm={{ cate_list[key][0] }}"><h5 class="section_nav " style="color: #020202;"><h5 class="section_nav" style="color: #000000; font-weight: bold;">{{key}}</h5></a>
           <br>
         {% endif %}
       {% endfor %}
@@ -171,7 +171,7 @@ body {
       {%endif%}
 
         {% block content %}
-
+        
         {% endblock content%}
         
     </div>
