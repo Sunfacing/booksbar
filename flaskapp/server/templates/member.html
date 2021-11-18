@@ -4,6 +4,7 @@
       <title>Booksbar | Member | {{ session['username']}}</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/171/171322.png">
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -14,8 +15,8 @@
   
     </head>
     <body>
-        <nav class="navbar" style="background-color: #5e6472;">
-          <a href="{{ url_for('index')}}" class="navbar-brand" style="color: #ffffff;"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/134/6374881134_593a507b-3f0f-498b-bfbe-445b6ef123d8.png?cb=1636943581' style="width: 60%;"></a>
+        <nav class="navbar" style="background-color: #393d3f;">
+          <a href="{{ url_for('index')}}" class="navbar-brand" style="color: #ffffff;"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/380/6391619380_b1cf68eb-1598-4eb2-987f-bd1ab6196133.png?cb=1637199110' style="width: 60%;"></a>
         </nav>
         <main>
 
@@ -25,61 +26,61 @@
                 <div class="container col-sm-2" style="margin-left:0px; text-align: center;" >
                     <div class="card mb-3" style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px; align-items: center; background-color: #ffffff;">
                         <div class="col-md-7">
-                            <img class="rounded mx-auto d-block" src="https://cdn-user-icons.flaticon.com/10505/10505649/1637149098073.svg?token=exp=1637150034~hmac=4db74dc1b8bea086f9e3a0bd294ac269" style="height: 100%; width: 100%; margin-top: 20px; margin-left: 15px;" > 
+                            <img class="rounded mx-auto d-block" src="https://cdn-user-icons.flaticon.com/20104/20104134/1637202745175.svg?token=exp=1637203646~hmac=0b25f865b527a16c582491fad9a7d050" style="height: 100%; width: 100%; margin-top: 20px; margin-left: 15px;" > 
                         </div>
                         <div class="col-md-9" style="margin-top: 15px; margin-bottom: 15px;">
-                            <h4 style="font-weight: bold; color: #5e6472;">{{ session['username']}}</h4>
+                            <h4 style="font-weight: bold; color: #393d3f;">{{ session['username']}}</h4>
                         </div>
                     </div>
                     <div class="card mb-3" style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px; align-items: center; margin-top: 30px;">
-                        <div class="col-md-7" style="margin-top: 30px; color:#5e6472">
-                            <a href="/member?track_type=0" style="color:#5e6472">
-                                <i class="fas fa-history" id="heart" style="color:#5e6472">  活動紀錄</i>
+                        <div class="col-md-7" style="margin-top: 30px; color:#393d3f">
+                            <a href="/member?track_type=0" style="color:#393d3f">
+                                <i class="fas fa-history" id="heart" style="color:#393d3f">  活動紀錄</i>
                             </a>
                         </div>
                         <div class="col-md-7" style="margin-top: 15px;">
-                            <a href="/member?track_type=1" style="color:#5e6472">
-                                <i class="fas fa-heart" id="heart" style="color:#5e6472">  追蹤分類</i>
+                            <a href="/member?track_type=1" style="color:#393d3f">
+                                <i class="fas fa-heart" id="heart" style="color:#393d3f">  追蹤分類</i>
                             </a>
                         </div>
                         <div class="col-md-7" style="margin-top: 15px;">
-                            <a href="/member?track_type=3" style="color:#5e6472">
+                            <a href="/member?track_type=3" style="color:#393d3f">
                                 <i class="fas fa-pen-nib">  追蹤作者</i>
                             </a>
                         </div>
                         <div class="col-md-7" style="margin-top: 15px;">
-                            <a href="/member?track_type=2" style="color:#5e6472">
+                            <a href="/member?track_type=2" style="color:#393d3f">
                                 <i class="fas fa-tag">  追蹤書籍</i>
                             </a>
                         </div>
                         <div class="col-md-7" style="margin-top: 30px; margin-bottom: 15px;">
                             <a href="{{ url_for('logout') }}">
-                            <button class="btn" type="submit" style="font-weight: bold; background-color: #5e6472; color: #ffffff;">登出</button>
+                            <button class="btn" type="submit" style="font-weight: bold; background-color: #393d3f; color: #ffffff;">登出</button>
                         </a>
                         </div>
                     </div>
                 </div>
                 <div class="container col-sm-6  w3-animate-opacity " style="margin-left:0px;">
                     {% block content %}
-                    <h5 style="background-color: #5e6472; color: white; text-align: center; font-weight: bold; padding: 15px; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px;">各項活動統計</h5>
+                    <h5 style="background-color: #393d3f; color: white; text-align: center; font-weight: bold; padding: 15px; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px;">各項活動統計</h5>
                     {% if activity_counts | length == 0 %}
-                        <h2 class="d-flex justify-content-center" style="font-weight: bold; margin-top: 30vh; color:#5e6472">目前尚未有任何活動紀錄</h2>
+                        <h2 class="d-flex justify-content-center" style="font-weight: bold; margin-top: 30vh; color:#393d3f">目前尚未有任何活動紀錄</h2>
                     {% else %}            
                         <div class="row d-flex justify-content-center" style="margin-bottom: 30px;">
                         {% for type_name, counts in activity_counts.items() %}
                           <div class="" style="width: 22%; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px; padding: 0px; margin-left:10px; margin-right:10px">
                             <div class="" style="font-weight: bold; padding: 0px; margin-top: 10px;">
-                                <h1 class="card-title d-flex justify-content-center counter" style="font-weight: bold; padding: 0px; font-size: 4rem; color:#5e6472" data-target="{{ counts }}">0</h1>            
-                                <h5 class="card-title d-flex justify-content-center" style="font-weight: bold; padding: 0px; margin-top: 10px; color:#5e6472">{{ type_name }}</h5>                       
+                                <h1 class="card-title d-flex justify-content-center counter" style="font-weight: bold; padding: 0px; font-size: 4rem; color:#393d3f" data-target="{{ counts }}">0</h1>            
+                                <h5 class="card-title d-flex justify-content-center" style="font-weight: bold; padding: 0px; margin-top: 10px; color:#393d3f">{{ type_name }}</h5>                       
                             </div>
                           </div>
                         {% endfor %} 
                         </div> 
-                        <h5 style="background-color: #5e6472; color: white; text-align: center; font-weight: bold; padding: 15px; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px;">最近20筆閱覽紀錄</h5>
+                        <h5 style="background-color: #393d3f; color: white; text-align: center; font-weight: bold; padding: 15px; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px;">最近20筆閱覽紀錄</h5>
 
                         <div class="row d-flex justify-content-center">
                             {% for isbn_id, product in browse_history.items() %}
-                            <div class="row no-gutters" style="width:95%; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px; padding: 0px; color:#5e6472 ">
+                            <div class="row no-gutters" style="width:95%; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px; padding: 0px; color:#393d3f ">
                                 <div class="col-md-3 " >
                                     <a href="product/{{ isbn_id }}">
                                         <img src="{{product['cover_photo']}}" class="card-img" onerror="this.onerror=null;this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/690/6336618690_75f2170c-b776-469f-9d33-4050ff81a665.png?cb=1636362136'" style="height: 85%; width: 85%; margin-top: 15px; margin-left: 15px;">
@@ -88,9 +89,9 @@
                                 <div class="col-md-9">
                                     <div class="card-body" >
                                     <a href="product/{{ isbn_id }}">
-                                        <h5 class="card-title" style="font-weight: bold; color: #5e6472;">{{product['title']}}</h5>
+                                        <h5 class="card-title" style="font-weight: bold; color: #393d3f;">{{product['title']}}</h5>
                                     </a>    
-                                    <p class="card-text" style="color: #5e6472;">{{product['description'][:100]}}....</p>
+                                    <p class="card-text" style="color: #393d3f;">{{product['description'][:100]}}....</p>
                                    </div>
                                 </div>
                             </div>

@@ -2,11 +2,11 @@
 
 {% block content %}
     {% if books | length == 0 %}
-        <h2 class="d-flex justify-content-center" style="font-weight: bold; margin-top: 30vh; color:#5e6472">目前尚未追蹤任何書籍</h2>
+        <h2 class="d-flex justify-content-center" style="font-weight: bold; margin-top: 30vh; color:#393d3f">目前尚未追蹤任何書籍</h2>
     {% endif %}
     {% for category, products in books.items() %}
         <div style="margin-bottom: 30px; ">
-            <ul class="breadcrumb " style="background-color: #5e6472; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; margin-bottom: 8px;">
+            <ul class="breadcrumb " style="background-color: #393d3f; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; margin-bottom: 8px;">
                 <li><a href="" style="margin-right: 10px; font-weight: bold; color:#ffffff">{{ category }}</a></li>
             </ul>    
             {% for isbn_id, info in products.items() %}
@@ -20,7 +20,7 @@
                     <div class="row">
                         <div class="card-body" style="padding-bottom: 0px; margin-left: 30px; margin-right: 30px; margin-top: 20px;">
                             <a href="product/{{ isbn_id }}">
-                                <h5 class="card-title" style="font-weight: bold; color: #5e6472;">{{info['title']}}</h5>
+                                <h5 class="card-title" style="font-weight: bold; color: #393d3f;">{{info['title']}}</h5>
                             </a>    
                         </div>
                     </div>
@@ -28,7 +28,7 @@
                         <div class="container col-3" style="text-align: center;">
                             <img src="https://linepaytw-cms.line-scdn.net/v0/fc8cb09e193cc3f5a8e7ebc6910debd296aacb3d84e1f1a2891dd45444a03855.png" style="width: 50%; height: 50%;">
                             {% if info['ks_price'] %} 
-                                <h4 style="color: #E34234; font-weight: bold;">{{info['ks_price']}} 元</h4><a href="{{info['ks_price']}}" class="btn" style="color:white; font-weight: bold; background-color: #5e6472;">前往網站</a>
+                                <h4 style="color: #E34234; font-weight: bold;">{{info['ks_price']}} 元</h4><a href="{{info['ks_price']}}" class="btn" style="color:white; font-weight: bold; background-color: #393d3f;">前往網站</a>
                             {% else %}
                                 <h4 style="color: #ffffff; font-weight: bold;">{{info['ks_price']}}</h4><button type="button" class="btn btn-default" style="font-weight: bold;">暫無存貨</button>
                             {% endif %}
@@ -38,18 +38,18 @@
                             <img src="https://meet.eslite.com/Content/Images/ThemePavilion/eslite-logo.jpg" style="width: 50%; height: 50%; ">
 
                             {% if info['es_price'] %} 
-                                <h4 style="color: #E34234; font-weight: bold;">{{info['es_price']}} 元</h4><a href="{{info['es_price']}}" class="btn" style="color:white; font-weight: bold; background-color: #5e6472;">前往網站</a>
+                                <h4 style="color: #E34234; font-weight: bold;">{{info['es_price']}} 元</h4><a href="{{info['es_price']}}" class="btn" style="color:white; font-weight: bold; background-color: #393d3f;">前往網站</a>
                             {% else %}
-                                <h4 style="color: #ffffff; font-weight: bold;">{{info['es_price']}}</h4><button type="button" class="btn btn-default" style="color: #5e6472;; font-weight: bold;">暫無存貨</button>
+                                <h4 style="color: #ffffff; font-weight: bold;">{{info['es_price']}}</h4><button type="button" class="btn btn-default" style="color: #393d3f;; font-weight: bold;">暫無存貨</button>
                             {% endif %}
                         </div>
                         
                         <div class="container col-3" style="text-align: center;">
                             <img src="https://www.esunbank.com.tw/bank/-/media/esunbank-mobile/images/discount/shops/b_onlineshop/2008.jpg" style="width: 50%; height: 50%;">
                             {% if info['mm_price'] %} 
-                                <h4 style="color: #E34234; font-weight: bold;">{{info['mm_price']}} 元</h4><a href="{{info['mm_price']}}" class="btn" style="color:white; font-weight: bold; background-color: #5e6472;">前往網站</a>
+                                <h4 style="color: #E34234; font-weight: bold;">{{info['mm_price']}} 元</h4><a href="{{info['mm_price']}}" class="btn" style="color:white; font-weight: bold; background-color: #393d3f;">前往網站</a>
                             {% else %}
-                                <h4 style="color: #ffffff; font-weight: bold;">{{info['mm_price']}} 元</h4><button type="button" class="btn btn-default" style="color: #5e6472; font-weight: bold;">暫無存貨</button>
+                                <h4 style="color: #ffffff; font-weight: bold;">{{info['mm_price']}} 元</h4><button type="button" class="btn btn-default" style="color: #393d3f; font-weight: bold;">暫無存貨</button>
                             {% endif %}
                         </div>
                     </div>

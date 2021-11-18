@@ -10,6 +10,7 @@
   {% endif %}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/171/171322.png">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -64,8 +65,8 @@ body {
 </style>
 </head>
 <body>
-  <nav class="navbar" style="background-color: #5e6472;">
-    <a class="navbar-brand" style="color: #ffffff;" href="{{ url_for('index')}}"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/134/6374881134_593a507b-3f0f-498b-bfbe-445b6ef123d8.png?cb=1636943581' style="width: 60%;"></a>
+  <nav class="navbar" style="background-color: #393d3f;">
+    <a class="navbar-brand" style="color: #ffffff;" href="{{ url_for('index')}}"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/380/6391619380_b1cf68eb-1598-4eb2-987f-bd1ab6196133.png?cb=1637199110' style="width: 60%;"></a>
     <a href="{{ url_for('member') }}" ><i class="fas fa-user-circle fa-2x" style="color: #ffffff;"></i></a>
 </nav>
 <style>
@@ -131,23 +132,23 @@ body {
   </style>
   </head>
   <body>
-    <div id="mySidenav" class="sidenav" style="background-color: #89B0AE;">
-      <a class="navbar-brand" style="color: #ffffff; text-decoration: none;"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/134/6374881134_593a507b-3f0f-498b-bfbe-445b6ef123d8.png?cb=1636943581' style="width: 100%;"></a>
+    <div id="mySidenav" class="sidenav" style="background-color: #393d3f;">
+      <a class="navbar-brand" style="color: #393d3f; text-decoration: none;"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/380/6391619380_b1cf68eb-1598-4eb2-987f-bd1ab6196133.png?cb=1637199110' style="width: 100%;"></a>
       {% for each in nav_sec%}
       <a href="{{ each }}"><h5 class="section_nav" style="color: #ffffff; font-weight: bold; text-decoration: none;">{{each}}</h5></a>
       {% endfor %}
-      <a href="javascript:void(0)" class="closebtn" style="background-color: #89B0AE; text-decoration: none;" onclick="closeNav()">&times;</a>
+      <a href="javascript:void(0)" class="closebtn" style="background-color: #393d3f; text-decoration: none;" onclick="closeNav()">&times;</a>
     </div>
     
     <div style="margin-top:10px">
     </div>
-    <span class="navbtn btn my-2 my-sm-0" href="#" role="button" onclick="openNav()" style="font-weight:bold; height:80px; border-radius: 7px; background-color: #89B0AE; color: #ffffff;">分<br>類<br>表</span>
+    <span class="navbtn btn my-2 my-sm-0" href="#" role="button" onclick="openNav()" style="font-weight:bold; height:80px; border-radius: 7px; background-color: #393d3f; color: #ffffff;">分<br>類<br>表</span>
   <div class="row">
     <div class="col-sm-2 " style="margin-left:70px;">
-      <a href="{{ current_sec }}?category_nm=all" style=" text-decoration: none;"><h3 style="color: #5e6472; margin-bottom:20px; margin-top:0px; font-weight: bold;">{{ current_sec }}</h3></a>
+      <a href="{{ current_sec }}?category_nm=all" style=" text-decoration: none;"><h3 style="color: #393d3f; margin-bottom:20px; margin-top:0px; font-weight: bold;">{{ current_sec }}</h3></a>
       {% for key in cate_list%}
         {% if key != 'all' %}         
-          <a href="?category_nm={{ key }}&subcate_nm={{ cate_list[key][0] }}" style="text-decoration: none;"><h5 class="section_nav" style="color: #5e6472; font-weight: bold;">{{key}}</h5></a>
+          <a href="?category_nm={{ key }}&subcate_nm={{ cate_list[key][0] }}" style="text-decoration: none;"><h5 class="section_nav" style="color: #393d3f; font-weight: bold;">{{key}}</h5></a>
           <br>
         {% endif %}
       {% endfor %}
@@ -160,9 +161,9 @@ body {
             <div class="col " >
               {% for subcate in subcate_list %}
                 {% if subcate == current_sub %}
-                  <a href="?category_nm={{ current_cate }}&subcate_nm={{ subcate }}" class="btn" style="margin:1px; background-color: #89B0AE; color:#f1f1f1; border-radius: 5px; font-weight: bold;" >{{ subcate }}</a>
+                  <a href="?category_nm={{ current_cate }}&subcate_nm={{ subcate }}" class="btn" style="margin:1px; background-color: #cc444b; color:#f1f1f1; border-radius: 5px; font-weight: bold;" >{{ subcate }}</a>
                 {% else %}
-                  <a href="?category_nm={{ current_cate }}&subcate_nm={{ subcate }}"class="btn" style="margin:1px; background-color: #5e6472; color:#f1f1f1; border-radius: 5px; font-weight: bold;">{{ subcate }}</a>                  
+                  <a href="?category_nm={{ current_cate }}&subcate_nm={{ subcate }}"class="btn" style="margin:1px; background-color: #393d3f; color:#f1f1f1; border-radius: 5px; font-weight: bold;">{{ subcate }}</a>                  
                 {% endif %}
               {% endfor %}
             </div>  
@@ -199,7 +200,7 @@ body {
       font-size: 18px;
       border: none;
       outline: none;
-      background-color: #5e6472;
+      background-color: #393d3f;
       color: #ffffff;
       cursor: pointer;
       padding: 10px;
@@ -210,7 +211,7 @@ body {
     }
     
     #myBtn:hover {
-      background-color: #89B0AE;
+      background-color: #cc444b;
     }
     </style>
   <script>

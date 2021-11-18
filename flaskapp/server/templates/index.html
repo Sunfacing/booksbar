@@ -4,6 +4,7 @@
       <title>Booksbar</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/171/171322.png">
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -11,8 +12,8 @@
       <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     </head>
     <body>
-      <nav class="navbar" style="background-color: #5e6472;">
-        <a class="navbar-brand" style="color: #ffffff;" href="{{ url_for('index')}}"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/134/6374881134_593a507b-3f0f-498b-bfbe-445b6ef123d8.png?cb=1636943581' style="width: 60%;"></a>
+      <nav class="navbar" style="background-color: #393d3f;">
+        <a class="navbar-brand" style="color: #ffffff;" href="{{ url_for('index')}}"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/380/6391619380_b1cf68eb-1598-4eb2-987f-bd1ab6196133.png?cb=1637199110' style="width: 60%;"></a>
         <a href="{{ url_for('member') }}" ><i class="fas fa-user-circle fa-2x" style="color: #ffffff"></i></a>
     </nav>
       <main>
@@ -23,11 +24,11 @@
               
               <form class="form-inline p-3" action="/product" >
                 <input id="question" class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="search" required />
-                <button class="btn my-2 my-sm-0" type="submit" onclick="loading(); " style="background-color:#5e6472; border-color: #5e6472; color:#ffffff ; font-weight:bold">搜尋書名</button>
+                <button class="btn my-2 my-sm-0" type="submit" onclick="loading(); " style="background-color:#393d3f; border-color: #393d3f; color:#ffffff ; font-weight:bold">搜尋書名</button>
               </form>
 
               <form class="form-inline p-3">
-                <a class="btn my-2 my-sm-0" href="/文學?category=現代華文創作" role="button" style="background-color:#89B0AE; border-color: #89B0AE; color:#ffffff ;font-weight:bold">查看全部分類</a>
+                <a class="btn my-2 my-sm-0" href="/文學?category=現代華文創作" role="button" style="background-color:#393d3f; border-color: #393d3f; color:#ffffff ;font-weight:bold">查看全部分類</a>
               </form>
               <br><br>
               <p class="text-xl-right" style="color: #ffffff; font-weight: bold; font-size:large;">你可能不知道自己要的是什麼，但是，要先知道自己，不要什麼。<br>                                  –《走在夢想的路上》．謝哲青</p>
@@ -36,15 +37,15 @@
         
         <div class="btn-group justify-content-end" role="group" aria-label="Basic example" style="width: 90%;">
           {% if period == 'month' %}
-            <a class="btn btn-dark my-2 my-sm-0" href="/?period=month" role="button" onclick="loading2();" style="background-color:#89B0AE; border-color: #89B0AE; font-weight:bold; border-radius: 7px;">近一個月出版</a>
+            <a class="btn btn-dark my-2 my-sm-0" href="/?period=month" role="button" onclick="loading2();" style="background-color:#cc444b; border-color: #cc444b; font-weight:bold; border-radius: 7px;">近一個月出版</a>
           {% else %}
-            <a class="btn btn-dark my-2 my-sm-0" href="/?period=month" role="button" onclick="loading2();" style="background-color:#5e6472; border-color: #5e6472; font-weight:bold; border-radius: 7px;">近一個月出版</a>
+            <a class="btn btn-dark my-2 my-sm-0" href="/?period=month" role="button" onclick="loading2();" style="background-color:#393d3f; border-color: #393d3f; font-weight:bold; border-radius: 7px;">近一個月出版</a>
           {% endif %}
           <div style="color:white"> | </div>
           {% if period == 'new' %}
-            <a class="btn btn-dark my-2 my-sm-0" href="/?period=new" role="button"  onclick="loading2();" style="background-color:#89B0AE; border-color: #89B0AE; font-weight:bold; border-radius: 7px;">即將出版</a>
+            <a class="btn btn-dark my-2 my-sm-0" href="/?period=new" role="button"  onclick="loading2();" style="background-color:#cc444b; border-color: #cc444b; font-weight:bold; border-radius: 7px;">即將出版</a>
           {% else %}
-          <a class="btn btn-dark my-2 my-sm-0" href="/?period=new" role="button"  onclick="loading2();" style="background-color:#5e6472; border-color: #5e6472; font-weight:bold; border-radius: 7px;">即將出版</a>
+          <a class="btn btn-dark my-2 my-sm-0" href="/?period=new" role="button"  onclick="loading2();" style="background-color:#393d3f; border-color: #393d3f; font-weight:bold; border-radius: 7px;">即將出版</a>
           {% endif %}
         </div>
         <div id="loading2" style="margin: auto;"></div>
@@ -54,7 +55,7 @@
             <div class="row justify-content-center">
               {% for book in subset %}
               <div class="card" style="width: 15rem; height:70%; border:0px; border-radius: 7px; margin: 10px;">
-                <a href="product/{{ book['isbn_id'] }}" alt='' style="color: #454b50; text-decoration:none">
+                <a href="product/{{ book['isbn_id'] }}" alt='' style="color: #393d3f; text-decoration:none">
                   
                   <div class="mx-auto d-block" style="vertical-align: middle; height: 240px;">
                     <img class="card-img-top p-3" src="{{ book['cover_photo']}}" alt="cover_photo" onerror="this.onerror=null; this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/331/6386236331_d0f703de-22e1-44c0-89e4-d49fc78d8899.png?cb=1637118063';">
@@ -124,6 +125,7 @@
         .card:hover {
             transform: scale(1.05);
           }
+
       </style>     
 
     </body>
