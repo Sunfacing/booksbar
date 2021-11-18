@@ -66,7 +66,7 @@
                     {% if activity_counts | length == 0 %}
                         <h2 class="d-flex justify-content-center" style="font-weight: bold; margin-top: 30vh; color:#393d3f">目前尚未有任何活動紀錄</h2>
                     {% else %}            
-                        <div class="row d-flex justify-content-center" style="margin-bottom: 30px;">
+                        <div class="row d-flex justify-content-center">
                         {% for type_name, counts in activity_counts.items() %}
                           <div class="" style="width: 22%; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px; padding: 0px; margin-left:10px; margin-right:10px">
                             <div class="" style="font-weight: bold; padding: 0px; margin-top: 10px;">
@@ -78,9 +78,9 @@
                         </div> 
                         <h5 style="background-color: #393d3f; color: white; text-align: center; font-weight: bold; padding: 15px; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px;">最近20筆閱覽紀錄</h5>
 
-                        <div class="row d-flex justify-content-center">
-                            {% for isbn_id, product in browse_history.items() %}
-                            <div class="row no-gutters" style="width:95%; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px; padding: 0px; color:#393d3f ">
+                        {% for isbn_id, product in browse_history.items() %}
+                        <div class="row d-flex justify-content-center" style="margin-bottom: 15px;">
+                            <div class="row no-gutters" style="width:95%; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px; padding: 0px; color:#393d3f;">
                                 <div class="col-md-3 " >
                                     <a href="product/{{ isbn_id }}">
                                         <img src="{{product['cover_photo']}}" class="card-img" onerror="this.onerror=null;this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/690/6336618690_75f2170c-b776-469f-9d33-4050ff81a665.png?cb=1636362136'" style="height: 85%; width: 85%; margin-top: 15px; margin-left: 15px;">
@@ -95,18 +95,8 @@
                                    </div>
                                 </div>
                             </div>
-                          {% endfor %}                             
                         </div>
-
-
-
-
-
-
-
-
-
-
+                          {% endfor %}                             
 
                     {% endif %}
                     <script>
