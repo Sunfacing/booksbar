@@ -95,24 +95,10 @@ class PipelineTrack(db.Model):
     quantity = db.Column(db.Integer)
     minutes = db.Column(db.Integer)
 
-class TitleSearch(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(255))
 
-
-
-# class HotItemRecom(db.Model):
-#     id = db.Column(db.Integer, primary_key=True) 
-#     level = db.Column(db.String(30)) 
-#     ks_pid = db.Column(db.Integer, ForeignKey('ks_book_info.id'))
-#     es_pid = db.Column(db.Integer, ForeignKey('es_book_info.id'))
-
-
-# class NewItemRecom(db.Model):
-#     id = db.Column(db.Integer, primary_key=True) 
-#     level = db.Column(db.String(30)) 
-#     ks_pid = db.Column(db.Integer, ForeignKey('ks_book_info.id'))
-#     es_pid = db.Column(db.Integer, ForeignKey('es_book_info.id'))
+class HotItemRecom(db.Model):
+    id = db.Column(db.Integer, primary_key=True) 
+    book_id = db.Column(db.Integer, ForeignKey('book_info.id'))
 
 
 
