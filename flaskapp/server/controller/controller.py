@@ -58,6 +58,7 @@ MONTH_AGO = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(day
 
 @app.route('/')
 def index(period='month'):
+    # db.session.execute('alter table book_info ADD FULLTEXT INDEX title (`title`) with parser ngram')
     period = request.args.get('period', period)
     random.sample(range(900), 10)
     data = tuple(random.sample(range(900), 40))

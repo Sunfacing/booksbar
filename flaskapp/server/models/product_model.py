@@ -1,7 +1,7 @@
 from collections import defaultdict
 from server import db
 from sqlalchemy import ForeignKey
-from sqlalchemy.schema import UniqueConstraint
+from sqlalchemy.schema import UniqueConstraint, Index
 
 
 class CategoryList(db.Model):
@@ -33,7 +33,7 @@ class BookInfo(db.Model):
     platform = db.Column(db.Integer, ForeignKey('platform.id'), nullable=False)
     platform_product_id = db.Column(db.String(255), primary_key=True, nullable=False)
     create_date = db.Column(db.DateTime, nullable=False) 
-    title = db.Column(db.String(255), nullable=False)
+    title = db.Column(db.String(255), nullable=False, index = True)
     author = db.Column(db.Integer, ForeignKey('author.id'))
     publisher = db.Column(db.Integer, ForeignKey('publisher.id'))
     size = db.Column(db.String(30))
@@ -44,12 +44,15 @@ class BookInfo(db.Model):
     cover_photo = db.Column(db.String(255))
     page = db.Column(db.Integer)
     product_url = db.Column(db.String(255))
+    __table_args__ = (Index('title', title, mysql_prefix='FULLTEXT', mysql_with_parser="ngram"),)
+
 
 
 class Author(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
     name = db.Column(db.String(100))
     platform = db.Column(db.Integer, ForeignKey('platform.id'))
+    __table_args__ = (Index('name', name, mysql_prefix='FULLTEXT', mysql_with_parser="ngram"),)
 
 
 class Publisher(db.Model):
@@ -92,8 +95,9 @@ class PipelineTrack(db.Model):
     quantity = db.Column(db.Integer)
     minutes = db.Column(db.Integer)
 
-
-
+class TitleSearch(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255))
 
 
 
@@ -241,9 +245,29 @@ def search_by_term(term):
     ON i.category_id = c.id
     INNER JOIN author AS a
     ON b.author = a.id
-	WHERE b.id IN (SELECT id FROM book_info WHERE platform = 1 AND title LIKE "%{}%")""".format(term))
+	WHERE MATCH (title) AGAINST('{}' IN boolean mode ) AND b.platform = 1""".format(term))
 
     return result
+
+
+def search_by_author(name):
+    result = db.session.execute("""
+    SELECT c.category, isbn_id, title, cover_photo, a.name AS author, description 
+    FROM book_info AS b
+    INNER JOIN isbn_catalog AS i
+    ON b.isbn_id = i.id
+    INNER JOIN category_list AS c
+    ON i.category_id = c.id
+    INNER JOIN author AS a
+    ON b.author = a.id
+	WHERE b.platform = 1 AND a.name = '{}'""".format(name))
+    return result
+
+
+
+
+
+
 
 
 
@@ -257,3 +281,5 @@ def daily_result(date):
     ON t.platform = p.id
     WHERE p.platform not IN ('original', 'promotional')""".format(date))
     return result
+
+
