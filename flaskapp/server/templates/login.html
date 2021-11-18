@@ -4,13 +4,14 @@
   <title>Booksbar | 會員登入</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="https://cdn-user-icons.flaticon.com/20104/20104134/1637199578250.svg?token=exp=1637200479~hmac=6e4b81543244a4dac2e6e6e987fac033">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
-  <nav class="navbar" style="background-color: #5e6472;">
+  <nav class="navbar" style="background-color: #393d3f;">
     <a class="navbar-brand" style="color: #ffffff;" href="{{ url_for('index')}}"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/134/6374881134_593a507b-3f0f-498b-bfbe-445b6ef123d8.png?cb=1636943581' style="width: 60%;"></a>
   </nav>
 
@@ -19,11 +20,11 @@
       <div class="front">
         <div class="container" style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; margin-top: 50px; padding: 30px; width: 40%;" >
           {% if msg != '' %}
-            <div class="alert " style="background-color: #f55969; color: #ffffff;">
+            <div class="alert " style="background-color: #cc444b; color: #ffffff;">
               <strong>{{msg}}</strong>
             </div>
           {% endif %}  
-          <h3 style="font-weight: bold; color:#5e6472">書友登入</h3>
+          <h3 style="font-weight: bold; color:#393d3f">書友登入</h3>
           <form action="{{ url_for('login')}}" method="post">
             <div class="form-group">
               <label for="email">Email:</label>
@@ -33,8 +34,8 @@
               <label for="pwd">Password:</label>
               <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="password" required>
             </div>
-            <button type="submit" class="btn" style="background-color: #89B0AE ;color:white; font-weight: bold; margin-right: 30px;">登入</button>
-            <a style="color: #89B0AE; font-weight: bold; " class="flipbutton" id="loginButton" >還不是書友? 新會員註冊</a>
+            <button type="submit" class="btn" style="background-color: #393d3f ;color:white; font-weight: bold; margin-right: 30px;">登入</button>
+            <a style="color: #393d3f; font-weight: bold; " class="flipbutton" id="loginButton" >還不是書友? 新會員註冊</a>
           </form>
         </div>
       </div>
@@ -46,7 +47,7 @@
               <strong>{{msg}}</strong>
             </div>
           {% endif %}  
-          <h3 style="font-weight: bold; color:#5e6472">新書友註冊</h3>
+          <h3 style="font-weight: bold; color:#393d3f">新書友註冊</h3>
           <form action="{{ url_for('signup')}}" method="post">
             <div class="form-group">
               <label for="email">Email:</label>
@@ -56,8 +57,8 @@
               <label for="pwd">Password:</label>
               <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="password" required>
             </div>
-            <button type="submit" class="btn" style="background-color: #89B0AE; color:white; font-weight: bold; margin-right: 30px;">註冊</button>
-            <a style="color: #89B0AE; font-weight: bold; " class="flipbutton" id="registerButton" >已是書友? 前往登入</a>
+            <button type="submit" class="btn" style="background-color: #393d3f; color:white; font-weight: bold; margin-right: 30px;">註冊</button>
+            <a style="color: #393d3f; font-weight: bold; " class="flipbutton" id="registerButton" >已是書友? 前往登入</a>
           </form>
         </div>
       </div>
