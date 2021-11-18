@@ -89,7 +89,7 @@ def index(period='month'):
         row.append(book)
         i += 1
     collections.append(row)
-    return render_template('index.html', collections=collections)
+    return render_template('index.html', collections=collections, period=period)
     
 
 @app.route('/<section_nm>', methods=['GET'])
@@ -334,21 +334,26 @@ def login():
         password = form['password']
         try:
             user = UserInfo.query.filter_by(email=email).first()
-        except Exception as e:
-            print(e)
+        except:
+            msg = "帳號或密碼有誤, 請重新嘗試"
+            return render_template('login.html', msg=msg)
+        try:
+            if user and bcrypt.check_password_hash(user.password, password):
+                session['loggedin'] = True
+                session['id'] = user.id
+                session['username'] = user.username
+                return redirect(url_for('index'))
+            elif user or bcrypt.check_password_hash(user.password, password):
+                msg = "帳號或密碼有誤, 請重新嘗試"
+                return render_template('login.html', msg=msg)
 
-        if user and bcrypt.check_password_hash(user.password, password):
-            session['loggedin'] = True
-            session['id'] = user.id
-            session['username'] = user.username
-            return redirect(url_for('index'))
-        elif user and bcrypt.check_password_hash(user.password, password):
+            else:
+                msg = "請先註冊"
+                return render_template('login.html', msg=msg)
+        except:
             msg = "帳號或密碼有誤, 請重新嘗試"
             return render_template('login.html', msg=msg)
 
-        else:
-            msg = "請先註冊"
-            return render_template('login.html', msg=msg)
     return render_template('login.html', msg='')
 
 
@@ -369,23 +374,34 @@ def signup():
         email = form['email']
         username = email.split('@')[0]
         password = form['password']
-        user = UserInfo.query.filter_by(email=email).first()
-        if user:
-            msg = '此帳號已註冊'
-        else:
-            try:
-                password = bcrypt.generate_password_hash(password)
-                user = UserInfo(email=email, password=password, username=username, source='native', token='')
-                db.session.add(user)
-                db.session.commit()
-                user = UserInfo.query.filter_by(email=email).first()
-                session['loggedin'] = True
-                session['id'] = user.id
-                session['username'] = user.username
-            except Exception as e:
-                print(e)
-            return redirect(url_for('index'))
-    return render_template('signup.html', msg=msg) 
+        try:
+            user = UserInfo.query.filter_by(email=email).first()        
+            if user:
+                msg = '此帳號已註冊'
+            elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
+                msg = 'E-mail 格式有誤'
+            elif not re.match(r'[A-Za-z0-9]+', password):
+                msg = '請勿使用空白建'
+            elif not password or not email:
+                msg = '請完整填入E-mail與密碼'
+            else:
+                try:
+                    password = bcrypt.generate_password_hash(password)
+                    user = UserInfo(email=email, password=password, username=username, source='native', token='')
+                    db.session.add(user)
+                    db.session.commit()
+                    user = UserInfo.query.filter_by(email=email).first()
+                    session['loggedin'] = True
+                    session['id'] = user.id
+                    session['username'] = user.username
+                except Exception:
+                    msg = '請勿包含空白鍵'
+                    return render_template('login.html', msg=msg) 
+                return redirect(url_for('index'))
+        except:
+            msg = '輸入格式有誤'
+            return render_template('login.html', msg=msg) 
+    return render_template('login.html', msg=msg) 
 
 
 
@@ -444,3 +460,28 @@ def search(search=None):
         else: product_list[categroy].append(data)
         count += 1
     return render_template('search.html', product_list=product_list, term=term, count=count)
+
+
+
+@app.route('/author')
+def author(name=None):
+    name = request.args.get('name', name)
+    try:
+        result = search_by_author(name)
+        product_list = defaultdict(dict)
+        count = 0
+        for product in result:
+            categroy = product['category']
+            data = {
+            'isbn_id': product['isbn_id'],
+            'title': product['title'],
+            'cover_photo': product['cover_photo'],
+            'author': product['author'],
+            'description': product['description'],
+            }
+            if not product_list[categroy]: product_list[categroy] = [data]
+            else: product_list[categroy].append(data)
+            count += 1
+    except Exception as e:
+        print(e)
+    return render_template('search.html', product_list=product_list, term=name, count=count)
