@@ -51,12 +51,13 @@ r= redis.Redis.from_url('redis://flaskproject.gtlinm.0001.use2.cache.amazonaws.c
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'jfif'])
 EXPIRE = 3600
 # TODAY = datetime.datetime.now(pytz.timezone('US/Pacific')).strftime("%Y-%m-%d")
-TODAY = '2021-11-15'
+TODAY = '2021-11-06'
+YESTERDAY = (datetime.datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 BUCKET = 'stylishproject'
 MONTH_AGO = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=30)).strftime("%Y-%m-%d")
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index(period='month'):
     # db.session.execute('alter table book_info ADD FULLTEXT INDEX title (`title`) with parser ngram')
     period = request.args.get('period', period)
@@ -93,7 +94,7 @@ def index(period='month'):
     return render_template('index.html', collections=collections, period=period)
     
 
-@app.route('/<section_nm>', methods=['GET'])
+@app.route('/<section_nm>', methods=['GET', 'POST'])
 def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
     section_nm = request.args.get('section_nm', section_nm)
     category_nm = request.args.get('category_nm', category_nm)
@@ -151,9 +152,10 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
 
 
 
-@app.route('/product/<isbn_id>')
+@app.route('/product/<isbn_id>', methods=['GET', 'POST'])
 def product(isbn_id=None):
     try:
+        print(session, 'currently')
         isbn_id = request.args.get('isbn_id', isbn_id)
         books = db.session.execute("SELECT * FROM bookbar.category_list")
         nav_sec = defaultdict(dict)
@@ -167,7 +169,7 @@ def product(isbn_id=None):
         try:
             info_list = get_book_info(isbn_id=isbn_id, date=TODAY)
         except:
-            info_list = get_book_info(isbn_id=isbn_id, date='2021-11-06')
+            info_list = get_book_info(isbn_id=isbn_id, date=YESTERDAY)
         for info in info_list:
             platform = info['platform']
             if platform == 1:
@@ -324,90 +326,158 @@ def member(track_type=0):
 
 
 
+@app.route('/api/login', methods=['GET', 'POST'])
+def login(email=None, pwd=None):
+    
+    email = request.args.get('email', email)
+    password = request.args.get('pwd', pwd)
+    response = defaultdict(dict)
+    try:
+        user = UserInfo.query.filter_by(email=email).first()
+        if user and bcrypt.check_password_hash(user.password, password):           
+            session['loggedin'] = True
+            session['id'] = user.id
+            session['username'] = user.username
+            response['response'] = 'ok'
+            return response
+        else: 
+            response['response'] = "帳號或密碼有誤, 請重新嘗試"
+            return response
+
+    except:
+        response['response'] = "帳號或密碼有誤, 請重新嘗試"
+        return response
 
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    form = request.form
-    if request.method == 'POST' and 'email' in form and 'password' in form:
-        email = form['email']
-        password = form['password']
-        try:
-            user = UserInfo.query.filter_by(email=email).first()
-        except:
-            msg = "帳號或密碼有誤, 請重新嘗試"
-            return render_template('login.html', msg=msg)
-        try:
-            if user and bcrypt.check_password_hash(user.password, password):
+
+@app.route('/api/register', methods=['GET', 'POST'])
+def register(email=None, pwd=None):
+    email = request.args.get('email', email)
+    password = request.args.get('pwd', pwd)
+    username = email.split('@')[0]
+
+    response = defaultdict(dict)
+    response['response'] = "帳號或密碼有誤, 請重新嘗試"
+    try:
+        user = UserInfo.query.filter_by(email=email).first()        
+        if user:
+            response['response'] = '此帳號已註冊'
+        elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
+            response['response'] = 'E-mail 格式有誤'
+        elif not re.match(r'[A-Za-z0-9]+', password):
+            response['response'] = '請勿使用空白建'
+        elif not password or not email:
+            response['response'] = '請完整填入E-mail與密碼'
+        else:
+            try:
+                password = bcrypt.generate_password_hash(password)
+                user = UserInfo(email=email, password=password, username=username, source='native', token='')
+                db.session.add(user)
+                db.session.commit()
+                user = UserInfo.query.filter_by(email=email).first()
                 session['loggedin'] = True
                 session['id'] = user.id
                 session['username'] = user.username
-                return redirect(url_for('index'))
-            elif user or bcrypt.check_password_hash(user.password, password):
-                msg = "帳號或密碼有誤, 請重新嘗試"
-                return render_template('login.html', msg=msg)
+                
+                response['response'] = 'ok' 
+                print(response, session)
+            except Exception:
+                response['response'] = '請勿包含空白鍵'
+                return response
+            return response
+        print('1')
+    except:
+        response['response'] = '輸入格式有誤'
+        return response
+    print('2')
+    return response 
+            
 
-            else:
-                msg = "請先註冊"
-                return render_template('login.html', msg=msg)
-        except:
-            msg = "帳號或密碼有誤, 請重新嘗試"
-            return render_template('login.html', msg=msg)
 
-    return render_template('login.html', msg='')
+
+
+# @app.route('/login', methods=['GET', 'POST'])
+# def login():
+#     form = request.form
+#     if request.method == 'POST' and 'email' in form and 'password' in form:
+#         email = form['email']
+#         password = form['password']
+#         try:
+#             user = UserInfo.query.filter_by(email=email).first()
+#         except:
+#             msg = "帳號或密碼有誤, 請重新嘗試"
+#             return render_template('login.html', msg=msg)
+#         try:
+#             if user and bcrypt.check_password_hash(user.password, password):
+#                 session['loggedin'] = True
+#                 session['id'] = user.id
+#                 session['username'] = user.username
+#                 return redirect(url_for('index'))
+#             elif user or bcrypt.check_password_hash(user.password, password):
+#                 msg = "帳號或密碼有誤, 請重新嘗試"
+#                 return render_template('login.html', msg=msg)
+
+#             else:
+#                 msg = "請先註冊"
+#                 return render_template('login.html', msg=msg)
+#         except:
+#             msg = "帳號或密碼有誤, 請重新嘗試"
+#             return render_template('login.html', msg=msg)
+
+#     return render_template('login.html', msg='')
 
 
 
 @app.route('/logout')
 def logout():
+    session.pop('id', None)
+    session.pop('username', None)
     session.pop('loggedin', None)
-    session.pop('email', None)
-    session.pop('password', None)
     return redirect(url_for('index'))
 
 
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    form = request.form
-    msg = ''
-    if request.method == 'POST' and 'email' in form and 'password' in form:
-        email = form['email']
-        username = email.split('@')[0]
-        password = form['password']
-        try:
-            user = UserInfo.query.filter_by(email=email).first()        
-            if user:
-                msg = '此帳號已註冊'
-            elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
-                msg = 'E-mail 格式有誤'
-            elif not re.match(r'[A-Za-z0-9]+', password):
-                msg = '請勿使用空白建'
-            elif not password or not email:
-                msg = '請完整填入E-mail與密碼'
-            else:
-                try:
-                    password = bcrypt.generate_password_hash(password)
-                    user = UserInfo(email=email, password=password, username=username, source='native', token='')
-                    db.session.add(user)
-                    db.session.commit()
-                    user = UserInfo.query.filter_by(email=email).first()
-                    session['loggedin'] = True
-                    session['id'] = user.id
-                    session['username'] = user.username
-                except Exception:
-                    msg = '請勿包含空白鍵'
-                    return render_template('login.html', msg=msg) 
-                return redirect(url_for('index'))
-        except:
-            msg = '輸入格式有誤'
-            return render_template('login.html', msg=msg) 
-    return render_template('login.html', msg=msg) 
+# @app.route('/signup', methods=['GET', 'POST'])
+# def signup():
+#     form = request.form
+#     msg = ''
+#     if request.method == 'POST' and 'email' in form and 'password' in form:
+#         email = form['email']
+#         username = email.split('@')[0]
+#         password = form['password']
+#         try:
+#             user = UserInfo.query.filter_by(email=email).first()        
+#             if user:
+#                 msg = '此帳號已註冊'
+#             elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
+#                 msg = 'E-mail 格式有誤'
+#             elif not re.match(r'[A-Za-z0-9]+', password):
+#                 msg = '請勿使用空白建'
+#             elif not password or not email:
+#                 msg = '請完整填入E-mail與密碼'
+#             else:
+#                 try:
+#                     password = bcrypt.generate_password_hash(password)
+#                     user = UserInfo(email=email, password=password, username=username, source='native', token='')
+#                     db.session.add(user)
+#                     db.session.commit()
+#                     user = UserInfo.query.filter_by(email=email).first()
+#                     session['loggedin'] = True
+#                     session['id'] = user.id
+#                     session['username'] = user.username
+#                 except Exception:
+#                     msg = '請勿包含空白鍵'
+#                     return render_template('login.html', msg=msg) 
+#                 return redirect(url_for('index'))
+#         except:
+#             msg = '輸入格式有誤'
+#             return render_template('login.html', msg=msg) 
+#     return render_template('login.html', msg=msg) 
 
 
 
 
-@app.route('/api/favorite', methods=['POST'])
+@app.route('/api/favorite', methods=['GET', 'POST'])
 def add_to_favorite(subcate=None, author=None, price=None):
     response = defaultdict(dict)
     if 'loggedin' in session:
@@ -442,7 +512,7 @@ def add_to_favorite(subcate=None, author=None, price=None):
         return response
 
 
-@app.route('/product')
+@app.route('/product', methods=['GET', 'POST'])
 def search(search=None):
     term = request.args.get('search', search)
     result = search_by_term(term)
@@ -464,7 +534,7 @@ def search(search=None):
 
 
 
-@app.route('/author')
+@app.route('/author', methods=['GET', 'POST'])
 def author(name=None):
     name = request.args.get('name', name)
     try:

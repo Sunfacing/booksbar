@@ -67,8 +67,13 @@ body {
 <body>
   <nav class="navbar" style="background-color: #393d3f;">
     <a class="navbar-brand" style="color: #ffffff;" href="{{ url_for('index')}}"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/380/6391619380_b1cf68eb-1598-4eb2-987f-bd1ab6196133.png?cb=1637199110' style="width: 60%;"></a>
-    <a href="{{ url_for('member') }}" ><i class="fas fa-user-circle fa-2x" style="color: #ffffff;"></i></a>
-</nav>
+    {% if 'loggedin' in session %}
+      <a href="/member"><i class="fas fa-user-circle fa-2x" style="color: #ffffff" ></i></a>        
+    {% else %}
+      <a onclick="document.getElementById('id01').style.display='block'" ><i class="fas fa-user-circle fa-2x" style="color: #ffffff" ></i></a>
+    {% endif %}
+  </nav>
+  {% include 'login.html' %}
 <style>
   body {
     font-family: "Lato", sans-serif;

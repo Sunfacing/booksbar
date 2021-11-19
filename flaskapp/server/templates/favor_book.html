@@ -4,9 +4,10 @@
     {% if books | length == 0 %}
         <h2 class="d-flex justify-content-center" style="font-weight: bold; margin-top: 30vh; color:#393d3f">目前尚未追蹤任何書籍</h2>
     {% endif %}
+    <div id="tracker" style="background-color: #ffffff;">
     {% for category, products in books.items() %}
-        <div style="margin-bottom: 30px; ">
-            <ul class="breadcrumb " style="background-color: #393d3f; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; margin-bottom: 8px;">
+        <div style="margin-bottom: 30px;">
+            <ul class="breadcrumb " style="background-color: #393d3f; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; margin-bottom: 8px; position: sticky; top: 0; z-index: 1;">
                 <li><a href="" style="margin-right: 10px; font-weight: bold; color:#ffffff">{{ category }}</a></li>
             </ul>    
             {% for isbn_id, info in products.items() %}
@@ -14,16 +15,69 @@
                 <div class="col-md-3" >
                     <a href="product/{{ isbn_id }}">
                         <img src="{{info['cover_photo']}}" class="card-img" onerror="this.onerror=null;this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/674/6392009674_d59d0209-6c03-4b75-9084-0e5fffb34183.png?cb=1637205240'" style="height:80%; width: 100%; margin-top: 35px; margin-left: 15px;">
-                    </a>    
+                    </a> 
+                      
                 </div>
                 <div class="col-md-9">
                     <div class="row">
-                        <div class="card-body" style="padding-bottom: 0px; margin-left: 30px; margin-right: 30px; margin-top: 20px;">
-                            <a href="product/{{ isbn_id }}">
-                                <h5 class="card-title" style="font-weight: bold; color: #393d3f;">{{info['title']}}</h5>
-                            </a>    
+                        <div class="col-md-10" >
+                            <div class="card-body" style="padding-bottom: 0px; margin-left: 30px; margin-right: 30px; margin-top: 20px;">
+                                <a href="product/{{ isbn_id }}"><h5 class="card-title" style="font-weight: bold; color: #393d3f;">{{info['title']}}</h5></a> 
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="card-body" style="padding-bottom: 0px; margin-left: 30px; margin-right: 30px; margin-top: 20px;">
+                                <button type="button" class="btn btn-check row " value="?price={{ isbn_id }}"><i class="fas fa-tag" style="color:#ffffff;"></i></button> 
+                            </div>
                         </div>
                     </div>
+                    <style>
+                        .btn-check{
+                          background-color: #cc444b;
+                          border-color: #cc444b;
+                        }
+            
+                    </style>
+                    <script>
+                    var tracker = document.getElementById('tracker')
+                    
+                    let button_tag;
+                    let icon_tag;
+                    tracker.addEventListener('click', (e) => {
+                        if (e.target.tagName == 'I') {
+                        icon_tag = e.target
+                        button_tag = e.target.parentNode
+                        value = e.target.parentNode.value; 
+                        } else if (e.target.tagName == 'BUTTON') {
+                        button_tag = e.target
+                        icon_tag = e.target.firstChild
+                        value = e.target.value;
+                        } else {
+                        value = 0;
+                        }
+                        if ( value != 0) {
+                        var api = "/api/favorite"+ value;
+        
+                        fetch(api, {method:'POST'})
+                            .then(response => response.json())
+                            .then(set_favorite)}
+                    })
+        
+        
+                    function set_favorite(result) {
+                        if (result.response == 'added') {
+                            button_tag.className = button_tag.className.replace("btn-basic", "btn-check");
+                            icon_tag.style.color = "#ffffff"
+                        } else if ( result.response == 'cancelled') {
+                            button_tag.className = button_tag.className.replace("btn-check", "btn-basic");
+                            icon_tag.style.color = "#393d3f"                  
+                        } else {
+                            alert('請先登入')
+                            document.getElementById('id01').style.display='block'
+                        }
+                    }
+                    </script>
+
                     <div class="row" style="margin-bottom: 20px;">
                         <div class="container col-3" style="text-align: center;">
                             <img src="https://linepaytw-cms.line-scdn.net/v0/fc8cb09e193cc3f5a8e7ebc6910debd296aacb3d84e1f1a2891dd45444a03855.png" style="width: 50%; height: 50%;">
@@ -40,7 +94,7 @@
                             {% if info['es_price'] %} 
                                 <h4 style="color: #E34234; font-weight: bold;">{{info['es_price']}} 元</h4><a href="{{info['es_price']}}" class="btn" style="color:white; font-weight: bold; background-color: #393d3f;">前往網站</a>
                             {% else %}
-                                <h4 style="color: #ffffff; font-weight: bold;">{{info['es_price']}}</h4><button type="button" class="btn btn-default" style="color: #393d3f;; font-weight: bold;">暫無存貨</button>
+                                <h4 style="color: #ffffff; font-weight: bold;">{{info['es_price']}} 元</h4><button type="button" class="btn btn-default" style="color: #393d3f;; font-weight: bold;">暫無存貨</button>
                             {% endif %}
                         </div>
                         
@@ -59,4 +113,5 @@
             {% endfor %}
         </div>
     {% endfor %}
+    </div>
 {% endblock content%}

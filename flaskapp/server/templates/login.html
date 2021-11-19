@@ -1,91 +1,111 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>Booksbar | 會員登入</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" href="https://cdn-user-icons.flaticon.com/20104/20104134/1637199578250.svg?token=exp=1637200479~hmac=6e4b81543244a4dac2e6e6e987fac033">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</head>
-<body>
-  <nav class="navbar" style="background-color: #393d3f;">
-    <a class="navbar-brand" style="color: #ffffff;" href="{{ url_for('index')}}"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/134/6374881134_593a507b-3f0f-498b-bfbe-445b6ef123d8.png?cb=1636943581' style="width: 60%;"></a>
-  </nav>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  <div class="flip-container">
-    <div class="flipper" id="flipper">
-      <div class="front">
-        <div class="container" style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; margin-top: 50px; padding: 30px; width: 40%;" >
-          {% if msg != '' %}
-            <div class="alert " style="background-color: #cc444b; color: #ffffff;">
-              <strong>{{msg}}</strong>
-            </div>
-          {% endif %}  
-          <h3 style="font-weight: bold; color:#393d3f">書友登入</h3>
-          <form action="{{ url_for('login')}}" method="post">
-            <div class="form-group">
-              <label for="email">Email:</label>
-              <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" required>
-            </div>
-            <div class="form-group">
-              <label for="pwd">Password:</label>
-              <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="password" required>
-            </div>
-            <button type="submit" class="btn" style="background-color: #393d3f ;color:white; font-weight: bold; margin-right: 30px;">登入</button>
-            <a style="color: #393d3f; font-weight: bold; " class="flipbutton" id="loginButton" >還不是書友? 前往註冊</a>
-          </form>
+
+<div id="id01" class="modal">
+    <div class="flip-container animate">
+      <div class="flipper" id="flipper">
+        <div class="front">
+          <div class="container" style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; margin-top: 50px; padding: 30px; width: 40%;" >
+
+            <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+            <h3 style="font-weight: bold; color:#393d3f">會員登入</h3>
+            <form action="" method="post">
+              <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" placeholder="Enter email" id="loginMail" name="email" required>
+              </div>
+              <div class="form-group">
+                <label for="pwd">Password:</label>
+                <input type="password" class="form-control" placeholder="Enter password" id="loginPwd" name="password" required>
+              </div>
+              <button class="btn login" onclick="login()" style="background-color: #393d3f ;color:white; font-weight: bold; margin-right: 30px;">登入</button>
+              <a style="color: #393d3f; font-weight: bold; " class="flipbutton" id="loginButton" >還沒有帳號? 前往註冊</a>
+            </form>
+          </div>
+        </div>
+
+        <div class="back">      
+          <div class="container" style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; margin-top: 50px; padding: 30px; width: 40%;" >
+
+            <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+            <h3 style="font-weight: bold; color:#393d3f">新會員註冊</h3>
+            <form action="" method="post">
+              <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" id="registerMail" placeholder="Enter email" name="email" required>
+              </div>
+              <div class="form-group">
+                <label for="pwd">Password:</label>
+                <input type="password" class="form-control" id="registerPwd" placeholder="Enter password" name="password" required>
+              </div>
+              <button class="btn login" onclick="register()" style="background-color: #393d3f; color:white; font-weight: bold; margin-right: 30px;">註冊</button>
+              <a style="color: #393d3f; font-weight: bold; " class="flipbutton" id="registerButton" >已有帳號? 前往登入</a>
+            </form>
+          </div>
         </div>
       </div>
+    </div>   
+  </div>
+<script>
 
-      <div class="back">
-        <div class="container" style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; margin-top: 50px; padding: 30px; width: 40%;" >
-          {% if msg != '' %}
-            <div class="alert " style="background-color: #f55969; color: #ffffff;">
-              <strong>{{msg}}</strong>
-            </div>
-          {% endif %}  
-          <h3 style="font-weight: bold; color:#393d3f">新書友註冊</h3>
-          <form action="{{ url_for('signup')}}" method="post">
-            <div class="form-group">
-              <label for="email">Email:</label>
-              <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" required>
-            </div>
-            <div class="form-group">
-              <label for="pwd">Password:</label>
-              <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="password" required>
-            </div>
-            <button type="submit" class="btn" style="background-color: #393d3f; color:white; font-weight: bold; margin-right: 30px;">註冊</button>
-            <a style="color: #393d3f; font-weight: bold; " class="flipbutton" id="registerButton" >已是書友? 前往登入</a>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>   
+    var loginButton = document.getElementById("loginButton");
+    var registerButton = document.getElementById("registerButton");
+
+    loginButton.onclick = function(){
+      document.querySelector("#flipper").classList.toggle("flip");
+    }
+
+    registerButton.onclick = function(){
+      document.querySelector("#flipper").classList.toggle("flip");
+    }
+</script>
+<script>
+  // Get the modal
+  var modal = document.getElementById('id01');
   
-  <script>
-
-      var loginButton = document.getElementById("loginButton");
-      var registerButton = document.getElementById("registerButton");
-
-      loginButton.onclick = function(){
-        document.querySelector("#flipper").classList.toggle("flip");
-      }
-
-      registerButton.onclick = function(){
-        document.querySelector("#flipper").classList.toggle("flip");
-      }
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
   </script>
+  <script>
+    function login(){
+      // document.getElementById('id01').style.display='none'
+      var email = document.getElementById("loginMail").value;
+      var pwd = document.getElementById("loginPwd").value;
+      if ( email != 0 && pwd != 0) {
+        var api_member = "/api/login"+ "?email=" + email + "&pwd=" + pwd;
+        fetch(api_member, {method:'POST'})
+              .then(response => response.json())
+              .then(alert('登入成功'))
+              .finally(location.reload())              
+      }
+    }
 
+    function register(){
+      // document.getElementById('id01').style.display='none'
+      var email = document.getElementById("registerMail").value;
+      var pwd = document.getElementById("registerPwd").value;
+      
+      if ( email != 0 && pwd != 0) {
+        var api_member = "/api/register"+ "?email=" + email + "&pwd=" + pwd;
+        fetch(api_member, {method:'POST'})
+            .then(response => response.json())
+            .then(alert('註冊成功'))
+            .finally(location.reload())
+
+      }
+    }
+</script>
 
 
 
 <style>
 
   .flipper {
-    padding: 30px;
+
     position: relative;
       background: #ffffff;
       -webkit-border-radius: 20px;
@@ -96,10 +116,10 @@
     transform-style: preserve-3d;
   }
 
-  .front, .back {
+  .front, .back{
     /*background-color: rgba(0,0,0,.3);*/
     position: absolute;
-      padding:10px 30px;
+    padding:10px 30px;
     top: 0;
     left: 0;
     right: 0;
@@ -125,11 +145,120 @@
   }
 </style>  
 
+<style>
 
+  /* Set a style for all buttons */
+  button.login {
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    opacity: 0.9;
+  }
+  
+  button.login:hover {
+    opacity:1;
+  }
+  
+  /* Extra styles for the cancel button */
+  .cancelbtn {
+    padding: 14px 20px;
+    background-color: #f44336;
+  }
+  
+  /* Float cancel and signup buttons and add an equal width */
+  .cancelbtn, .signupbtn {
+    float: left;
+    width: 50%;
+  }
+  
+  /* Add padding to container elements */
+  .container {
+    padding: 16px;
+    background-color: #ffffff;
+  }
+  
+  /* The Modal (background) */
+  .modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.4);
+    padding-top: 50px;
+  }
+  
+  /* Modal Content/Box */
+  .modal-content {
+    background-color: #fefefe;
+    margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+  }
+  
+  /* Style the horizontal ruler */
+  hr {
+    border: 1px solid #f1f1f1;
+    margin-bottom: 25px;
+  }
+   
+  /* The Close Button (x) */
+  .close {
+    position: relative;
 
+    font-size: 40px;
+    font-weight: bold;
+    color: #bd2f2f;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: #f44336;
+    cursor: pointer;
+  }
+  
+  /* Clear floats */
+  .clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+  
+  /* Change styles for cancel button and signup button on extra small screens */
+  @media screen and (max-width: 300px) {
+    .cancelbtn, .signupbtn {
+       width: 100%;
+    }
+  }
+  .animate {
+  -webkit-animation: animatezoom 0.6s;
+  animation: animatezoom 0.6s
+}
+@-webkit-keyframes animatezoom {
+  from {-webkit-transform: scale(0)} 
+  to {-webkit-transform: scale(1)}
+}
+  
+@keyframes animatezoom {
+  from {transform: scale(0)} 
+  to {transform: scale(1)}
+}
 
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px) {
+  span.psw {
+     display: block;
+     float: none;
+  }
+  .cancelbtn {
+     width: 100%;
+  }
+}
+</style>
 
-
-
-</body>
-</html>
