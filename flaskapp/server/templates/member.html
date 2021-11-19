@@ -62,7 +62,7 @@
                 </div>
                 <div class="container col-sm-6  w3-animate-opacity " style="margin-left:0px;">
                     {% block content %}
-                    <h5 style="background-color: #393d3f; color: white; text-align: center; font-weight: bold; padding: 15px; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px;">各項活動統計</h5>
+                    <h5 style="background-color: #393d3f; color: white; text-align: center; font-weight: bold; padding: 15px; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px;  position: sticky; top: 0; z-index: 1;">各項活動統計</h5>
                     {% if activity_counts | length == 0 %}
                         <h2 class="d-flex justify-content-center" style="font-weight: bold; margin-top: 30vh; color:#393d3f">目前尚未有任何活動紀錄</h2>
                     {% else %}            
@@ -76,7 +76,7 @@
                           </div>
                         {% endfor %} 
                         </div> 
-                        <h5 style="background-color: #393d3f; color: white; text-align: center; font-weight: bold; padding: 15px; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px;">最近20筆閱覽紀錄</h5>
+                        <h5 style="background-color: #393d3f; color: white; text-align: center; font-weight: bold; padding: 15px; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px;  position: sticky; top: 0; z-index: 1;">最近20筆閱覽紀錄</h5>
 
                         {% for isbn_id, product in browse_history.items() %}
                         <div class="row d-flex justify-content-center" style="margin-bottom: 15px;">
