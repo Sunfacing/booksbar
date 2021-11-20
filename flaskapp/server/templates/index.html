@@ -65,6 +65,13 @@
                   <div class="mx-auto d-block" style="vertical-align: middle; height: 240px;">
                     <img class="card-img-top p-3" src="{{ book['cover_photo']}}" alt="cover_photo" onerror="this.onerror=null; this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/674/6392009674_d59d0209-6c03-4b75-9084-0e5fffb34183.png?cb=1637205240';">
                   </div>
+                  <div class="overlay">
+                    {% if book['description'] | length == 0 %}
+                      <div class="text" style="white-space: pre-line; font-size: smaller; width: 90%; text-align: center;"> 目前無內容介紹 </div>
+                    {% else %}
+                      <div class="text" style="white-space: pre-line; font-size: smaller; width: 90%;"> {{book['description'][:120]}}...</div>
+                    {% endif %}
+                  </div>
                   
                   <div class="card-body" style="height:8rem; width:20em">
                     {% if book['title'].split('：')[0]| length <= 10 %}
@@ -85,11 +92,6 @@
       </div>
       </main>
       
-      <style>
-        .card {
-          box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2);
-        }
-      </style>
 
       <script type="text/javascript">
         function loading(){
@@ -126,12 +128,51 @@
             cursor: wait;
             }
       </style>  
-      <style>
-        .card:hover {
-            transform: scale(1.05);
-          }
+    
+<style>
+  .card {
+    box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2);
+    position: relative;
+    width: 50%;
+  }
+  .card:hover {
+    transform: scale(1.1);
+  }
+  .image {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  
+  .overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    transition: .5s ease;
+    background-color: #393d3f;
+    border-radius: 7px;
+  }
+  
+  .card:hover .overlay {
+    opacity: 0.95;
+  }
+  
+  .text {
+    color: #ffffff;
+    position: relative;
+    top: 40%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    text-align: left;
+  }
+  </style>
 
-      </style>     
-
-    </body>
+  </body>
   </html>
