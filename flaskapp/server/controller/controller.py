@@ -155,7 +155,6 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
 @app.route('/product/<isbn_id>', methods=['GET', 'POST'])
 def product(isbn_id=None):
     try:
-        print(session, 'currently')
         isbn_id = request.args.get('isbn_id', isbn_id)
         books = db.session.execute("SELECT * FROM bookbar.category_list")
         nav_sec = defaultdict(dict)
@@ -326,11 +325,12 @@ def member(track_type=0):
 
 
 
-@app.route('/api/login', methods=['GET', 'POST'])
+@app.route('/api/login', methods=['POST'])
 def login(email=None, pwd=None):
     
     email = request.args.get('email', email)
     password = request.args.get('pwd', pwd)
+    print(email, password)
     response = defaultdict(dict)
     try:
         user = UserInfo.query.filter_by(email=email).first()
@@ -338,14 +338,17 @@ def login(email=None, pwd=None):
             session['loggedin'] = True
             session['id'] = user.id
             session['username'] = user.username
-            response['response'] = 'ok'
+            response['response'] = '登入成功'
+            print(response)
             return response
         else: 
             response['response'] = "帳號或密碼有誤, 請重新嘗試"
+            print(response)
             return response
 
     except:
         response['response'] = "帳號或密碼有誤, 請重新嘗試"
+        print(response)
         return response
 
 
@@ -380,17 +383,14 @@ def register(email=None, pwd=None):
                 session['id'] = user.id
                 session['username'] = user.username
                 
-                response['response'] = 'ok' 
-                print(response, session)
+                response['response'] = '註冊成功' 
             except Exception:
                 response['response'] = '請勿包含空白鍵'
                 return response
             return response
-        print('1')
     except:
         response['response'] = '輸入格式有誤'
         return response
-    print('2')
     return response 
             
 

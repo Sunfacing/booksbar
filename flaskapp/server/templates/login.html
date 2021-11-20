@@ -9,18 +9,18 @@
 
             <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
             <h3 style="font-weight: bold; color:#393d3f">會員登入</h3>
-            <form action="" method="post">
+            <div class="login">
               <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" class="form-control" placeholder="Enter email" id="loginMail" name="email" required>
+                <input type="email" class="form-control" placeholder="Enter email" id="loginMail" name="email" value="{{ value }}" required>
               </div>
               <div class="form-group">
                 <label for="pwd">Password:</label>
                 <input type="password" class="form-control" placeholder="Enter password" id="loginPwd" name="password" required>
               </div>
-              <button class="btn login" onclick="login()" style="background-color: #393d3f ;color:white; font-weight: bold; margin-right: 30px;">登入</button>
+              <button class="btn login" id="login" style="background-color: #393d3f ;color:white; font-weight: bold; margin-right: 30px;">登入</button>
               <a style="color: #393d3f; font-weight: bold; " class="flipbutton" id="loginButton" >還沒有帳號? 前往註冊</a>
-            </form>
+            </div>
           </div>
         </div>
 
@@ -29,7 +29,7 @@
 
             <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
             <h3 style="font-weight: bold; color:#393d3f">新會員註冊</h3>
-            <form action="" method="post">
+            <div class="register">
               <div class="form-group">
                 <label for="email">Email:</label>
                 <input type="email" class="form-control" id="registerMail" placeholder="Enter email" name="email" required>
@@ -38,16 +38,15 @@
                 <label for="pwd">Password:</label>
                 <input type="password" class="form-control" id="registerPwd" placeholder="Enter password" name="password" required>
               </div>
-              <button class="btn login" onclick="register()" style="background-color: #393d3f; color:white; font-weight: bold; margin-right: 30px;">註冊</button>
+              <button class="btn login" id="register" style="background-color: #393d3f; color:white; font-weight: bold; margin-right: 30px;">註冊</button>
               <a style="color: #393d3f; font-weight: bold; " class="flipbutton" id="registerButton" >已有帳號? 前往登入</a>
-            </form>
+            </div>
           </div>
         </div>
       </div>
     </div>   
   </div>
 <script>
-
     var loginButton = document.getElementById("loginButton");
     var registerButton = document.getElementById("registerButton");
 
@@ -71,33 +70,49 @@
   }
   </script>
   <script>
-    function login(){
-      // document.getElementById('id01').style.display='none'
+
+    function checker(result) {
+                if (result.response == '登入成功' || result.response == '註冊成功' ) {
+                    document.getElementById('id01').style.display='none'
+                    Swal.fire('Welcome', result.response, 'success')
+                    location.reload()
+                } else {
+                  document.getElementById('id01').style.display='none'
+                  Swal.fire('Oops..', result.response, 'error')
+                }
+            }
+
+    var loginBtn = document.getElementById('login')
+    loginBtn.addEventListener('click', (e) => {
       var email = document.getElementById("loginMail").value;
       var pwd = document.getElementById("loginPwd").value;
       if ( email != 0 && pwd != 0) {
         var api_member = "/api/login"+ "?email=" + email + "&pwd=" + pwd;
-        fetch(api_member, {method:'POST'})
+        fetch(api_member, {method:'POST', headers: { Accept: 'application/json'}})
               .then(response => response.json())
-              .then(alert('登入成功'))
-              .finally(location.reload())              
-      }
-    }
+              .then(checker)
+    }})
 
-    function register(){
-      // document.getElementById('id01').style.display='none'
+
+    var registerBtn = document.getElementById('register')
+    registerBtn.addEventListener('click', (e) => {
       var email = document.getElementById("registerMail").value;
       var pwd = document.getElementById("registerPwd").value;
-      
       if ( email != 0 && pwd != 0) {
         var api_member = "/api/register"+ "?email=" + email + "&pwd=" + pwd;
-        fetch(api_member, {method:'POST'})
-            .then(response => response.json())
-            .then(alert('註冊成功'))
-            .finally(location.reload())
+        fetch(api_member, {method:'POST', headers: { Accept: 'application/json'}})
+              .then(response => response.json())
+              .then(checker)
+    }})
 
-      }
+
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
     }
+
+
+
+
 </script>
 
 
