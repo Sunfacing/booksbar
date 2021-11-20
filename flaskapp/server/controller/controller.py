@@ -20,7 +20,7 @@ import redis
 from server import app, bcrypt
 from server import db
 import boto3
-from collections import defaultdict
+from collections import UserList, defaultdict
 
 
 from server.models.product_model import *
@@ -58,28 +58,14 @@ MONTH_AGO = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(day
 
 
 @app.route('/', methods=['GET', 'POST'])
-def index(period='month'):
-    # db.session.execute('alter table book_info ADD FULLTEXT INDEX title (`title`) with parser ngram')
+def index(period='month', user_id='0'):
     period = request.args.get('period', period)
-    random.sample(range(900), 10)
-    data = tuple(random.sample(range(900), 40))
-    if period == 'month':
-        books = db.session.execute("""SELECT isbn_id, category_id, b.title, b.cover_photo, b.publish_date, b.product_url, a.name AS author FROM isbn_catalog AS i
-                                    INNER JOIN book_info AS b
-                                    ON i.id = b.isbn_id
-                                    INNER JOIN author AS a
-                                    ON b.author = a.id
-                                    WHERE category_id IN {} AND b.platform = 1 and b.publish_date BETWEEN '{}' AND '{}'
-                                    ORDER BY publish_date DESC
-                                    LIMIT 20""".format(data, MONTH_AGO, TODAY))
+    user_id = request.args.get('user_id', user_id)
+    if user_id != '0':
+        books = homepage_by_track(period, TODAY, MONTH_AGO, user_id)
     else:
-        books = db.session.execute("""SELECT isbn_id, category_id, b.title, b.cover_photo, b.publish_date, b.product_url, a.name AS author FROM isbn_catalog AS i
-                                    INNER JOIN book_info AS b
-                                    ON i.id = b.isbn_id
-                                    INNER JOIN author AS a
-                                    ON b.author = a.id
-                                    WHERE b.platform = 1 and b.publish_date > '{}'
-                                    LIMIT 20""".format(TODAY))
+        books = homepage_by_all(period, TODAY, MONTH_AGO)
+
 
     collections = []
     row = []
@@ -91,8 +77,10 @@ def index(period='month'):
         row.append(book)
         i += 1
     collections.append(row)
-    return render_template('index.html', collections=collections, period=period)
+    return render_template('index.html', collections=collections, period=period, user_id=user_id)
     
+
+
 
 @app.route('/<section_nm>', methods=['GET', 'POST'])
 def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
@@ -339,16 +327,13 @@ def login(email=None, pwd=None):
             session['id'] = user.id
             session['username'] = user.username
             response['response'] = '登入成功'
-            print(response)
             return response
         else: 
             response['response'] = "帳號或密碼有誤, 請重新嘗試"
-            print(response)
             return response
 
     except:
         response['response'] = "帳號或密碼有誤, 請重新嘗試"
-        print(response)
         return response
 
 
@@ -395,84 +380,12 @@ def register(email=None, pwd=None):
             
 
 
-
-
-# @app.route('/login', methods=['GET', 'POST'])
-# def login():
-#     form = request.form
-#     if request.method == 'POST' and 'email' in form and 'password' in form:
-#         email = form['email']
-#         password = form['password']
-#         try:
-#             user = UserInfo.query.filter_by(email=email).first()
-#         except:
-#             msg = "帳號或密碼有誤, 請重新嘗試"
-#             return render_template('login.html', msg=msg)
-#         try:
-#             if user and bcrypt.check_password_hash(user.password, password):
-#                 session['loggedin'] = True
-#                 session['id'] = user.id
-#                 session['username'] = user.username
-#                 return redirect(url_for('index'))
-#             elif user or bcrypt.check_password_hash(user.password, password):
-#                 msg = "帳號或密碼有誤, 請重新嘗試"
-#                 return render_template('login.html', msg=msg)
-
-#             else:
-#                 msg = "請先註冊"
-#                 return render_template('login.html', msg=msg)
-#         except:
-#             msg = "帳號或密碼有誤, 請重新嘗試"
-#             return render_template('login.html', msg=msg)
-
-#     return render_template('login.html', msg='')
-
-
-
 @app.route('/logout')
 def logout():
     session.pop('id', None)
     session.pop('username', None)
     session.pop('loggedin', None)
     return redirect(url_for('index'))
-
-
-# @app.route('/signup', methods=['GET', 'POST'])
-# def signup():
-#     form = request.form
-#     msg = ''
-#     if request.method == 'POST' and 'email' in form and 'password' in form:
-#         email = form['email']
-#         username = email.split('@')[0]
-#         password = form['password']
-#         try:
-#             user = UserInfo.query.filter_by(email=email).first()        
-#             if user:
-#                 msg = '此帳號已註冊'
-#             elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
-#                 msg = 'E-mail 格式有誤'
-#             elif not re.match(r'[A-Za-z0-9]+', password):
-#                 msg = '請勿使用空白建'
-#             elif not password or not email:
-#                 msg = '請完整填入E-mail與密碼'
-#             else:
-#                 try:
-#                     password = bcrypt.generate_password_hash(password)
-#                     user = UserInfo(email=email, password=password, username=username, source='native', token='')
-#                     db.session.add(user)
-#                     db.session.commit()
-#                     user = UserInfo.query.filter_by(email=email).first()
-#                     session['loggedin'] = True
-#                     session['id'] = user.id
-#                     session['username'] = user.username
-#                 except Exception:
-#                     msg = '請勿包含空白鍵'
-#                     return render_template('login.html', msg=msg) 
-#                 return redirect(url_for('index'))
-#         except:
-#             msg = '輸入格式有誤'
-#             return render_template('login.html', msg=msg) 
-#     return render_template('login.html', msg=msg) 
 
 
 
