@@ -2,7 +2,7 @@ from collections import defaultdict
 from server import db
 from sqlalchemy import ForeignKey
 from sqlalchemy.schema import UniqueConstraint, Index
-
+import random
 
 class CategoryList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -99,6 +99,74 @@ class PipelineTrack(db.Model):
 class HotItemRecom(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
     book_id = db.Column(db.Integer, ForeignKey('book_info.id'))
+
+
+
+
+def homepage_by_track(period, today, month_ago, user_id):
+    if period == 'month':
+        books = db.session.execute("""
+                SELECT isbn_id, i.category_id, c.category ,b.title, b.description, b.cover_photo, b.publish_date, b.product_url, a.name AS author  FROM user_favorite AS u
+                INNER JOIN category_list AS c
+                ON u.type_id = c.id
+                INNER JOIN isbn_catalog AS i
+                ON c.id = i.category_id
+                INNER JOIN book_info AS b
+                ON i.id = b.isbn_id
+                INNER JOIN author AS a
+                ON b.author = a.id
+                WHERE u.user_id = {} AND u.track_type = 1 AND b.platform = 1 and b.publish_date BETWEEN '{}' AND '{}'
+                ORDER BY publish_date DESC""".format(user_id, month_ago, today))
+    else:
+        books = db.session.execute("""
+                SELECT isbn_id, i.category_id, c.category ,b.title, b.description, b.cover_photo, b.publish_date, b.product_url, a.name AS author  FROM user_favorite AS u
+                INNER JOIN category_list AS c
+                ON u.type_id = c.id
+                INNER JOIN isbn_catalog AS i
+                ON c.id = i.category_id
+                INNER JOIN book_info AS b
+                ON i.id = b.isbn_id
+                INNER JOIN author AS a
+                ON b.author = a.id
+                WHERE u.user_id = {} AND u.track_type = 1 AND b.platform = 1 and b.publish_date > '{}'
+                ORDER BY publish_date DESC""".format(user_id, today))
+    print(books)
+    return books
+
+
+
+def homepage_by_all(period, today, month_ago):
+    random.sample(range(900), 10)
+    data = tuple(random.sample(range(900), 40))
+    if period == 'month':
+        books = db.session.execute("""SELECT isbn_id, category_id, b.title, b.description, b.cover_photo, b.publish_date, b.product_url, a.name AS author FROM isbn_catalog AS i
+                                    INNER JOIN book_info AS b
+                                    ON i.id = b.isbn_id
+                                    INNER JOIN author AS a
+                                    ON b.author = a.id
+                                    WHERE category_id IN {} AND b.platform = 1 and b.publish_date BETWEEN '{}' AND '{}'
+                                    ORDER BY publish_date DESC
+                                    LIMIT 20""".format(data, month_ago, today))
+    else:
+        books = db.session.execute("""SELECT isbn_id, category_id, b.title, b.description, b.cover_photo, b.publish_date, b.product_url, a.name AS author FROM isbn_catalog AS i
+                                    INNER JOIN book_info AS b
+                                    ON i.id = b.isbn_id
+                                    INNER JOIN author AS a
+                                    ON b.author = a.id
+                                    WHERE b.platform = 1 and b.publish_date > '{}'
+                                    LIMIT 20""".format(today))
+    return books
+
+
+
+
+
+
+
+
+
+
+
 
 
 
