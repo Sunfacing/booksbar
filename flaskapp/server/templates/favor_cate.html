@@ -7,13 +7,13 @@
     {% for section, cate_sub in cates.items() %}
         <div  style="margin-bottom: 30px;">
         <ul class="breadcrumb bg-dark" style="background-color: #ffffff; position: sticky; top: 0; z-index: 1; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; margin-bottom: 8px;">
-            <li><a href="/{{ section }}" style="margin-right: 10px; font-weight: bolder; color:#ffffff">{{ section }}</a></li>
+            <li><a href="/{{ section }}" style="margin-right: 10px; font-weight: bolder; color:#ffffff; text-decoration: none;">{{ section }}</a></li>
         </ul>
         {% for category, subcate in cate_sub %}
         <ul class="breadcrumb " style="background-color: #ffffff; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px;">
-            <li style="margin-right: 10px; font-weight: bolder; color:#393d3f"><a href="/{{ section }}?category_nm={{ category }}">{{ category }}</a></li>
+            <li style="margin-right: 10px; font-weight: bolder; color:#393d3f"><a href="/{{ section }}?category_nm={{ category }}" style="text-decoration: none; color: #393d3f;">{{ category }}</a></li>
             <li style="margin-right: 10px; font-weight: bolder;">⯈</li>
-            <li style="margin-right: 10px; font-weight: bolder; color:#393d3f"><a href="/{{ section }}?category_nm={{ category }}&subcate_nm={{ subcate }}">{{ subcate }}</a></li>
+            <li style="margin-right: 10px; font-weight: bolder; color:#393d3f"><a href="/{{ section }}?category_nm={{ category }}&subcate_nm={{ subcate }}" style="text-decoration: none; color: #393d3f;">{{ subcate }}</a></li>
         </ul>
         {% endfor %} 
         </div>

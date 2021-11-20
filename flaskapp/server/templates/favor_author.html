@@ -7,12 +7,12 @@
     {% for author_name, books in authors.items() %}
         <div style="margin-bottom: 30px;">
         <ul class="breadcrumb bg-dark" style="background-color: #ffffff;  position: sticky; top: 0; z-index: 1;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; margin-bottom: 8px;">
-            <li><a href="/author?name={{ author_name }}" style="margin-right: 10px; font-weight: bold; color:#ffffff;">{{ author_name }}</a></li>
+            <li><a href="/author?name={{ author_name }}" style="margin-right: 10px; font-weight: bold; color:#ffffff; text-decoration: none;">{{ author_name }}</a></li>
         </ul>
         {% for book in books %}
             <ul class="breadcrumb" style="background-color: #ffffff; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px;">
                 <li style="margin-right: 10px; font-weight: bold; color:#393d3f">{{ book[2] }}</li>
-                <li><a href="/product/{{ book[0] }}" style="margin-right: 10px; font-weight: bold; color:#393d3f">{{ book[1] }} </a></li>
+                <li><a href="/product/{{ book[0] }}" style="margin-right: 10px; font-weight: bold; color:#393d3f; text-decoration: none;">{{ book[1] }} </a></li>
             </ul>
         {% endfor %} 
         </div>

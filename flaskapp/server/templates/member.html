@@ -26,10 +26,10 @@
                 <div class="container col-sm-2" style="margin-left:0px; text-align: center;" >
                     <div class="card mb-3" style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px; align-items: center; background-color: #ffffff;">
                         <div class="col-md-7">
-                            <img class="rounded mx-auto d-block" src="https://cdn-user-icons.flaticon.com/20104/20104134/1637202745175.svg?token=exp=1637203646~hmac=0b25f865b527a16c582491fad9a7d050" style="height: 100%; width: 100%; margin-top: 20px; margin-left: 15px;" > 
+                            <img class="rounded mx-auto d-block" src="https://cdn-icons-png.flaticon.com/128/171/171322.png" style="height: 100%; width: 100%; margin-top: 20px; margin-left: 15px;" > 
                         </div>
                         <div class="col-md-9" style="margin-top: 15px; margin-bottom: 15px;">
-                            <h4 style="font-weight: bold; color: #393d3f;">{{ session['username']}}</h4>
+                            <h4 style="font-weight: bold; color: #393d3f;">{{ session['username']}}</h4><i class="fas fa-edit"></i>
                         </div>
                     </div>
                     <div class="card mb-3" style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px; align-items: center; margin-top: 30px;">
@@ -83,12 +83,12 @@
                             <div class="row no-gutters" style="width:95%; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px; padding: 0px; color:#393d3f;">
                                 <div class="col-md-3 " >
                                     <a href="product/{{ isbn_id }}">
-                                        <img src="{{product['cover_photo']}}" class="card-img" onerror="this.onerror=null;this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/690/6336618690_75f2170c-b776-469f-9d33-4050ff81a665.png?cb=1636362136'" style="height: 85%; width: 85%; margin-top: 15px; margin-left: 15px;">
+                                        <img src="{{product['cover_photo']}}" class="card-img" onerror="this.onerror=null;this.src='https://cdn-icons-png.flaticon.com/128/171/171322.png'" style="height: 85%; width: 85%; margin-bottom: 15px; margin-top: 15px; margin-left: 15px;">
                                     </a>    
                                 </div>
                                 <div class="col-md-9">
                                     <div class="card-body" >
-                                    <a href="product/{{ isbn_id }}">
+                                    <a href="product/{{ isbn_id }}" style="text-decoration: none; ">
                                         <h5 class="card-title" style="font-weight: bold; color: #393d3f;">{{product['title']}}</h5>
                                     </a>    
                                     <p class="card-text" style="color: #393d3f;">{{product['description'][:100]}}....</p>
@@ -96,7 +96,7 @@
                                 </div>
                             </div>
                         </div>
-                          {% endfor %}                             
+                        {% endfor %}                             
 
                     {% endif %}
                     <script>
