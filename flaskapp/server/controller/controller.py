@@ -57,6 +57,28 @@ BUCKET = 'stylishproject'
 MONTH_AGO = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=30)).strftime("%Y-%m-%d")
 
 
+# @app.route('/', methods=['GET', 'POST'])
+# def index(period='month', user_id='0'):
+#     period = request.args.get('period', period)
+#     user_id = request.args.get('user_id', user_id)
+#     if user_id != '0':
+#         books = homepage_by_track(period, TODAY, MONTH_AGO, user_id)
+#     else:
+#         books = homepage_by_all(period, TODAY, MONTH_AGO)
+
+
+#     collections = []
+#     row = []
+#     i = 0
+#     for book in books:
+#         if i % 4 == 0 and i > 1:
+#             collections.append(row)
+#             row = []
+#         row.append(book)
+#         i += 1
+#     collections.append(row)
+#     return render_template('index.html', collections=collections, period=period, user_id=user_id)
+    
 @app.route('/', methods=['GET', 'POST'])
 def index(period='month', user_id='0'):
     period = request.args.get('period', period)
@@ -66,25 +88,39 @@ def index(period='month', user_id='0'):
     else:
         books = homepage_by_all(period, TODAY, MONTH_AGO)
 
+    category_hash = get_category()
+    try:
+        product_list = defaultdict(dict)
+        for book in books:
+            subcate_id = book['category_id']
+            cate_nm = category_hash[subcate_id]['category']
+            subcate_nm = category_hash[subcate_id]['subcategory']
+            data = {'isbn_id': book['isbn_id'],
+                    'subcategory': subcate_nm,
+                    'title': book['title'],
+                    'cover_photo': book['cover_photo'],
+                    'description': book['description'],
+                    'publish_date': book['publish_date'],
+                    'author': book['author']
+            }
+            if not product_list[cate_nm]: product_list[cate_nm] = [data]
+            else: product_list[cate_nm].append(data)
 
-    collections = []
-    row = []
-    i = 0
-    for book in books:
-        if i % 4 == 0 and i > 1:
-            collections.append(row)
-            row = []
-        row.append(book)
-        i += 1
-    collections.append(row)
-    return render_template('index.html', collections=collections, period=period, user_id=user_id)
-    
+    except Exception as e:
+        print(e)
 
+
+
+    return render_template('index_2.html', product_list=product_list, period=period, user_id=user_id)
 
 
 @app.route('/<section_nm>', methods=['GET', 'POST'])
 def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
     section_nm = request.args.get('section_nm', section_nm)
+    
+    checker = CategoryList.query.filter_by(section=section_nm).first()  
+    if checker is None:
+        return render_template('404.html'), 404
     category_nm = request.args.get('category_nm', category_nm)
     subcate_nm = request.args.get('subcate_nm', subcate_nm)
     books = db.session.execute("SELECT * FROM bookbar.category_list")

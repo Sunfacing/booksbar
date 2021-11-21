@@ -100,21 +100,26 @@
           {% endif %}
         </div>
         {% endif %}
+        <div>
 
 
         <div id="loading2" style="margin: auto;"></div>
         <div id="content2">
-
-        {% for subset in collections %}
-          {% if not subset  %}
+          <div class="row" style="width:80%; margin:auto; margin-left: 10%; margin-top: 50px;">
+          {% if product_list | length == 0  %}
             <h1 style="color: #393d3f; margin: auto; width: 80%; text-align: center; font-weight: bold;">目前還沒有追蹤分類</h1>
           {% endif %}
-          <div class="container p-3" style="width: 100%; margin: auto;">
-            <div class="row ">
-              {% for book in subset %}
-              <div class="card " style="width: 15rem; height:70%; border:0px; border-radius: 7px; margin: 10px;">
+
+          {% for category, books in product_list.items() %}
+              <div style="width: 12%; margin-top: 10px; margin-bottom: 10px; position: sticky; top: 0; z-index: 1; ">
+                  <ul class="breadcrumb" style="background-color: #393d3f; position: sticky; top: 0; z-index: 1;  box-shadow: 0 1px 2px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; margin-bottom: 8px;">
+                      <li style="margin-right: 0px; font-weight: bold; color:#ffffff; background-color: #393d3f;">{{ category }}</li>
+                  </ul>
+              </div> 
+              <div class="row" style="width:80%; margin:auto; margin-left: 5%">
+              {% for book in books %}
+              <div class="card " style="width: 15rem; height:70%; border:0px; border-radius: 7px; margin: 10px; ">
                 <a href="product/{{ book['isbn_id'] }}" alt='' style="color: #393d3f; text-decoration:none">
-                  
                   <div class="mx-auto d-block" style="vertical-align: middle; height: 240px;">
                     <img class="card-img-top p-3" src="{{ book['cover_photo']}}" alt="cover_photo" onerror="this.onerror=null; this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/674/6392009674_d59d0209-6c03-4b75-9084-0e5fffb34183.png?cb=1637205240';">
                   </div>
@@ -125,23 +130,23 @@
                       <div class="text" style="white-space: pre-line; font-size: smaller; width: 90%; overflow: hidden;"> {{book['description'][:110]}}...</div>
                     {% endif %}
                   </div>
-                  
-                  <div class="card-body" style="height:8rem; width:20em">
+                  <div class="card-body" style="height:9rem; width:20em">
                     {% if book['title'].split('：')[0]| length <= 10 %}
-                      <h5 class="card-title" style="font-weight: bold">{{ book['title'].split('：')[0][:10] }}</h5>
+                      <h5 class="card-title" style="font-weight: bold">{{ book['title'].split('：')[0] }}</h5>
                     {% else %}
-                      <h5 class="card-title" style="font-weight: bold">{{ book['title'].split('：')[0].split('（')[0][:10] }}</h5>
+                      <h5 class="card-title" style="font-weight: bold">{{ book['title'].split('：')[0].split('（')[0]}}</h5>
                     {% endif %}
-                    <p>作者: {{ book['author'][:10]}}</br>
-                    出版日: {{ book['publish_date'].strftime("%Y-%m-%d")}}</p>                    
+                    <div class="" style="font-weight: bold; display: inline-block ;padding: 1px ;padding-left: 6px ;padding-right: 6px ;margin: 0px; margin-bottom: 4px; font-size: 13px; background-color: #393d3f; color: #ffffff; border-radius: 7px;">{{ book['subcategory']}}</div>
+                    <p style="font-weight: bold;">作者: {{ book['author'][:10]}}</br>
+                    出版日: {{ book['publish_date']}}</p>                    
                   </div>
                 </a>
-                </div>
-              {% endfor %} 
-              </div> 
-          </div> 
-        {% endfor %} 
+              </div>
+              {% endfor %}
+            </div>
+          {% endfor %}
         </div>
+
       </div>
       </main>
       <button onclick="topFunction()" id="myBtn" title="Go to top">▲</button>      
@@ -234,7 +239,7 @@
     width: 50%;
   }
   .card:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
   }
   .image {
     display: block;
@@ -318,7 +323,15 @@
   }
   </style>
 
+<style>
+  h5.card-title {
+  white-space: nowrap; 
+  width: 200px; 
+  overflow: hidden;
+  text-overflow: ellipsis; 
 
+}
+</style>
 
   </body>
   </html>
