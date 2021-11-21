@@ -54,7 +54,7 @@ EXPIRE = 3600
 TODAY = '2021-11-06'
 YESTERDAY = (datetime.datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 # BUCKET = 'stylishproject'
-MONTH_AGO = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=15)).strftime("%Y-%m-%d")
+MONTH_AGO = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=60)).strftime("%Y-%m-%d")
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -91,7 +91,6 @@ def index(period='month', user_id='0'):
 @app.route('/<section_nm>', methods=['GET', 'POST'])
 def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
     section_nm = request.args.get('section_nm', section_nm)
-    
     checker = CategoryList.query.filter_by(section=section_nm).first()  
     if checker is None:
         return render_template('404.html'), 404

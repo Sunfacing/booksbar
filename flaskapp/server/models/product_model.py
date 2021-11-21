@@ -173,12 +173,6 @@ def get_category():
 
 
 
-
-
-
-
-
-
 def get_catalog_section(section, date_1, date_2):
     product_list =db.session.execute("""
         SELECT b.isbn_id,
@@ -200,7 +194,7 @@ def get_catalog_section(section, date_1, date_2):
         ON b.publisher = p.id
         WHERE b.platform = 1 AND c.section = '{}'  
         AND publish_date BETWEEN '{}' AND '{}'
-        ORDER BY publish_date DESC LIMIT 9""".format(section, date_1, date_2))
+        ORDER BY publish_date DESC LIMIT 40""".format(section, date_1, date_2))
     return product_list
 
 
