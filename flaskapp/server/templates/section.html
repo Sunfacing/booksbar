@@ -70,6 +70,7 @@
                                     src="{{ product['cover_photo']}}"
                                     class="card-img-top"
                                     alt="..."
+                                    onerror="this.onerror=null;this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/674/6392009674_d59d0209-6c03-4b75-9084-0e5fffb34183.png?cb=1637205240'"
                                     style="margin-top: 15px;"
                                 />
                                 <div class="card-body ">
@@ -99,6 +100,7 @@
                                 src="{{ product['cover_photo']}}"
                                 class="card-img-top"
                                 alt="..."
+                                onerror="this.onerror=null; this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/674/6392009674_d59d0209-6c03-4b75-9084-0e5fffb34183.png?cb=1637205240'"
                                 style="margin-top: 15px;"
                             />
                             <div class="card-body">
@@ -120,7 +122,7 @@
             <div class="carousel-item">
                 <div class="container">
                     <div class="row">
-                    {% for product in product_list[6:] %}
+                    {% for product in product_list[6:9] %}
                         <div class="col-lg-4 d-none d-lg-block">
                             <a href="product/{{ product['isbn_id']}}" style="text-decoration: none; color: #393d3f;">
                             <div class="card" style="height: 100%; border: 0px; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border-radius: 7px;">
@@ -128,7 +130,8 @@
                                     src="{{ product['cover_photo']}}"
                                     class="card-img-top"
                                     alt="..."
-                                    style="margin-top: 15px;"
+                                    onerror="this.onerror=null;this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/674/6392009674_d59d0209-6c03-4b75-9084-0e5fffb34183.png?cb=1637205240';"
+                                    style="margin-top: 15px; "
                                 />
                                 <div class="card-body">
                                     <h5 class="card-title" style="font-weight: bold; color: #393d3f;">{{ product['title'][:10]}}</h5>
