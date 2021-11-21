@@ -37,7 +37,7 @@ class BookInfo(db.Model):
     author = db.Column(db.Integer, ForeignKey('author.id'))
     publisher = db.Column(db.Integer, ForeignKey('publisher.id'))
     size = db.Column(db.String(30))
-    publish_date = db.Column(db.DateTime)
+    publish_date = db.Column(db.DateTime, index = True)
     table_of_content = db.Column(db.Text)
     description = db.Column(db.Text)
     author_intro = db.Column(db.Text)
@@ -131,24 +131,31 @@ def homepage_by_track(period, today, month_ago, user_id):
 
     return books
 
-
+# DATE_FORMAT(publish_date,'%Y-%m-%d')
 
 def homepage_by_all(period, today, month_ago):
     data = tuple(random.sample(range(900), 40))
+    import time
+    start = time.time()
     if period == 'month':
         books = db.session.execute("""SELECT isbn_id, category_id, b.title, b.description, b.cover_photo, DATE_FORMAT(publish_date,'%Y-%m-%d') AS publish_date, b.product_url, a.name AS author FROM isbn_catalog AS i
                                     INNER JOIN book_info AS b
                                     ON i.id = b.isbn_id
                                     INNER JOIN author AS a
                                     ON b.author = a.id
-                                    WHERE b.platform = 1 and publish_date BETWEEN '{}' AND '{}'""".format(month_ago, today))
+                                    WHERE b.platform = 1 and publish_date BETWEEN '{}' AND '{}'
+                                    ORDER BY publish_date DESC""".format(month_ago, today))
     else:
         books = db.session.execute("""SELECT isbn_id, category_id, b.title, b.description, b.cover_photo, DATE_FORMAT(publish_date,'%Y-%m-%d') AS publish_date, b.product_url, a.name AS author FROM isbn_catalog AS i
                                     INNER JOIN book_info AS b
                                     ON i.id = b.isbn_id
                                     INNER JOIN author AS a
                                     ON b.author = a.id
-                                    WHERE b.platform = 1 and publish_date > '{}'""".format(today))
+                                    WHERE b.platform = 1 and publish_date > '{}'
+                                    ORDER BY publish_date DESC""".format(today))
+    end = time.time()
+    print(end - start, 'used')
+    
     return books
 
 
@@ -306,6 +313,12 @@ def search_by_term(term):
     return result
 
 
+
+
+
+
+
+
 def search_by_author(name):
     result = db.session.execute("""
     SELECT c.category, isbn_id, title, cover_photo, a.name AS author, description 
@@ -316,12 +329,8 @@ def search_by_author(name):
     ON i.category_id = c.id
     INNER JOIN author AS a
     ON b.author = a.id
-	WHERE b.platform = 1 AND a.name = '{}'""".format(name))
+    WHERE MATCH (a.name) AGAINST('{}' IN boolean mode ) AND b.platform = 1""".format(name))
     return result
-
-
-
-
 
 
 

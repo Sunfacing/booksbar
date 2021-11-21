@@ -53,32 +53,10 @@ EXPIRE = 3600
 # TODAY = datetime.datetime.now(pytz.timezone('US/Pacific')).strftime("%Y-%m-%d")
 TODAY = '2021-11-06'
 YESTERDAY = (datetime.datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-BUCKET = 'stylishproject'
-MONTH_AGO = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=30)).strftime("%Y-%m-%d")
+# BUCKET = 'stylishproject'
+MONTH_AGO = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=15)).strftime("%Y-%m-%d")
 
 
-# @app.route('/', methods=['GET', 'POST'])
-# def index(period='month', user_id='0'):
-#     period = request.args.get('period', period)
-#     user_id = request.args.get('user_id', user_id)
-#     if user_id != '0':
-#         books = homepage_by_track(period, TODAY, MONTH_AGO, user_id)
-#     else:
-#         books = homepage_by_all(period, TODAY, MONTH_AGO)
-
-
-#     collections = []
-#     row = []
-#     i = 0
-#     for book in books:
-#         if i % 4 == 0 and i > 1:
-#             collections.append(row)
-#             row = []
-#         row.append(book)
-#         i += 1
-#     collections.append(row)
-#     return render_template('index.html', collections=collections, period=period, user_id=user_id)
-    
 @app.route('/', methods=['GET', 'POST'])
 def index(period='month', user_id='0'):
     period = request.args.get('period', period)
@@ -105,13 +83,9 @@ def index(period='month', user_id='0'):
             }
             if not product_list[cate_nm]: product_list[cate_nm] = [data]
             else: product_list[cate_nm].append(data)
-
     except Exception as e:
         print(e)
-
-
-
-    return render_template('index_2.html', product_list=product_list, period=period, user_id=user_id)
+    return render_template('index.html', product_list=product_list, period=period, user_id=user_id)
 
 
 @app.route('/<section_nm>', methods=['GET', 'POST'])
@@ -461,16 +435,42 @@ def add_to_favorite(subcate=None, author=None, price=None):
         return response
 
 
-@app.route('/product', methods=['GET', 'POST'])
+# @app.route('/keyword', methods=['GET', 'POST'])
+# def search(search=None):
+#     term = request.args.get('search', search)
+#     result = search_by_term(term)
+#     product_list = defaultdict(dict)
+#     count = 0
+#     for product in result:
+#         categroy = product['category']
+#         data = {
+#         'isbn_id': product['isbn_id'],
+#         'title': product['title'],
+#         'cover_photo': product['cover_photo'],
+#         'author': product['author'],
+#         'description': product['description'],
+#         }
+#         if not product_list[categroy]: product_list[categroy] = [data]
+#         else: product_list[categroy].append(data)
+#         count += 1
+#     return render_template('search.html', product_list=product_list, term=term, count=count)
+
+
+
+@app.route('/keyword', methods=['GET', 'POST'])
 def search(search=None):
     term = request.args.get('search', search)
-    result = search_by_term(term)
+    keyword_result = search_by_term(term)
     product_list = defaultdict(dict)
+
+    duplicate_hash = defaultdict(dict)
+
     count = 0
-    for product in result:
+    for product in keyword_result:
+        isbn_id = product['isbn_id']
         categroy = product['category']
         data = {
-        'isbn_id': product['isbn_id'],
+        'isbn_id': isbn_id,
         'title': product['title'],
         'cover_photo': product['cover_photo'],
         'author': product['author'],
@@ -478,8 +478,39 @@ def search(search=None):
         }
         if not product_list[categroy]: product_list[categroy] = [data]
         else: product_list[categroy].append(data)
+
+        duplicate_hash[isbn_id] = 1
         count += 1
+
+    author_result = search_by_author(term)
+    for each in author_result:
+        isbn_id = each['isbn_id']
+        if not duplicate_hash[isbn_id]:
+            categroy = each['category']
+            data = {
+            'isbn_id': isbn_id,
+            'title': each['title'],
+            'cover_photo': each['cover_photo'],
+            'author': each['author'],
+            'description': each['description'],
+            }
+            if not product_list[categroy]: product_list[categroy] = [data]
+            else: product_list[categroy].append(data)
+            count += 1
+
+
     return render_template('search.html', product_list=product_list, term=term, count=count)
+
+
+
+
+
+
+
+
+
+
+
 
 
 
