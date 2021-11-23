@@ -1,21 +1,27 @@
 from pymongo import MongoClient
 from collections import defaultdict
-from datetime import date, datetime, timedelta
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
-from scraper_tools.data_processor import *
-from scraper_tools.scrapers import multi_scrapers
+from data_processor import *
+from scrapers import multi_scrapers
 import requests
 import time
+from airflow import DAG
+from airflow.operators.python_operator import PythonOperator
+from datetime import date, timedelta
+import datetime
+import pytz
 
-TODAY = date.today().strftime("%Y-%m-%d")
-TODAY_FOR_COLLECTION_NAME = date.today().strftime("%m%d")
-DATE_SUBTRACT_1 = str(datetime.today() - timedelta(days=1)).split(' ')[0].split('-')[1:]
+
+TODAY = datetime.datetime.now(pytz.timezone('Asia/Taipei')).strftime("%Y-%m-%d")
+TODAY_FOR_COLLECTION_NAME = (datetime.datetime.now(pytz.timezone('Asia/Taipei'))).strftime("%m%d")
+DATE_SUBTRACT_1 = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=1)).strftime("%m%d")
 YESTERDAY_FOR_EORROR_CHECKER = ''.join(DATE_SUBTRACT_1)
-DATE_SUBTRACT_7 = str(datetime.today() - timedelta(days=7)).split(' ')[0].split('-')[1:]
+DATE_SUBTRACT_7 = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=7)).strftime("%m%d")
 DATE_FOR_DELETE_COLLECTION_NAME = ''.join(DATE_SUBTRACT_7)
 
-client = MongoClient('localhost', 27017)
+# client = MongoClient('localhost', 27017)
+client = MongoClient('mongodb://bartender:books@ec2-3-17-181-14.us-east-2.compute.amazonaws.com:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false')
 db = client.bookbar
 
 # Set collection name with variable for auto addition / validation / deletion
@@ -252,14 +258,13 @@ def phased_out_checker(url_to_scrape, sliced_list, target_id_key):
     return current_product_list
 
 
-if __name__=='__main__':
-    
-    # Step 1: Build up category list if not exists for later scrapping, it's one time set up
-    if not category_list.find_one():
-        get_category_list(SECTION_URL)
-    
+
+
+
+def mm_scrap_category():     
     # Step 2. Scrap daily to get the price and looking for new items record error into [error_catalog] 
     start = time.time()
+    start_time = datetime.datetime.now(pytz.timezone('Asia/Taipei')).strftime("%H:%M:%S")
     for i in range(2):
         list_to_scrape = scan_category_for_scraping(catalog_tem_today, 'subcate_code', category_list, {}, 'subcate_code')
         multi_scrapers(
@@ -277,27 +282,42 @@ if __name__=='__main__':
         unfinished_category_list = create_new_field(unfinished_list, error_date=TODAY)
         mongo_insert(category_error, unfinished_category_list)
     end = time.time()
-    timecounter.insert_one({'date': TODAY, 'platform': 'momo', 'step': 'scrape catalog', 'time': end - start})
-    
+    end_time = datetime.datetime.now(pytz.timezone('Asia/Taipei')).strftime("%H:%M:%S")
+    raw_number = catalog_tem_today.count_documents({})
+    timecounter.insert_one({'date': TODAY, 'platform': 'momo', 'step': 'scrape catalog', 'time': end - start, 'start': start_time, 'end': end_time, 'quantity': raw_number})
+
+def mm_remove_duplicates():  
     # Step 3. The raw catalog contains duplicate products; remove them from [catalog_tem_today] 
     #         and copy cleaned catalog to [catalog_today] then delete [catalog_tem_today]
     start = time.time()
+    start_time = datetime.datetime.now(pytz.timezone('Asia/Taipei')).strftime("%H:%M:%S")
     copy_to_collection(catalog_tem_today, catalog_today, 'momo_pid')
-    db.drop_collection(catalog_tem_today)
     end = time.time()
-    timecounter.insert_one({'date': TODAY, 'platform': 'momo', 'step': 'remove duplicates', 'time': end - start})
+    end_time = datetime.datetime.now(pytz.timezone('Asia/Taipei')).strftime("%H:%M:%S")
+    duplicate = catalog_tem_today.count_documents({}) - catalog_today.count_documents({})
+    today_quantity = catalog_today.count_documents({})
+    db.drop_collection(catalog_tem_today)
+    timecounter.insert_one({'date': TODAY, 'platform': 'momo', 'step': 'remove duplicates', 'time': end - start, 'start': start_time, 'end': end_time, 'quantity': duplicate})
+    timecounter.insert_one({'date': TODAY, 'platform': 'momo', 'step': 'create_catalog', 'quantity': today_quantity})
 
 
+
+def mm_checking_new_unfound_products():
     # Step 4. Mutually compare[catalog_today] with [catalog_yesterday], 
     #         phase out product in [phase_out_product_catalog]
     #         new product in [new_prodcut_catalog]
     start = time.time()
+    start_time = datetime.datetime.now(pytz.timezone('Asia/Taipei')).strftime("%H:%M:%S")
     daily_change_tracker(catalog_today, catalog_yesterday, 'momo_pid', new_prodcut_catalog, unfound_product_catalog)
     end = time.time()
-    timecounter.insert_one({'date': TODAY, 'platform': 'momo', 'step': 'track change', 'time': end - start}) 
+    end_time = datetime.datetime.now(pytz.timezone('Asia/Taipei')).strftime("%H:%M:%S")
+    unfound = unfound_product_catalog.count_documents({})
+    timecounter.insert_one({'date': TODAY, 'platform': 'momo', 'step': 'track change', 'time': end - start, 'start': start_time, 'end': end_time, 'quantity': unfound}) 
 
+def mm_scrap_new_products():
     # Step 5. Use [new_prodcut_catalog] to request single product's api and insert into product_info
     start = time.time()
+    start_time = datetime.datetime.now(pytz.timezone('Asia/Taipei')).strftime("%H:%M:%S")
     product_catalog = new_prodcut_catalog.find({'track_date': TODAY})
     product_list = convert_mongo_object_to_list(product_catalog)
     multi_scrapers(
@@ -311,11 +331,15 @@ if __name__=='__main__':
         slicing=True
     )
     end = time.time()
-    timecounter.insert_one({'date': TODAY, 'platform': 'momo', 'step': 'scrape product', 'time': end - start})
+    end_time = datetime.datetime.now(pytz.timezone('Asia/Taipei')).strftime("%H:%M:%S")
+    new_product = product_info.count_documents({'track_date': TODAY})
+    timecounter.insert_one({'date': TODAY, 'platform': 'momo', 'step': 'scrape product', 'time': end - start, 'start': start_time, 'end': end_time, 'quantity': new_product})
     
+def mm_scrap_unfound_products():
     # Step 6: Reading [unfound_product_catalog], add current back to [catalog_today], phased out to [phase_out_product_catalog]
     #         Delete after finishing scraping
     start = time.time()    
+    start_time = datetime.datetime.now(pytz.timezone('Asia/Taipei')).strftime("%H:%M:%S")
     product_catalog = unfound_product_catalog.find()
     product_list = convert_mongo_object_to_list(product_catalog)
     multi_scrapers(
@@ -330,8 +354,28 @@ if __name__=='__main__':
     )
     db.drop_collection(unfound_product_catalog)
     end = time.time()
-    timecounter.insert_one({'date': TODAY, 'platform': 'momo', 'step': 'check unfound', 'time': end - start})
+    end_time = datetime.datetime.now(pytz.timezone('Asia/Taipei')).strftime("%H:%M:%S")
+    phase_out = phase_out_product_catalog.count_documents({'track_date': TODAY})
+    timecounter.insert_one({'date': TODAY, 'platform': 'momo', 'step': 'check unfound', 'time': end - start, 'start': start_time, 'end': end_time, 'quantity': phase_out})
 
+def mm_drop_old_collection():
     # Step 7. Delete catalog of 7 days age, EX: today is '2021-10-26', so delete '2021-10-19'
     db.drop_collection(catalog_last_7_days)
        
+
+
+# with DAG(
+# dag_id='a_m_scraper',
+# schedule_interval='40 17 * * *',
+# start_date=datetime.datetime(2021, 11, 1),
+# catchup=False,
+# # default_args={'depends_on_past': True},
+# tags=['it_is_test'],
+# ) as dag:
+#     task_1 = PythonOperator(task_id='scrap_category', python_callable=mm_scrap_category)
+#     task_2 = PythonOperator(task_id='remove_duplicates', python_callable=mm_remove_duplicates)
+#     task_3 = PythonOperator(task_id='checking_new_unfound_products', python_callable=mm_checking_new_unfound_products)
+#     task_4 = PythonOperator(task_id='scrap_new_products', python_callable=mm_scrap_new_products)
+#     task_5 = PythonOperator(task_id='scrap_unfound_products', python_callable=mm_scrap_unfound_products)
+#     task_6 = PythonOperator(task_id='drop_old_collection', python_callable=mm_drop_old_collection)
+#     task_1 >> task_2 >> task_3 >> task_4 >> task_5 >> task_6

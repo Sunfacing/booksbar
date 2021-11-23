@@ -1,7 +1,11 @@
 from collections import defaultdict
 from datetime import date
+import datetime
+import pytz
+TODAY = datetime.datetime.now(pytz.timezone('Asia/Taipei')).strftime("%Y-%m-%d")
 
-TODAY = date.today().strftime("%Y-%m-%d")
+
+
 
 def mongo_insert(collection, product_list):
     """
@@ -141,3 +145,6 @@ def convert_mongo_object_to_list(mongo_object):
     for product in mongo_object:
         product_list.append(product)
     return product_list
+
+
+
