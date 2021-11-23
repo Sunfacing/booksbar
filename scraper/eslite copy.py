@@ -349,12 +349,15 @@ def drop_old_collection():
 #         task_1 >> task_2 >> task_3 >> task_4 >> task_5 >> task_6
 
 
-scrap_category()
-remove_duplicates()
-checking_new_unfound_products()
-scrap_new_products()
-scrap_unfound_products()
-drop_old_collection()
+# scrap_category()
+# remove_duplicates()
+# checking_new_unfound_products()
+# scrap_new_products()
+# scrap_unfound_products()
+# drop_old_collection()
+
+
+db.eslite_catalog_1117.rename('eslite_catalog_1119')
 
 
 
