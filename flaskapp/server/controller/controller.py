@@ -50,11 +50,10 @@ r= redis.Redis.from_url('redis://flaskproject.gtlinm.0001.use2.cache.amazonaws.c
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'jfif'])
 EXPIRE = 3600
-# TODAY = datetime.datetime.now(pytz.timezone('US/Pacific')).strftime("%Y-%m-%d")
-TODAY = '2021-11-06'
+TODAY = datetime.datetime.now(pytz.timezone('US/Pacific')).strftime("%Y-%m-%d")
+# TODAY = '2021-11-06'
 YESTERDAY = (datetime.datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-# BUCKET = 'stylishproject'
-MONTH_AGO = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=60)).strftime("%Y-%m-%d")
+MONTH_AGO = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=15)).strftime("%Y-%m-%d")
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -269,7 +268,7 @@ def member(track_type=0):
             return render_template('favor_cate.html', cates=cate_list)
         elif track_type == '2':
             user_id = session['id'] 
-            date = '2021-11-06'
+            date = TODAY
             books = get_user_favor_book(user_id, date)
             book_list = defaultdict(dict)
             final_list = defaultdict(dict)

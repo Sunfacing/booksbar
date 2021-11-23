@@ -8,7 +8,7 @@ class Config(object):
     JWT_SECRET_KEY = os.getenv('jwt_secret_key')
     RESTFUL_JSON = {"ensure_ascii": False}
     JSON_AS_ASCII = False
-
+    SESSION_PROTECTION = 'strong'
     SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{os.getenv('user')}:{os.getenv('passwd')}@{os.getenv('host')}:3306/{os.getenv('database')}?charset=utf8mb4"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 

@@ -82,7 +82,7 @@
                         <div class="container col-3" style="text-align: center;">
                             <img src="https://linepaytw-cms.line-scdn.net/v0/fc8cb09e193cc3f5a8e7ebc6910debd296aacb3d84e1f1a2891dd45444a03855.png" style="width: 50%; height: 50%;">
                             {% if info['ks_price'] %} 
-                                <h4 style="color: #E34234; font-weight: bold;">{{info['ks_price']}} 元</h4><a href="{{info['ks_price']}}" class="btn" style="color:white; font-weight: bold; background-color: #393d3f; text-decoration: none;">前往網站</a>
+                                <h4 style="color: #E34234; font-weight: bold;">{{info['ks_price']}} 元</h4><a href="{{info['ks_product_url']}}" class="btn" style="color:white; font-weight: bold; background-color: #393d3f; text-decoration: none;">前往網站</a>
                             {% else %}
                                 <h4 style="color: #ffffff; font-weight: bold;">{{info['ks_price']}}</h4><button type="button" class="btn btn-default" style="font-weight: bold;">暫無存貨</button>
                             {% endif %}
@@ -92,7 +92,7 @@
                             <img src="https://meet.eslite.com/Content/Images/ThemePavilion/eslite-logo.jpg" style="width: 50%; height: 50%; ">
 
                             {% if info['es_price'] %} 
-                                <h4 style="color: #E34234; font-weight: bold;">{{info['es_price']}} 元</h4><a href="{{info['es_price']}}" class="btn" style="color:white; font-weight: bold; background-color: #393d3f; text-decoration: none;">前往網站</a>
+                                <h4 style="color: #E34234; font-weight: bold;">{{info['es_price']}} 元</h4><a href="{{info['es_product_url']}}" class="btn" style="color:white; font-weight: bold; background-color: #393d3f; text-decoration: none;">前往網站</a>
                             {% else %}
                                 <h4 style="color: #ffffff; font-weight: bold;">{{info['es_price']}} 元</h4><button type="button" class="btn btn-default" style="color: #393d3f; font-weight: bold;">暫無存貨</button>
                             {% endif %}
@@ -101,7 +101,7 @@
                         <div class="container col-3" style="text-align: center;">
                             <img src="https://www.esunbank.com.tw/bank/-/media/esunbank-mobile/images/discount/shops/b_onlineshop/2008.jpg" style="width: 50%; height: 50%;">
                             {% if info['mm_price'] %} 
-                                <h4 style="color: #E34234; font-weight: bold;">{{info['mm_price']}} 元</h4><a href="{{info['mm_price']}}" class="btn" style="color:white; font-weight: bold; background-color: #393d3f; text-decoration: none;">前往網站</a>
+                                <h4 style="color: #E34234; font-weight: bold;">{{info['mm_price']}} 元</h4><a href="{{info['mm_product_url']}}" class="btn" style="color:white; font-weight: bold; background-color: #393d3f; text-decoration: none;">前往網站</a>
                             {% else %}
                                 <h4 style="color: #ffffff; font-weight: bold;">{{info['mm_price']}} 元</h4><button type="button" class="btn btn-default" style="color: #393d3f; font-weight: bold;">暫無存貨</button>
                             {% endif %}

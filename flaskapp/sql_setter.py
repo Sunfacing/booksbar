@@ -89,7 +89,27 @@ def register_kingstone_commenter():
     token = db.Column(db.String(255))
 
 
+def register_track_type():
+    type_1 = TrackType(track_type='subcategory')
+    type_2 = TrackType(track_type='product')
+    type_3 = TrackType(track_type='author')
+    type_4 = TrackType(track_type='browsing')
+    db.session.add_all([type_1, type_2, type_3, type_4])
+    db.session.commit()
 
+
+def register_pipeline_step():
+    step_1 = PipelineStep(step='scrape_raw')
+    step_2 = PipelineStep(step='remove_duplicate')
+    step_3 = PipelineStep(step='detect_unfound')
+    step_4 = PipelineStep(step='scrape_new_item')
+    step_5 = PipelineStep(step='create_catalog')
+    step_6 = PipelineStep(step='register_new_author')
+    step_7 = PipelineStep(step='register_new_publisher')
+    step_8 = PipelineStep(step='register_new_book')
+    step_9 = PipelineStep(step='update_price')
+    db.session.add_all([step_1, step_2, step_3, step_4, step_5, step_6, step_7, step_8, step_9])
+    db.session.commit()
 
 
 
@@ -99,4 +119,6 @@ if __name__ == '__main__':
         create_platform()
         register_price_type()
         create_category_list(ks_category_list)
-    register_kingstone_commenter()
+        register_kingstone_commenter()
+        register_track_type()
+        register_pipeline_step()

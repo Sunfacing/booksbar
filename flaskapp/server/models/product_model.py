@@ -154,7 +154,7 @@ def homepage_by_all(period, today, month_ago):
                                     WHERE b.platform = 1 and publish_date > '{}'
                                     ORDER BY publish_date DESC""".format(today))
     end = time.time()
-    print(end - start, 'used')
+    # print(end - start, 'used')
     
     return books
 
@@ -257,6 +257,7 @@ def get_book_info(isbn_id, date):
     INNER JOIN publisher AS u
     ON u.id = b.publisher
     WHERE isbn_id = {} AND survey_date='{}'""".format(isbn_id, date))
+
     return info_list
 
 

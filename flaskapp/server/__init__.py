@@ -1,9 +1,7 @@
-from flask import Flask
+from flask import Flask, render_template
 from config import Config
 from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import Model, SQLAlchemy
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
 from flask_bcrypt  import Bcrypt
 from flask_migrate import Migrate
 from werkzeug.exceptions import HTTPException
@@ -17,17 +15,15 @@ class BaseModel(Model):
 app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app, model_class=BaseModel)
-
-limiter = Limiter(app, key_func=get_remote_address)
+app.secret_key = 'super secret string'
 bcrypt = Bcrypt(app)  # Create/Check hashpassword
 jwt = JWTManager(app) # Generate token
 migrate = Migrate(app, db)
 
 
-
 @app.errorhandler(404)
 def server_error(error):
-    return "The page you request is not found", 404
+    return render_template('404.html'), 404
 
 
 
@@ -35,11 +31,11 @@ def server_error(error):
 def server_error(e):
     if isinstance(e, HTTPException):
         return e
-    return "The page you request is not found", 404
+    return render_template('404.html'), 404
 
 
 
-from server.controller import user_controller
+from server.controller import controller
 
 
 

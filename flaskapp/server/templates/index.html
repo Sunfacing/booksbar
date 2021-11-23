@@ -14,7 +14,7 @@
     </head>
     <body>
       <nav class="navbar" style="background-color: #393d3f;">
-        <a class="navbar-brand" style="color: #ffffff;" href="{{ url_for('index')}}"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/380/6391619380_b1cf68eb-1598-4eb2-987f-bd1ab6196133.png?cb=1637199110' style="width: 60%;"></a>
+        <a class="navbar-brand" style="color: #ffffff;" href="{{ url_for('index')}}"><img src='https://d3bu8utwyaxpsl.cloudfront.net/logo.png' style="width: 60%;"></a>
         {% if 'loggedin' in session %}
           <a href="/member"><i class="fas fa-user-circle fa-2x" style="color: #ffffff" ></i></a>        
         {% else %}
@@ -105,22 +105,22 @@
 
         <div id="loading2" style="margin: auto;"></div>
         <div id="content2">
-          <div class="row" style="width:80%; margin:auto; margin-left: 10%; margin-top: 50px;">
+          <div class="row" style="width:90%; margin:auto; margin-left: 10%; margin-top: 50px;">
           {% if product_list | length == 0  %}
             <h1 style="color: #393d3f; margin: auto; width: 80%; text-align: center; font-weight: bold;">目前還沒有追蹤分類</h1>
           {% endif %}
 
           {% for category, books in product_list.items() %}
-              <div style="width: 12%; margin-top: 10px; margin-bottom: 10px; position: sticky; top: 0; z-index: 1; ">
+              <div style="width: 10%; margin-top: 10px; margin-bottom: 10px; position: sticky; top: 0; z-index: 1; ">
                   <ul class="breadcrumb" style="background-color: #393d3f; position: sticky; top: 0; z-index: 1;  box-shadow: 0 1px 2px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; margin-bottom: 8px;">
-                      <li style="margin-right: 0px; font-weight: bold; color:#ffffff; background-color: #393d3f;">{{ category }}</li>
+                      <li style="margin-right: 0px; font-weight: bold; color:#ffffff; background-color: #393d3f; font-size: 1rem;">{{ category }}</li>
                   </ul>
               </div> 
-              <div class="row" style="width:80%; margin:auto; margin-left: 5%">
+              <div class="row" style="width:80%; margin:auto; margin-left: 3%">
               {% for book in books %}
-              <div class="card " style="width: 15rem; height:70%; border:0px; border-radius: 7px; margin: 10px; ">
+              <div class="card " style="width: 20%; height:75%; border:0px; border-radius: 7px; margin: 10px; ">
                 <a href="product/{{ book['isbn_id'] }}" alt='' style="color: #393d3f; text-decoration:none">
-                  <div class="mx-auto d-block" style="vertical-align: middle; height: 240px;">
+                  <div class="mx-auto d-block" style="vertical-align: middle; height: 10%; margin-bottom: 1%;">
                     <img class="card-img-top p-3" src="{{ book['cover_photo']}}" alt="cover_photo" onerror="this.onerror=null; this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/674/6392009674_d59d0209-6c03-4b75-9084-0e5fffb34183.png?cb=1637205240';">
                   </div>
                   <div class="overlay">
@@ -326,7 +326,7 @@
 <style>
   h5.card-title {
   white-space: nowrap; 
-  width: 200px; 
+  width: 190px; 
   overflow: hidden;
   text-overflow: ellipsis; 
 
