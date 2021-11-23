@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <title>Booksbar | Member | {{ session['username']}}</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="icon" href="https://d3bu8utwyaxpsl.cloudfront.net/open-book.png">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+      <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+ 
+  
+    </head>
+    <body>
+        <nav class="navbar" style="background-color: #393d3f;">
+          <a href="{{ url_for('index')}}" class="navbar-brand" style="color: #ffffff;"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/380/6391619380_b1cf68eb-1598-4eb2-987f-bd1ab6196133.png?cb=1637199110' style="width: 60%;"></a>
+        </nav>
+        <main>
+
+            <div class="row" style="margin-top: 50px;">
+                <div class="container col-sm-1" style="margin-left:0px;">
+                </div>
+                <div class="container col-sm-2" style="margin-left:0px; text-align: center;" >
+                    <div class="card mb-3" style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px; align-items: center; background-color: #ffffff;">
+                        <div class="col-md-7">
+                            <img class="rounded mx-auto d-block" src="https://cdn-icons-png.flaticon.com/128/171/171322.png" style="height: 100%; width: 100%; margin-top: 20px; margin-left: 15px;" > 
+                        </div>
+                        <div class="col-md-9" style="margin-top: 15px; margin-bottom: 15px;">
+                            <h4 style="font-weight: bold; color: #393d3f;">{{ session['username']}}</h4><i class="fas fa-edit"></i>
+                        </div>
+                    </div>
+                    <div class="card mb-3" style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px; align-items: center; margin-top: 30px;">
+                        <div class="col-md-7" style="margin-top: 30px; color:#393d3f">
+                            <a href="/member?track_type=0" style="color:#393d3f">
+                                <i class="fas fa-history" id="heart" style="color:#393d3f">  活動紀錄</i>
+                            </a>
+                        </div>
+                        <div class="col-md-7" style="margin-top: 15px;">
+                            <a href="/member?track_type=1" style="color:#393d3f">
+                                <i class="fas fa-heart" id="heart" style="color:#393d3f">  追蹤分類</i>
+                            </a>
+                        </div>
+                        <div class="col-md-7" style="margin-top: 15px;">
+                            <a href="/member?track_type=3" style="color:#393d3f">
+                                <i class="fas fa-pen-nib">  追蹤作者</i>
+                            </a>
+                        </div>
+                        <div class="col-md-7" style="margin-top: 15px;">
+                            <a href="/member?track_type=2" style="color:#393d3f">
+                                <i class="fas fa-tag">  追蹤書籍</i>
+                            </a>
+                        </div>
+                        <div class="col-md-7" style="margin-top: 30px; margin-bottom: 15px;">
+                            <a href="{{ url_for('logout') }}">
+                            <button class="btn" type="submit" style="font-weight: bold; background-color: #393d3f; color: #ffffff;">登出</button>
+                        </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="container col-sm-6  w3-animate-opacity " style="margin-left:0px;">
+                    {% block content %}
+                    <h5 style="background-color: #393d3f; color: white; text-align: center; font-weight: bold; padding: 15px; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px;  position: sticky; top: 0; z-index: 1;">各項活動統計</h5>
+                    {% if activity_counts | length == 0 %}
+                        <h2 class="d-flex justify-content-center" style="font-weight: bold; margin-top: 30vh; color:#393d3f">目前尚未有任何活動紀錄</h2>
+                    {% else %}            
+                        <div class="row d-flex justify-content-center">
+                        {% for type_name, counts in activity_counts.items() %}
+                          <div class="" style="width: 22%; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px; padding: 0px; margin-left:10px; margin-right:10px">
+                            <div class="" style="font-weight: bold; padding: 0px; margin-top: 10px;">
+                                <h1 class="card-title d-flex justify-content-center counter" style="font-weight: bold; padding: 0px; font-size: 4rem; color:#393d3f" data-target="{{ counts }}">0</h1>            
+                                <h5 class="card-title d-flex justify-content-center" style="font-weight: bold; padding: 0px; margin-top: 10px; color:#393d3f">{{ type_name }}</h5>                       
+                            </div>
+                          </div>
+                        {% endfor %} 
+                        </div> 
+                        <h5 style="background-color: #393d3f; color: white; text-align: center; font-weight: bold; padding: 15px; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px;  position: sticky; top: 0; z-index: 1;">最近20筆閱覽紀錄</h5>
+
+                        {% for isbn_id, product in browse_history.items() %}
+                        <div class="row d-flex justify-content-center" style="margin-bottom: 15px;">
+                            <div class="row no-gutters" style="width:95%; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 7px; padding: 0px; color:#393d3f;">
+                                <div class="col-md-3 " >
+                                    <a href="product/{{ isbn_id }}">
+                                        <img src="{{product['cover_photo']}}" class="card-img" onerror="this.onerror=null;this.src='https://cdn-icons-png.flaticon.com/128/171/171322.png'" style="height: 85%; width: 85%; margin-bottom: 15px; margin-top: 15px; margin-left: 15px;">
+                                    </a>    
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="card-body" >
+                                    <a href="product/{{ isbn_id }}" style="text-decoration: none; ">
+                                        <h5 class="card-title" style="font-weight: bold; color: #393d3f;">{{product['title']}}</h5>
+                                    </a>    
+                                    <p class="card-text" style="color: #393d3f;">{{product['description'][:100]}}....</p>
+                                   </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}                             
+
+                    {% endif %}
+                    <script>
+                        // Selector
+                        const counters = document.querySelectorAll('.counter');
+                        // Main function
+                        for(let n of counters) {
+                        const updateCount = () => {
+                            const target = + n.getAttribute('data-target');
+                            const count = + n.innerText;
+                            const speed = 5000000; // change animation speed here
+                            const inc = target / speed; 
+                            if(count < target) {
+                            n.innerText = Math.ceil(count + inc);
+                            setTimeout(updateCount, 1);
+                            } else {
+                            n.innerText = target;
+                            }
+                        }
+                        updateCount();
+                        }                        
+                    </script>
+                    {% endblock content%}
+                </div>  
+                <div class="container col-sm-2" style="margin-left:0px;">
+                    
+                </div>
+              </div>
+              
+
+
+
+
+              <button onclick="topFunction()" id="myBtn" title="Go to top">▲</button>      
+              <style>
+                #myBtn {
+                  display: none;
+                  position: fixed;
+                  bottom: 20px;
+                  right: 30px;
+                  z-index: 99;
+                  font-size: 18px;
+                  border: none;
+                  outline: none;
+                  background-color: #393d3f;
+                  color: #ffffff;
+                  cursor: pointer;
+                  padding: 10px;
+                  margin: 30px;
+                  border-radius: 7px;
+                  height: 50px;
+                  width: 50px;
+                }
+                
+                #myBtn:hover {
+                  background-color: #cc444b;
+                }
+                </style>
+              <script>
+                //Get the button
+                var mybutton = document.getElementById("myBtn");
+                
+                // When the user scrolls down 20px from the top of the document, show the button
+                window.onscroll = function() {scrollFunction()};
+                
+                function scrollFunction() {
+                  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                    mybutton.style.display = "block";
+                  } else {
+                    mybutton.style.display = "none";
+                  }
+                }
+                
+                // When the user clicks on the button, scroll to the top of the document
+                function topFunction() {
+                  document.body.scrollTop = 0;
+                  document.documentElement.scrollTop = 0;
+                }
+              </script>
+        </main>
+    </body>

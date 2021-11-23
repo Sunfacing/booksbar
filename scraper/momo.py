@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 from collections import defaultdict
-from datetime import date
+from datetime import date, datetime, timedelta
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 from scraper_tools.data_processor import *
@@ -10,28 +10,29 @@ import time
 
 TODAY = date.today().strftime("%Y-%m-%d")
 TODAY_FOR_COLLECTION_NAME = date.today().strftime("%m%d")
-DATE_FOR_DELETE_COLLECTION_NAME = str(int(TODAY_FOR_COLLECTION_NAME) - 7)
-YESTERDAY_FOR_EORROR_CHECKER = str(int(TODAY_FOR_COLLECTION_NAME) - 1)
-
+DATE_SUBTRACT_1 = str(datetime.today() - timedelta(days=1)).split(' ')[0].split('-')[1:]
+YESTERDAY_FOR_EORROR_CHECKER = ''.join(DATE_SUBTRACT_1)
+DATE_SUBTRACT_7 = str(datetime.today() - timedelta(days=7)).split(' ')[0].split('-')[1:]
+DATE_FOR_DELETE_COLLECTION_NAME = ''.join(DATE_SUBTRACT_7)
 
 client = MongoClient('localhost', 27017)
-db = client.Bookstores
+db = client.bookbar
 
 # Set collection name with variable for auto addition / validation / deletion
 catalog_today = db['momo_catalog_' + TODAY_FOR_COLLECTION_NAME]
 catalog_yesterday = db['momo_catalog_' + YESTERDAY_FOR_EORROR_CHECKER]
 catalog_last_7_days = db['momo_catalog_' + DATE_FOR_DELETE_COLLECTION_NAME]
 
-category_list = db.momo_nomenclature  # Category List
+category_list = db.momo  # Category List
 catalog_tem_today = db.momo_catalog_tem_today
-# category_list = db.momo  # Category List
+page_error = db.kingstone_page_error
 category_error = db.momo_category_error
 product_info = db.momo_product_info
 product_error = db.momo_product_error
 new_prodcut_catalog = db.momo_new_product_catalog
 phase_out_product_catalog = db.momo_phase_out_catalog
 unfound_product_catalog = db.momo_unfound_product_catalog
-
+timecounter = db.timecounter
 
 SECTION_URL = 'https://m.momoshop.com.tw/category.momo?cn=4000000000&cid=dir&oid=dir&imgSH=fourCardType'
 CATALOG_URL = 'https://m.momoshop.com.tw/cateGoods.momo?cn={}&page={}&sortType=5&imgSH=itemizedType'
@@ -61,7 +62,7 @@ def category_path_finder(data, url):
 def get_category_list(url):
     path_url_prefix = 'https://m.momoshop.com.tw/category.momo?cn='
     nomenclature = []
-    page  = requests.get(url, headers = HEADERS) 
+    page  = requests.get(url, headers = HEADERS, timeout=60) 
     page.enconding = 'utf-8'
     section_links = BeautifulSoup(page.content, 'html.parser').find('div', {'class': 'classificationList'}).find_all('dd')
     for sec in section_links:
@@ -95,15 +96,19 @@ def get_category_list(url):
 def get_product_list(url, subcate_code):
     i = 1
     product_list = []
+    error_pages = []
     while True:
         try:
             catalog_url = url.format(subcate_code, i)
             try:
-                page  = requests.get(catalog_url, headers = HEADERS)
+                page  = requests.get(catalog_url, headers = HEADERS, timeout=60)
             except:
                 print('something went wrong with {} at page {}, try again in 10 seconds'.format(subcate_code, i))
                 time.sleep(10)
-                page  = requests.get(catalog_url, headers = HEADERS)                
+                try:
+                    page  = requests.get(catalog_url, headers = HEADERS, timeout=60)                
+                except:
+                    error_pages.append({'subcate_code': subcate_code, 'page': i, 'fail_date': TODAY})
             page.enconding = 'utf-8'
             category_links = BeautifulSoup(page.content, 'html.parser').find_all('a', {'class': 'productInfo'})
             publisher_author_links = BeautifulSoup(page.content, 'html.parser').find('p', {'class': 'publishInfo'})
@@ -159,12 +164,16 @@ def get_product_list(url, subcate_code):
                                     'pic_url': pic_url})
 
         except Exception as e:
-            print('something wrong with', subcate_code , e)
+            print('now is {} at page {}'.format(subcate_code, i), 'with result', len(category_links))
+            error_pages.append({'subcate_code': subcate_code, 'page': i, 'fail_date': TODAY})
         i += 1
+    if len(error_pages) > 0:
+        mongo_insert(page_error, error_pages)
     return product_list
 
 def get_product_info(url_to_scrape, sliced_list, target_id_key):
     info_list = []
+    not_found_list = []
     i = 0
     for product in sliced_list:       
         data = defaultdict(dict)
@@ -172,11 +181,14 @@ def get_product_info(url_to_scrape, sliced_list, target_id_key):
         url = url_to_scrape + product[target_id_key]
         print(i, url)
         try:
-            page  = requests.get(url, headers = HEADERS)
+            page  = requests.get(url, headers = HEADERS, timeout=60)
         except:
             print('{} fetching data failed, try again in 10 seconds'.format(data['subcate_code']))
-            time.sleep(10) 
-            page  = requests.get(url, headers = HEADERS)
+            time.sleep(10)
+            try:
+                page  = requests.get(url, headers = HEADERS, timeout=60)
+            except:
+                not_found_list.append({'subcate_id': product['subcate_code'], 'product_id': product[target_id_key], 'track_date': TODAY})
         page.enconding = 'utf-8'
         page_content = BeautifulSoup(page.content, 'html.parser')
         try:
@@ -195,11 +207,12 @@ def get_product_info(url_to_scrape, sliced_list, target_id_key):
                     elif len(info) > 1:
                         data[label] = value.strip()
                 except:
-                    pass
+                    data[label] = ''
         except:
-            product_info = ''
+            not_found_list.append({'subcate_id': product['subcate_code'], 'product_id': product[target_id_key], 'track_date': TODAY})
         data['momo_pid'] = url.split('i_code=')[-1].split('&')[0]
         data['title'] = title
+        data['track_date'] = TODAY
         i += 1
         info_list.append(data)
     return info_list
@@ -215,11 +228,14 @@ def phased_out_checker(url_to_scrape, sliced_list, target_id_key):
         product_url = url_to_scrape + product[target_id_key]
         print(i, product_url)
         try:
-            page  = requests.get(product_url, headers = HEADERS)
+            page  = requests.get(product_url, headers = HEADERS, timeout=60)
         except:
             print('{} fetching data failed, try again in 10 seconds'.format(momo_pid))
-            time.sleep(10) 
-            page  = requests.get(product_url, headers = HEADERS)
+            time.sleep(10)
+            try:
+                page  = requests.get(product_url, headers = HEADERS, timeout=60)
+            except:
+                pass
         page.enconding = 'utf-8'
         page_content = BeautifulSoup(page.content, 'html.parser')
         try:
@@ -241,12 +257,13 @@ if __name__=='__main__':
     # Step 1: Build up category list if not exists for later scrapping, it's one time set up
     if not category_list.find_one():
         get_category_list(SECTION_URL)
-
+    
     # Step 2. Scrap daily to get the price and looking for new items record error into [error_catalog] 
+    start = time.time()
     for i in range(2):
         list_to_scrape = scan_category_for_scraping(catalog_tem_today, 'subcate_code', category_list, {}, 'subcate_code')
         multi_scrapers(
-            worker_num = 2, 
+            worker_num = 10, 
             list_to_scrape = list_to_scrape, 
             url_to_scrape = CATALOG_URL, 
             target_id_key = 'subcate_code', 
@@ -259,24 +276,32 @@ if __name__=='__main__':
     if len(unfinished_list) > 0:
         unfinished_category_list = create_new_field(unfinished_list, error_date=TODAY)
         mongo_insert(category_error, unfinished_category_list)
-
-
+    end = time.time()
+    timecounter.insert_one({'date': TODAY, 'platform': 'momo', 'step': 'scrape catalog', 'time': end - start})
+    
     # Step 3. The raw catalog contains duplicate products; remove them from [catalog_tem_today] 
     #         and copy cleaned catalog to [catalog_today] then delete [catalog_tem_today]
+    start = time.time()
     copy_to_collection(catalog_tem_today, catalog_today, 'momo_pid')
     db.drop_collection(catalog_tem_today)
+    end = time.time()
+    timecounter.insert_one({'date': TODAY, 'platform': 'momo', 'step': 'remove duplicates', 'time': end - start})
 
 
     # Step 4. Mutually compare[catalog_today] with [catalog_yesterday], 
     #         phase out product in [phase_out_product_catalog]
     #         new product in [new_prodcut_catalog]
+    start = time.time()
     daily_change_tracker(catalog_today, catalog_yesterday, 'momo_pid', new_prodcut_catalog, unfound_product_catalog)
+    end = time.time()
+    timecounter.insert_one({'date': TODAY, 'platform': 'momo', 'step': 'track change', 'time': end - start}) 
 
     # Step 5. Use [new_prodcut_catalog] to request single product's api and insert into product_info
+    start = time.time()
     product_catalog = new_prodcut_catalog.find({'track_date': TODAY})
     product_list = convert_mongo_object_to_list(product_catalog)
     multi_scrapers(
-        worker_num = 2, 
+        worker_num = 5, 
         list_to_scrape = product_list, 
         url_to_scrape = PRODUCT_URL, 
         target_id_key = 'momo_pid', 
@@ -285,13 +310,16 @@ if __name__=='__main__':
         insert_func = mongo_insert,
         slicing=True
     )
-
+    end = time.time()
+    timecounter.insert_one({'date': TODAY, 'platform': 'momo', 'step': 'scrape product', 'time': end - start})
+    
     # Step 6: Reading [unfound_product_catalog], add current back to [catalog_today], phased out to [phase_out_product_catalog]
     #         Delete after finishing scraping
+    start = time.time()    
     product_catalog = unfound_product_catalog.find()
     product_list = convert_mongo_object_to_list(product_catalog)
     multi_scrapers(
-        worker_num = 2, 
+        worker_num = 5, 
         list_to_scrape = product_list, 
         url_to_scrape = PRODUCT_URL, 
         target_id_key = 'momo_pid', 
@@ -301,6 +329,9 @@ if __name__=='__main__':
         slicing=True
     )
     db.drop_collection(unfound_product_catalog)
+    end = time.time()
+    timecounter.insert_one({'date': TODAY, 'platform': 'momo', 'step': 'check unfound', 'time': end - start})
 
     # Step 7. Delete catalog of 7 days age, EX: today is '2021-10-26', so delete '2021-10-19'
     db.drop_collection(catalog_last_7_days)
+       
