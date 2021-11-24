@@ -128,3 +128,12 @@ def add_to_favorite(subcate=None, author=None, price=None):
         return response
     response['response'] = 'no'
     return response
+
+
+
+@app.route('/logout')
+def logout():
+    session.pop('id', None)
+    session.pop('username', None)
+    session.pop('loggedin', None)
+    return redirect(url_for('index'))
