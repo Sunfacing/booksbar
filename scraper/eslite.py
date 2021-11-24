@@ -1,6 +1,7 @@
 import time
 import requests
-
+import os
+from dotenv import load_dotenv
 from pymongo import MongoClient
 from collections import defaultdict
 from datetime import date, timedelta
@@ -28,8 +29,13 @@ DATE_SUBTRACT_7 = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedel
 DATE_FOR_DELETE_COLLECTION_NAME = ''.join(DATE_SUBTRACT_7)
 
 
+
+
 # client = MongoClient('localhost', 27017)
-client = MongoClient('mongodb://bartender:books@ec2-3-17-181-14.us-east-2.compute.amazonaws.com:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false')
+load_dotenv()
+client = MongoClient('mongodb://{}:{}@{}/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false'.format(os.getenv("mon_user"), os.getenv("mon_passwd"), os.getenv("mon_host")))
+
+
 db = client.bookbar
 # Set collection name with variable for auto addition / validation / deletion
 catalog_today = db['eslite_catalog_' + TODAY_FOR_COLLECTION_NAME]
@@ -356,16 +362,3 @@ scrap_new_products()
 scrap_unfound_products()
 drop_old_collection()
 
-
-
-# start = time.time()
-# copy_to_collection(catalog_today, catalog_tem_today, 'eslite_pid')
-# db.drop_collection(catalog_today)
-# end = time.time()
-# timecounter.insert_one({'date': TODAY, 'platform': 'eslite', 'step': 'remove duplicates', 'time': end - start, 'start': start, 'end': end})
-
-# start = time.time()
-# copy_to_collection(catalog_tem_today, catalog_today, 'eslite_pid')
-# db.drop_collection(catalog_tem_today)
-# end = time.time()
-# timecounter.insert_one({'date': TODAY, 'platform': 'eslite', 'step': 'remove duplicates', 'time': end - start, 'start': start, 'end': end})

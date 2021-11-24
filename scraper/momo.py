@@ -6,8 +6,10 @@ from data_processor import *
 from scrapers import multi_scrapers
 import requests
 import time
-from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
+import os
+from dotenv import load_dotenv
+# from airflow import DAG
+# from airflow.operators.python_operator import PythonOperator
 from datetime import date, timedelta
 import datetime
 import pytz
@@ -21,7 +23,10 @@ DATE_SUBTRACT_7 = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedel
 DATE_FOR_DELETE_COLLECTION_NAME = ''.join(DATE_SUBTRACT_7)
 
 # client = MongoClient('localhost', 27017)
-client = MongoClient('mongodb://bartender:books@ec2-3-17-181-14.us-east-2.compute.amazonaws.com:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false')
+# client = MongoClient(f'mongodb://{os.getenv("mon_user")}:{os.getenv("mon_passwd")}@{os.getenv("mon_host")}/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false')
+load_dotenv()
+client = MongoClient('mongodb://{}:{}@{}/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false'.format(os.getenv("mon_user"), os.getenv("mon_passwd"), os.getenv("mon_host")))
+
 db = client.bookbar
 
 # Set collection name with variable for auto addition / validation / deletion
@@ -379,3 +384,4 @@ def mm_drop_old_collection():
 #     task_5 = PythonOperator(task_id='scrap_unfound_products', python_callable=mm_scrap_unfound_products)
 #     task_6 = PythonOperator(task_id='drop_old_collection', python_callable=mm_drop_old_collection)
 #     task_1 >> task_2 >> task_3 >> task_4 >> task_5 >> task_6
+
