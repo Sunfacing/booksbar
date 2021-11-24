@@ -1,7 +1,7 @@
 from collections import defaultdict
-
 from enum import Enum
 
+from server import db
 
 class Platform(Enum):
     KINGSTONE = 1
@@ -55,3 +55,12 @@ def introduction_checker(info, error_message):
     if info == 'None' or not info:
         return error_message
     return info
+
+
+def create_data(data):
+    """
+    Reduce repetitive db.session.add and db.session.commit
+    :param data: data to add
+    """
+    db.session.add(data)
+    db.session.commit()

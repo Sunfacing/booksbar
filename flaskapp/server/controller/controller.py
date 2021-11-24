@@ -61,7 +61,7 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
     category_nm = request.args.get('category_nm', category_nm)
     subcate_nm = request.args.get('subcate_nm', subcate_nm)
     books = db.session.execute("SELECT * FROM bookbar.category_list")
-    page = request.args.get('page', page)
+
     cate_list = defaultdict(list)
     nav_sec = defaultdict(dict)
     for book in books:
@@ -71,6 +71,7 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
             category = book['category']
             subcategory = book['subcategory']
             cate_list[category].append(subcategory)
+    print(cate_list)
     subcate_list = cate_list[category_nm]
     if category_nm != 'all':
         product_list = get_catalog_subcategory(subcate_nm, page=page)
@@ -83,6 +84,8 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
         html_page = 'section.html'
 
     book_counts = get_subcate_book_counts(subcate_nm)
+
+    page = request.args.get('page', page)
     ttl_pages = 0
     shown_pages = defaultdict(dict)
     for book in book_counts:
@@ -118,7 +121,7 @@ def product(isbn_id=None):
     for book in books:
         section = book['section']
         nav_sec[section] = section
-        
+
     eslite = defaultdict(dict)
     kingstone = defaultdict(dict)
     momo = defaultdict(dict)
@@ -154,8 +157,7 @@ def product(isbn_id=None):
     if 'loggedin' in session:
         user_id = session['id']
         isbn_id = kingstone['isbn_id']
-        db.session.add(UserFavorite(user_id=user_id, track_type=TrackType.ACTIVITY_HISTORY.value, type_id=isbn_id))
-        db.session.commit()
+        create_data(UserFavorite(user_id=user_id, track_type=TrackType.ACTIVITY_HISTORY.value, type_id=isbn_id))
         tracking_hash = check_user_track_by_product(user_id, kingstone['category_id'], isbn_id, kingstone['author_id'])
     else:
         tracking_hash = {}
