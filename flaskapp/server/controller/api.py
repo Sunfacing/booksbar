@@ -1,20 +1,14 @@
-import datetime
-import os
 from collections import defaultdict
-from datetime import timedelta
-import pymysql
-import plotly.express as px
-import plotly
-from flask import render_template, request, redirect, session, jsonify
-from flask.helpers import url_for
 import re
+
+from flask import  request, redirect, session
+from flask.helpers import url_for
+
 from server import app, bcrypt
 from server import db
-import pytz
-
 from server.models.product_model import *
 from server.models.user_model import *
-
+from server.controller.util import *
 
 
 
@@ -24,20 +18,9 @@ def book_info(isbn_id=None):
     result = api_book_info(isbn_id)
     response = defaultdict(dict)
     for info in result:
-        if info['table_of_content'] == 'None':
-            response['table_of_content'] = "目前無目錄大綱"
-        else:
-            response['table_of_content'] = info['table_of_content']
-
-        if not info['description']:
-            response['description'] = "目前無內容簡介"
-        else:
-            response['description'] = info['description']
-
-        if not info['author_intro']:
-            response['author_intro'] = "目前無作者介紹"
-        else:
-            response['author_intro'] = info['author_intro']
+        response['table_of_content'] = introduction_checker(info['table_of_content'], "目前無目錄大綱")
+        response['description'] = introduction_checker(info['description'], "目前無內容簡介")
+        response['author_intro'] = introduction_checker(info['author_intro'], "目前無作者介紹")
     return response
 
 

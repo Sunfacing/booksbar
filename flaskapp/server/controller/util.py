@@ -39,3 +39,15 @@ def create_booslist_by_category(*returned_booklists):
                 duplicate_hash[isbn_id] = 1
                 count += 1
     return [product_list, count]
+
+
+
+def introduction_checker(info, error_message):
+    """
+    Used in product page under introduction section
+    :param info: information title -> table_of_contents, description, author_intro
+    :param error_message: message return if information is empty
+    """
+    if info == 'None' or not info:
+        return error_message
+    return info
