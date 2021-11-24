@@ -10,13 +10,17 @@ class Platform(Enum):
 
 
 class TrackType(Enum):
-    ACTIVITY_HISTORY = '0'
     FAVORITE_CATEGORY = '1'
     FAVORITE_BOOK = '2'
     FAVORITE_AUTHOR = '3'
+    ACTIVITY_HISTORY = '4'
 
 
 def create_booslist_by_category(*returned_booklists):
+    """
+    Used in search page under introduction section, called by [introduction_checker]
+    :param returned_booklists: information title -> table_of_contents, description, author_intro
+    """
     product_list = defaultdict(dict)
     duplicate_hash = defaultdict(dict)
     count = 0
@@ -26,11 +30,11 @@ def create_booslist_by_category(*returned_booklists):
             categroy = book['category']
             if not duplicate_hash[isbn_id]:
                 data = {
-                'isbn_id': isbn_id,
-                'title': book['title'],
-                'cover_photo': book['cover_photo'],
-                'author': book['author'],
-                'description': book['description'],
+                    'isbn_id': isbn_id,
+                    'title': book['title'],
+                    'cover_photo': book['cover_photo'],
+                    'author': book['author'],
+                    'description': book['description'],
                 }
                 if not product_list[categroy]:
                     product_list[categroy] = [data]
