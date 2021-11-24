@@ -1,5 +1,4 @@
 import datetime
-import re
 from collections import defaultdict
 from datetime import timedelta
 
@@ -111,64 +110,55 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
 
 
 
-
-
 @app.route('/product/<isbn_id>', methods=['GET', 'POST'])
 def product(isbn_id=None):
+    isbn_id = request.args.get('isbn_id', isbn_id)
+    books = db.session.execute("SELECT * FROM bookbar.category_list")
+    nav_sec = defaultdict(dict)
+    for book in books:
+        section = book['section']
+        nav_sec[section] = section
+        
+    eslite = defaultdict(dict)
+    kingstone = defaultdict(dict)
+    momo = defaultdict(dict)
     try:
-        isbn_id = request.args.get('isbn_id', isbn_id)
-        books = db.session.execute("SELECT * FROM bookbar.category_list")
-        nav_sec = defaultdict(dict)
-        for book in books:
-            section = book['section']
-            nav_sec[section] = section
+        info_list = get_book_info(isbn_id=isbn_id, date=TODAY)
+    except:
+        return render_template('404.html'), 404
 
-        eslite = defaultdict(dict)
-        kingstone = defaultdict(dict)
-        momo = defaultdict(dict)
-        try:
-            info_list = get_book_info(isbn_id=isbn_id, date=TODAY)
-        except:
-            return render_template('404.html'), 404
-
-        for info in info_list:
-            platform = info['platform']
-            if platform == 1:
-                kingstone = info
-            elif platform == 2:
-                eslite  = info
-            else:
-                momo = info
-            if not momo['price']:
-                momo['price'] = 0
-            if not eslite['price']:
-                eslite['price'] = 0
-            if not kingstone['price']:
-                kingstone['price'] = 0
-
-        pics = get_book_pics(isbn_id)
-        pic_list = []
-        i = 2
-        for pic in pics:
-            pic_list.append([pic['pics'], i])
-            i += 1
-
-        comment_list = get_book_comments(isbn_id)
-        comments = []
-        for each in comment_list:
-            comments.append([each['date'].date(), each['comment']])
-
-        if 'loggedin' in session:
-            user_id = session['id']
-            isbn_id = kingstone['isbn_id']
-            db.session.add(UserFavorite(user_id=user_id, track_type=4, type_id=isbn_id))
-            db.session.commit()
-            tracking_hash = check_user_track_by_product(user_id, kingstone['category_id'], isbn_id, kingstone['author_id'])
+    for info in info_list:
+        platform = info['platform']
+        if platform == Platform.KINGSTONE.value:
+            kingstone = info
+        elif platform == Platform.ESLITE.value:
+            eslite  = info
         else:
-            tracking_hash = {}
-    except Exception as exception:
-        print(exception)
-
+            momo = info
+        if not momo['price']:
+            momo['price'] = 0
+        if not eslite['price']:
+            eslite['price'] = 0
+        if not kingstone['price']:
+            kingstone['price'] = 0
+    pics = get_book_pics(isbn_id)
+    pic_list = []
+    i = 2
+    for pic in pics:
+        pic_list.append([pic['pics'], i])
+        i += 1
+    comment_list = get_book_comments(isbn_id)
+    comments = []
+    for each in comment_list:
+        comments.append([each['date'].date(), each['comment']])
+    if 'loggedin' in session:
+        user_id = session['id']
+        isbn_id = kingstone['isbn_id']
+        db.session.add(UserFavorite(user_id=user_id, track_type=TrackType.ACTIVITY_HISTORY.value, type_id=isbn_id))
+        db.session.commit()
+        tracking_hash = check_user_track_by_product(user_id, kingstone['category_id'], isbn_id, kingstone['author_id'])
+    else:
+        tracking_hash = {}
     return render_template('product.html', nav_sec=nav_sec,
                                         kingstone=kingstone,
                                         eslite=eslite,
@@ -176,6 +166,7 @@ def product(isbn_id=None):
                                         pic_list=pic_list,
                                         comment_list=comments,
                                         tracking_hash=tracking_hash)
+
 
 @app.route('/member')
 def member(track_type=TrackType.ACTIVITY_HISTORY.value):
@@ -242,9 +233,6 @@ def member(track_type=TrackType.ACTIVITY_HISTORY.value):
         activity_counts = summerize_user_activity(user_id)
         browse_history = check_user_browsing_history(user_id)
         return render_template('member.html', activity_counts=activity_counts, browse_history=browse_history)
-
-        
-
 
 
 @app.route('/keyword', methods=['GET'])
