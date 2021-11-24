@@ -245,15 +245,9 @@ def member(track_type=TrackType.ACTIVITY_HISTORY.value):
 
         
 
-@app.route('/logout')
-def logout():
-    session.pop('id', None)
-    session.pop('username', None)
-    session.pop('loggedin', None)
-    return redirect(url_for('index'))
 
 
-@app.route('/keyword', methods=['GET', 'POST'])
+@app.route('/keyword', methods=['GET'])
 def search(search=None):
     term = request.args.get('search', search)
     keyword_result = search_by_term(term)
@@ -262,7 +256,7 @@ def search(search=None):
     return render_template('search.html', product_list=product_list[0], term=term, count=product_list[1])
 
 
-@app.route('/author', methods=['GET', 'POST'])
+@app.route('/author', methods=['GET'])
 def author(name=None):
     name = request.args.get('name', name)
     returned_booklist = search_by_author(name)

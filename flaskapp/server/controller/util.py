@@ -9,7 +9,11 @@ class Platform(Enum):
     MOMO = 3
 
 
-
+class TrackType(Enum):
+    ACTIVITY_HISTORY = '0'
+    FAVORITE_CATEGORY = '1'
+    FAVORITE_BOOK = '2'
+    FAVORITE_AUTHOR = '3'
 
 
 def create_booslist_by_category(*returned_booklists):
