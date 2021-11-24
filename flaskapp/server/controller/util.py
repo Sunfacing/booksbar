@@ -44,7 +44,7 @@ def create_booslist_by_category(*returned_booklists):
 
 def introduction_checker(info, error_message):
     """
-    Used in product page under introduction section
+    Used in product page under introduction section, called by [introduction_checker]
     :param info: information title -> table_of_contents, description, author_intro
     :param error_message: message return if information is empty
     """
