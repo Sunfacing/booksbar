@@ -35,7 +35,7 @@ class UserComment(db.Model):
     comment = db.Column(db.Text)
 
 
-def get_user_favor_category(user_id):
+def get_user_favor_categories(user_id):
     result = db.session.execute("""
     SELECT section, category, subcategory FROM user_favorite AS u 
     INNER JOIN category_list AS c
@@ -47,9 +47,13 @@ def get_user_favor_category(user_id):
 
 
 
-def get_user_favor_author(user_id):
+def get_user_favor_authors(user_id):
     result = db.session.execute("""
-    SELECT isbn_id, name, title, publish_date FROM user_favorite AS u 
+    SELECT isbn_id, 
+        name, 
+        title, 
+        DATE_FORMAT(publish_date,'%Y-%m-%d') AS publish_date 
+    FROM user_favorite AS u 
     INNER JOIN author AS a
     ON u.type_id = a.id
     INNER JOIN book_info AS b
@@ -59,9 +63,15 @@ def get_user_favor_author(user_id):
     return result
 
 
-def get_user_favor_book(user_id, date):
+def get_user_favor_books(user_id, date):
     result = db.session.execute("""
-    SELECT c.category, isbn_id, title, cover_photo, product_url, price, b.platform 
+    SELECT c.category,
+        isbn_id,
+        title,
+        cover_photo,
+        product_url,
+        price,
+        b.platform 
     FROM user_favorite AS u
     INNER JOIN book_info AS b
     ON u.type_id = b.isbn_id
@@ -78,7 +88,8 @@ def get_user_favor_book(user_id, date):
 
 def check_user_track_by_product(user_id, category_id, author_id, isbn_id):
     result = db.session.execute("""
-    SELECT track_type, type_id  FROM bookbar.user_favorite
+    SELECT track_type, type_id  
+    FROM bookbar.user_favorite
     WHERE track_type= 1 AND type_id = {} AND user_id = {}
     OR track_type= 2 AND type_id = {} AND user_id = {}
     OR track_type= 3 AND type_id = {} AND user_id = {}
@@ -112,7 +123,10 @@ def summerize_user_activity(user_id):
 
 def check_user_browsing_history(user_id):
     result = db.session.execute("""
-    SELECT DISTINCT(type_id) AS isbn_id, b.title, b.cover_photo, b.description
+    SELECT DISTINCT(type_id) AS isbn_id, 
+        b.title,
+        b.cover_photo,
+        b.description
     FROM user_favorite AS u
     INNER JOIN book_info AS b
     ON b.isbn_id = u.type_id

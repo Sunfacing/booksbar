@@ -178,71 +178,72 @@ def product(isbn_id=None):
                                         tracking_hash=tracking_hash)
 
 @app.route('/member')
-def member(track_type=0):
-    if 'loggedin' in session:
-        user_id = session['id']
-        track_type = request.args.get('track_type', track_type)
-        if track_type == '1':
-            cate_list = defaultdict(dict)
-            result = get_user_favor_category(user_id)
-            for cate in result:
-                section = cate['section']
-                categroy = cate['category']
-                subcategory = cate['subcategory']
-                if not cate_list[section]:
-                    cate_list[section] = [[categroy, subcategory]]
-                else:
-                    cate_list[section].append([categroy, subcategory])
-            return render_template('favor_cate.html', cates=cate_list)
-        elif track_type == '2':
-            user_id = session['id']
-            date = TODAY
-            books = get_user_favor_book(user_id, date)
-            book_list = defaultdict(dict)
-            final_list = defaultdict(dict)
-            for book in books:
-                category = book['category']
-                isbn_id = book['isbn_id']
-                if book['platform'] == Platform.KINGSTONE.value:     
-                    book_list[isbn_id]['title'] = book['title']
-                    book_list[isbn_id]['cover_photo'] = book['cover_photo']
-                    book_list[isbn_id]['ks_product_url'] = book['product_url']
-                    book_list[isbn_id]['ks_price'] = int(book['price'])
-                    if not book['price']:
-                        book_list[isbn_id]['ks_price'] = 0
-                elif book['platform'] == Platform.ESLITE.value:
-                    book_list[isbn_id]['es_product_url'] = book['product_url']
-                    book_list[isbn_id]['es_price'] = int(book['price'])
-                    if not book_list[isbn_id]['es_price']:
-                        book_list[isbn_id]['es_price'] = 0
-                else:
-                    book_list[isbn_id]['mm_product_url'] = book['product_url']
-                    book_list[isbn_id]['mm_price'] = int(book['price'])
-                    if not book_list[isbn_id]['mm_price']:
-                        book_list[isbn_id]['mm_price'] = 0
-                final_list[category][isbn_id] = book_list[isbn_id]
-            return render_template('favor_book.html', books=final_list)
-
-        elif track_type == '3':
-            authors = get_user_favor_author(user_id)
-            author_list = defaultdict(dict)
-            for author in authors:
-                isbn_id = author['isbn_id']
-                name = author['name']
-                title = author['title']
-                publish_date = author['publish_date']
-                if not author_list[name]:
-                    author_list[name] = [[isbn_id, title, publish_date]]
-                else:
-                    author_list[name].append([isbn_id, title, publish_date])
-            return render_template('favor_author.html', authors=author_list)
-        else:
-            activity_counts = summerize_user_activity(user_id)
-            browse_history = check_user_browsing_history(user_id)
-            return render_template('member.html', activity_counts=activity_counts, browse_history=browse_history)
-    else:
+def member(track_type=TrackType.ACTIVITY_HISTORY.value):
+    if 'loggedin' not in session:
         return redirect(url_for('login'))
+    user_id = session['id']
+    track_type = request.args.get('track_type', track_type)
 
+    # Render user's favorite cateogory page by Section -> Category -> Subcategory
+    if track_type == TrackType.FAVORITE_CATEGORY.value:
+        cate_list = defaultdict(dict)
+        result = get_user_favor_categories(user_id)
+        for cate in result:
+            section = cate['section']
+            category = cate['category']
+            subcategory = cate['subcategory']
+            if not cate_list[section]:
+                cate_list[section] = [[category, subcategory]]
+            else:
+                cate_list[section].append([category, subcategory])
+        return render_template('favor_cate.html', cates=cate_list)
+
+    # Render user's favorite books
+    elif track_type == TrackType.FAVORITE_BOOK.value:
+        user_id = session['id']
+        books = get_user_favor_books(user_id, TODAY)
+        book_list = defaultdict(dict)
+        final_list = defaultdict(dict)
+        for book in books:
+            category = book['category']
+            isbn_id = book['isbn_id']
+            if book['platform'] == Platform.KINGSTONE.value:   
+                book_list[isbn_id]['title'] = book['title']
+                book_list[isbn_id]['cover_photo'] = book['cover_photo']
+                platform = 'ks'
+            elif book['platform'] == Platform.ESLITE.value:
+                platform = 'es'
+            else:
+                platform = 'mm'
+            book_list[isbn_id][platform + '_product_url'] = book['product_url']
+            book_list[isbn_id][platform + '_price'] = int(book['price'])
+            if not book_list[isbn_id][platform + '_price']:
+                book_list[isbn_id][platform + '_price'] = 0
+            final_list[category][isbn_id] = book_list[isbn_id]
+        return render_template('favor_book.html', books=final_list)
+
+    # Render user's favorite authors
+    elif track_type == TrackType.FAVORITE_AUTHOR.value:
+        authors = get_user_favor_authors(user_id)
+        author_list = defaultdict(dict)
+        for author in authors:
+            isbn_id = author['isbn_id']
+            name = author['name']
+            title = author['title']
+            publish_date = author['publish_date']
+            if not author_list[name]:
+                author_list[name] = [[isbn_id, title, publish_date]]
+            else:
+                author_list[name].append([isbn_id, title, publish_date])
+        return render_template('favor_author.html', authors=author_list)
+
+    # Render user's activity history
+    else:
+        activity_counts = summerize_user_activity(user_id)
+        browse_history = check_user_browsing_history(user_id)
+        return render_template('member.html', activity_counts=activity_counts, browse_history=browse_history)
+
+        
 
 @app.route('/logout')
 def logout():
