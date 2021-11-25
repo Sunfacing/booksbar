@@ -21,7 +21,7 @@ YESTERDAY = (datetime.datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 MONTH_AGO = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=15)).strftime("%Y-%m-%d")
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def index(period='month', user_id='0'):
     period = request.args.get('period', period)
     user_id = request.args.get('user_id', user_id)
@@ -94,7 +94,7 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
                                 shown_pages=shown_pages)
 
 
-@app.route('/product/<isbn_id>', methods=['GET', 'POST'])
+@app.route('/product/<isbn_id>', methods=['GET'])
 def product(isbn_id=None):
     isbn_id = request.args.get('isbn_id', isbn_id)
     books = db.session.execute("SELECT * FROM bookbar.category_list")
@@ -202,20 +202,14 @@ def member(track_type=TrackType.ACTIVITY_HISTORY.value):
 
 
 @app.route('/keyword', methods=['GET'])
-def search(search=None):
+def search(search=None, only_author=False):
     term = request.args.get('search', search)
-    keyword_result = search_by_term(term)
+    only_author = request.args.get('only_author', only_author)
     author_result = search_by_author(term)
+    if only_author:
+        product_list = create_booslist_by_category(author_result)
+        return render_template('search.html', product_list=product_list[0], term=term, count=product_list[1])
+    keyword_result = search_by_term(term)
     product_list = create_booslist_by_category(keyword_result, author_result)
     return render_template('search.html', product_list=product_list[0], term=term, count=product_list[1])
-
-
-@app.route('/author', methods=['GET'])
-def author(name=None):
-    name = request.args.get('name', name)
-    returned_booklist = search_by_author(name)
-    product_list = create_booslist_by_category(returned_booklist)
-    return render_template('search.html', product_list=product_list[0], term=name, count=product_list[1])
-
-
 
