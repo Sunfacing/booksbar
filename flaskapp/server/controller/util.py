@@ -45,7 +45,6 @@ def create_booslist_by_category(*returned_booklists):
     return [product_list, count]
 
 
-
 def introduction_checker(info, error_message):
     """
     Used in product page under introduction section, called by [introduction_checker]
@@ -64,7 +63,6 @@ def create_data(data):
     """
     db.session.add(data)
     db.session.commit()
-
 
 
 def show_paging(page, book_counts, books_per_page):
@@ -93,3 +91,25 @@ def show_paging(page, book_counts, books_per_page):
     
     shown_pages['current'] = page
     return shown_pages
+
+
+def create_dict_list(list_to_loop, *sub_keys, main_key):
+    """
+    Return a dict of lists, with multiple sub_keys input based on each case.
+    This function is used for member page's favorite categories and authors
+    :param sub_keys: keys under each main_key, such as publish dates, book names 
+    :param main_key: key for grouping sub_keys, two cases are author names and category names 
+    """
+    dict_list = defaultdict(dict)
+    for element in list_to_loop:
+        main = element[main_key]
+        temp_list = []
+        for key in sub_keys:
+            column = element[key]
+            temp_list.append(column)
+        if not dict_list[main]:
+            dict_list[main] = [temp_list]
+        else:
+            dict_list[main].append(temp_list)    
+        temp_list = []
+    return dict_list

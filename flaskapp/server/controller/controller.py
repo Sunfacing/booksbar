@@ -16,7 +16,7 @@ from server.controller.util import *
 
 
 # TODAY = datetime.datetime.now(pytz.timezone('US/Pacific')).strftime("%Y-%m-%d")
-TODAY = '2021-11-21'
+TODAY = '2021-11-06'
 YESTERDAY = (datetime.datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 MONTH_AGO = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=15)).strftime("%Y-%m-%d")
 
@@ -52,7 +52,7 @@ def index(period='month', user_id='0'):
     return render_template('index.html', product_list=product_list, period=period, user_id=user_id)
 
 
-@app.route('/<section_nm>', methods=['GET', 'POST'])
+@app.route('/<section_nm>', methods=['GET'])
 def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
     section_nm = request.args.get('section_nm', section_nm)
     checker = CategoryList.query.filter_by(section=section_nm).first()
@@ -78,9 +78,7 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
         html_page = 'subcate.html'                       
     else:
         return_list = get_catalog_section(section_nm, MONTH_AGO, TODAY)
-        product_list = []
-        for product in return_list:
-            product_list.append(product)
+        product_list = [product for product in return_list]
         html_page = 'section.html'
 
     book_counts = get_subcate_book_counts(subcate_nm)
@@ -97,9 +95,6 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
                                 shown_pages=shown_pages)
 
 
-
-
-
 @app.route('/product/<isbn_id>', methods=['GET', 'POST'])
 def product(isbn_id=None):
     isbn_id = request.args.get('isbn_id', isbn_id)
@@ -108,6 +103,8 @@ def product(isbn_id=None):
     for book in books:
         section = book['section']
         nav_sec[section] = section
+
+    print(nav_sec)
 
     eslite = defaultdict(dict)
     kingstone = defaultdict(dict)
@@ -159,65 +156,68 @@ def product(isbn_id=None):
                                         tracking_hash=tracking_hash)
 
 
+def create_dict_list(list_to_loop, *sub_keys, main_key):
+    """
+    Return a dict of lists, with multiple sub_keys input based on each case.
+    This function is used for member page's favorite categories and authors
+    :param sub_keys: keys under each main_key, such as publish dates, book names 
+    :param main_key: key for grouping sub_keys, two cases are author names and category names 
+    """
+    dict_list = defaultdict(dict)
+    for element in list_to_loop:
+        main = element[main_key]
+        temp_list = []
+        for key in sub_keys:
+            column = element[key]
+            temp_list.append(column)
+        if not dict_list[main]:
+            dict_list[main] = [temp_list]
+        else:
+            dict_list[main].append(temp_list)    
+        temp_list = []
+    return dict_list
+
 @app.route('/member')
 def member(track_type=TrackType.ACTIVITY_HISTORY.value):
     if 'loggedin' not in session:
         return redirect(url_for('login'))
     user_id = session['id']
     track_type = request.args.get('track_type', track_type)
-
+    
     # Render user's favorite cateogory page by Section -> Category -> Subcategory
-    if track_type == TrackType.FAVORITE_CATEGORY.value:
-        cate_list = defaultdict(dict)
+    if track_type == TrackType.FAVORITE_CATEGORY.value:    
         result = get_user_favor_categories(user_id)
-        for cate in result:
-            section = cate['section']
-            category = cate['category']
-            subcategory = cate['subcategory']
-            if not cate_list[section]:
-                cate_list[section] = [[category, subcategory]]
-            else:
-                cate_list[section].append([category, subcategory])
-        return render_template('favor_cate.html', cates=cate_list)
+        return_list = create_dict_list(result, 'category', 'subcategory', main_key='section')
+        return render_template('favor_cate.html', cates=return_list)
 
     # Render user's favorite books
     elif track_type == TrackType.FAVORITE_BOOK.value:
-        user_id = session['id']
         books = get_user_favor_books(user_id, TODAY)
-        book_list = defaultdict(dict)
+        return_list = defaultdict(dict)
         final_list = defaultdict(dict)
         for book in books:
             category = book['category']
             isbn_id = book['isbn_id']
             if book['platform'] == Platform.KINGSTONE.value:   
-                book_list[isbn_id]['title'] = book['title']
-                book_list[isbn_id]['cover_photo'] = book['cover_photo']
+                return_list[isbn_id]['title'] = book['title']
+                return_list[isbn_id]['cover_photo'] = book['cover_photo']
                 platform = 'ks'
             elif book['platform'] == Platform.ESLITE.value:
                 platform = 'es'
             else:
                 platform = 'mm'
-            book_list[isbn_id][platform + '_product_url'] = book['product_url']
-            book_list[isbn_id][platform + '_price'] = int(book['price'])
-            if not book_list[isbn_id][platform + '_price']:
-                book_list[isbn_id][platform + '_price'] = 0
-            final_list[category][isbn_id] = book_list[isbn_id]
+            return_list[isbn_id][platform + '_product_url'] = book['product_url']
+            return_list[isbn_id][platform + '_price'] = int(book['price'])
+            if not return_list[isbn_id][platform + '_price']:
+                return_list[isbn_id][platform + '_price'] = 0
+            final_list[category][isbn_id] = return_list[isbn_id]
         return render_template('favor_book.html', books=final_list)
 
     # Render user's favorite authors
     elif track_type == TrackType.FAVORITE_AUTHOR.value:
         authors = get_user_favor_authors(user_id)
-        author_list = defaultdict(dict)
-        for author in authors:
-            isbn_id = author['isbn_id']
-            name = author['name']
-            title = author['title']
-            publish_date = author['publish_date']
-            if not author_list[name]:
-                author_list[name] = [[isbn_id, title, publish_date]]
-            else:
-                author_list[name].append([isbn_id, title, publish_date])
-        return render_template('favor_author.html', authors=author_list)
+        return_list = create_dict_list(authors, 'isbn_id', 'title', 'publish_date', main_key='name')
+        return render_template('favor_author.html', authors=return_list)
 
     # Render user's activity history
     else:
