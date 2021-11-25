@@ -24,6 +24,12 @@ def book_info(isbn_id=None):
     return response
 
 
+def store_user_session(user):
+    session['loggedin'] = True
+    session['id'] = user.id
+    session['username'] = user.username
+
+
 @app.route('/api/login', methods=['POST'])
 def login(email=None, pwd=None):
     email = request.args.get('email', email)
@@ -31,51 +37,35 @@ def login(email=None, pwd=None):
     response = defaultdict(dict)
     user = UserInfo.query.filter_by(email=email).first()
     if user and bcrypt.check_password_hash(user.password, password):
-        session['loggedin'] = True
-        session['id'] = user.id
-        session['username'] = user.username
+        store_user_session(user)
         response['response'] = '登入成功'
         return response
     response['response'] = "帳號或密碼有誤, 請重新嘗試"
     return response
 
 
-@app.route('/api/register', methods=['GET', 'POST'])
+@app.route('/api/register', methods=['POST'])
 def register(email=None, pwd=None):
     email = request.args.get('email', email)
     password = request.args.get('pwd', pwd)
     username = email.split('@')[0]
-
     response = defaultdict(dict)
-    response['response'] = "帳號或密碼有誤, 請重新嘗試"
-    try:
+    user = UserInfo.query.filter_by(email=email).first()
+    if user:
+        response['response'] = '此帳號已註冊'
+    elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
+        response['response'] = 'E-mail 格式有誤'
+    elif not re.match(r'[A-Za-z0-9]+', email):
+        response['response'] = '請勿使用空白建'
+    elif not password or not email:
+        response['response'] = '請完整填入E-mail與密碼'
+    else:
+        password = bcrypt.generate_password_hash(password)
+        user = UserInfo(email=email, password=password, username=username, source='native', token='')
+        create_data(user)
         user = UserInfo.query.filter_by(email=email).first()
-        if user:
-            response['response'] = '此帳號已註冊'
-        elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
-            response['response'] = 'E-mail 格式有誤'
-        elif not re.match(r'[A-Za-z0-9]+', password):
-            response['response'] = '請勿使用空白建'
-        elif not password or not email:
-            response['response'] = '請完整填入E-mail與密碼'
-        else:
-            try:
-                password = bcrypt.generate_password_hash(password)
-                user = UserInfo(email=email, password=password, username=username, source='native', token='')
-                db.session.add(user)
-                db.session.commit()
-                user = UserInfo.query.filter_by(email=email).first()
-                session['loggedin'] = True
-                session['id'] = user.id
-                session['username'] = user.username
-                response['response'] = '註冊成功'
-            except Exception:
-                response['response'] = '請勿包含空白鍵'
-                return response
-            return response
-    except:
-        response['response'] = '輸入格式有誤'
-        return response
+        store_user_session(user)
+        response['response'] = '註冊成功'
     return response
 
 
