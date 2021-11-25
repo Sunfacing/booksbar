@@ -64,3 +64,32 @@ def create_data(data):
     """
     db.session.add(data)
     db.session.commit()
+
+
+
+def show_paging(page, book_counts, books_per_page):
+    """
+    Takes current book total counts and calculate if there's next paging
+    :param page: the current page passed from html
+    :param book_counts: total number of books in database now
+    :param books_per_page: number of books rendered in html
+    """
+    ttl_pages = 0
+    shown_pages = defaultdict(dict)
+
+    # Calculate how many pages available based on current number of books rendered each page
+    for book in book_counts:
+        ttl_pages = (book[0] / books_per_page)
+    # If user is at the first page, return -1 for html to turn off link, otherwise the previous page
+    if int(page) - 1 == 0:
+        shown_pages['pre'] = -1
+    else:
+        shown_pages['pre'] = int(page) - 1
+    # If user is at the last page, return -1 for html to turn off link, otherwise the previous page
+    if ttl_pages - int(page) < 0 :
+        shown_pages['next'] = -1
+    else:
+        shown_pages['next'] = int(page) + 1
+    
+    shown_pages['current'] = page
+    return shown_pages

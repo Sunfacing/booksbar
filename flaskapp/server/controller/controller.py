@@ -14,7 +14,7 @@ from server.models.product_model import *
 from server.models.user_model import *
 from server.controller.util import *
 
-EXPIRE = 3600
+
 # TODAY = datetime.datetime.now(pytz.timezone('US/Pacific')).strftime("%Y-%m-%d")
 TODAY = '2021-11-21'
 YESTERDAY = (datetime.datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
@@ -84,23 +84,8 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
         html_page = 'section.html'
 
     book_counts = get_subcate_book_counts(subcate_nm)
-
     page = request.args.get('page', page)
-    ttl_pages = 0
-    shown_pages = defaultdict(dict)
-    for book in book_counts:
-        ttl_pages = (book[0] / 20)
-    if int(page) - 1 == 0:
-        shown_pages['pre'] = -1
-    else:
-        shown_pages['pre'] = int(page) - 1
-
-    if ttl_pages - int(page) < 0 :
-        shown_pages['next'] = -1
-    else:
-        shown_pages['next'] = int(page) + 1
-
-    shown_pages['current'] = page
+    shown_pages = show_paging(page, book_counts, books_per_page=20)
 
     return render_template(html_page, nav_sec=nav_sec,
                                 cate_list=cate_list,
@@ -110,6 +95,8 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
                                 current_sub=subcate_nm,
                                 product_list=product_list,
                                 shown_pages=shown_pages)
+
+
 
 
 
@@ -156,9 +143,11 @@ def product(isbn_id=None):
         comments.append([each['date'].date(), each['comment']])
     if 'loggedin' in session:
         user_id = session['id']
-        isbn_id = kingstone['isbn_id']
         create_data(UserFavorite(user_id=user_id, track_type=TrackType.ACTIVITY_HISTORY.value, type_id=isbn_id))
-        tracking_hash = check_user_track_by_product(user_id, kingstone['category_id'], isbn_id, kingstone['author_id'])
+        tracking_hash = check_user_track_by_product(user_id=user_id, 
+                                                    category_id=kingstone['category_id'], 
+                                                    author_id=isbn_id, 
+                                                    isbn_id=kingstone['author_id'])
     else:
         tracking_hash = {}
     return render_template('product.html', nav_sec=nav_sec,
