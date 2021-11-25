@@ -1,7 +1,7 @@
 from collections import defaultdict
 import re
 
-from flask import  request, redirect, session
+from flask import request, redirect, session
 from flask.helpers import url_for
 
 from server import app, bcrypt
@@ -22,12 +22,6 @@ def book_info(isbn_id=None):
         response['description'] = introduction_checker(info['description'], "目前無內容簡介")
         response['author_intro'] = introduction_checker(info['author_intro'], "目前無作者介紹")
     return response
-
-
-def store_user_session(user):
-    session['loggedin'] = True
-    session['id'] = user.id
-    session['username'] = user.username
 
 
 @app.route('/api/login', methods=['POST'])
@@ -69,10 +63,13 @@ def register(email=None, pwd=None):
     return response
 
 
-@app.route('/api/favorite', methods=['GET', 'POST'])
+@app.route('/api/favorite', methods=['GET', 'POST', 'DELETE'])
 def add_to_favorite(subcate=None, author=None, price=None):
     response = defaultdict(dict)
-    if 'loggedin' in session:
+    if 'loggedin' not in session:
+        response['response'] = 'no'
+        return response
+    else:
         user_id = session['id']
         subcate = request.args.get('subcate', subcate)
         author = request.args.get('author', author)
@@ -90,7 +87,7 @@ def add_to_favorite(subcate=None, author=None, price=None):
                                     WHERE user_id={} AND track_type={} AND type_id={}"
                                     .format(user_id, track_type, type_id))
         for data in user:
-            if data['user_id']:
+            if data ['user_id']:
                 db.session.execute("DELETE FROM user_favorite\
                                     WHERE user_id={} AND track_type={} AND type_id={}"
                                     .format(user_id, track_type, type_id))
@@ -101,8 +98,6 @@ def add_to_favorite(subcate=None, author=None, price=None):
         db.session.commit()
         response['response'] = 'added'
         return response
-    response['response'] = 'no'
-    return response
 
 
 

@@ -1,6 +1,6 @@
 from collections import defaultdict
 from enum import Enum
-
+from flask import session
 from server import db
 
 class Platform(Enum):
@@ -113,3 +113,13 @@ def create_dict_list(list_to_loop, *sub_keys, main_key):
             dict_list[main].append(temp_list)    
         temp_list = []
     return dict_list
+
+
+
+def store_user_session(user):
+    """
+    Record user's login status
+    """
+    session['loggedin'] = True
+    session['id'] = user.id
+    session['username'] = user.username
