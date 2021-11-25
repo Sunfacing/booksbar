@@ -16,7 +16,7 @@ from server.controller.util import *
 
 
 # TODAY = datetime.datetime.now(pytz.timezone('US/Pacific')).strftime("%Y-%m-%d")
-TODAY = '2021-11-06'
+TODAY = '2021-11-25'
 YESTERDAY = (datetime.datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 MONTH_AGO = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=15)).strftime("%Y-%m-%d")
 
@@ -34,7 +34,7 @@ def index(period='month', user_id='0'):
     product_list = defaultdict(dict)
     for book in books:
         subcate_id = book['category_id']
-        cate_nm = category_hash[subcate_id]['category']
+        sec_nm = category_hash[subcate_id]['section']
         subcate_nm = category_hash[subcate_id]['subcategory']
         data = {
             'isbn_id': book['isbn_id'],
@@ -45,10 +45,10 @@ def index(period='month', user_id='0'):
             'publish_date': book['publish_date'],
             'author': book['author']
         }
-        if not product_list[cate_nm]:
-            product_list[cate_nm] = [data]
+        if not product_list[sec_nm]:
+            product_list[sec_nm] = [data]
         else:
-            product_list[cate_nm].append(data)
+            product_list[sec_nm].append(data)
     return render_template('index.html', product_list=product_list, period=period, user_id=user_id)
 
 
@@ -71,7 +71,6 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
             category = book['category']
             subcategory = book['subcategory']
             cate_list[category].append(subcategory)
-    print(cate_list)
     subcate_list = cate_list[category_nm]
     if category_nm != 'all':
         product_list = get_catalog_subcategory(subcate_nm, page=page)
@@ -103,9 +102,6 @@ def product(isbn_id=None):
     for book in books:
         section = book['section']
         nav_sec[section] = section
-
-    print(nav_sec)
-
     eslite = defaultdict(dict)
     kingstone = defaultdict(dict)
     momo = defaultdict(dict)
@@ -155,27 +151,6 @@ def product(isbn_id=None):
                                         comment_list=comments,
                                         tracking_hash=tracking_hash)
 
-
-def create_dict_list(list_to_loop, *sub_keys, main_key):
-    """
-    Return a dict of lists, with multiple sub_keys input based on each case.
-    This function is used for member page's favorite categories and authors
-    :param sub_keys: keys under each main_key, such as publish dates, book names 
-    :param main_key: key for grouping sub_keys, two cases are author names and category names 
-    """
-    dict_list = defaultdict(dict)
-    for element in list_to_loop:
-        main = element[main_key]
-        temp_list = []
-        for key in sub_keys:
-            column = element[key]
-            temp_list.append(column)
-        if not dict_list[main]:
-            dict_list[main] = [temp_list]
-        else:
-            dict_list[main].append(temp_list)    
-        temp_list = []
-    return dict_list
 
 @app.route('/member')
 def member(track_type=TrackType.ACTIVITY_HISTORY.value):
