@@ -183,30 +183,34 @@
             let icon_tag;
             tracker.addEventListener('click', (e) => {
               if (e.target.tagName == 'I') {
-                icon_tag = e.target
-                button_tag = e.target.parentNode
+                icon_tag = e.target;
+                button_tag = e.target.parentNode;
                 value = e.target.parentNode.value;
               } else if (e.target.tagName == 'BUTTON') {
-                button_tag = e.target
-                icon_tag = e.target.firstChild
+                button_tag = e.target;
+                icon_tag = e.target.firstChild;
                 value = e.target.value;
               } else {
                 value = 0;
               }
               if ( value != 0) {
-              var api = "/api/favorite"+ value;
+                var api = "/api/favorite"+ value;
+                let request_method = 'POST';
+                if (button_tag.className == 'btn btn-check row') {
+                  request_method = 'DELETE';
+                }
 
-              fetch(api, {method:'POST'})
+              fetch(api, {method: request_method})
                     .then(response => response.json())
                     .then(set_favorite)}
             })
 
 
             function set_favorite(result) {
-                if (result.response == 'added') {
+                if (result.message == 'added') {
                   button_tag.className = button_tag.className.replace("btn-basic", "btn-check");
                   icon_tag.style.color = "#ffffff"
-                } else if ( result.response == 'cancelled') {
+                } else if ( result.message == 'cancelled') {
                   button_tag.className = button_tag.className.replace("btn-check", "btn-basic");
                   icon_tag.style.color = "#393d3f"                  
                 } else {

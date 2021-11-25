@@ -67,7 +67,7 @@ def register(email=None, pwd=None):
 def add_to_favorite(subcate=None, author=None, price=None):
     response = defaultdict(dict)
     if 'loggedin' not in session:
-        response['response'] = 'no'
+        response['message'] = 'no'
         return response
     else:
         user_id = session['id']
@@ -83,25 +83,20 @@ def add_to_favorite(subcate=None, author=None, price=None):
         elif author:
             track_type = Platform.KINGSTONE.value
             type_id = author
-        user = db.session.execute("SELECT * FROM user_favorite\
-                                    WHERE user_id={} AND track_type={} AND type_id={}"
-                                    .format(user_id, track_type, type_id))
+        user = check_user_favorite(user_id, track_type, type_id)
         for data in user:
-            if data ['user_id']:
-                db.session.execute("DELETE FROM user_favorite\
-                                    WHERE user_id={} AND track_type={} AND type_id={}"
-                                    .format(user_id, track_type, type_id))
-                db.session.commit()
-                response['response'] = 'cancelled'
-                return response
-        db.session.add(UserFavorite(user_id=user_id, track_type=track_type, type_id=type_id))
-        db.session.commit()
-        response['response'] = 'added'
+            user_id = data['user_id']
+        if user_id and request.method == 'DELETE':
+            delete_user_favorite(user_id, track_type, type_id)
+            response['message'] = 'cancelled'
+        if user_id and request.method == 'POST':
+            added_favorite = UserFavorite(user_id=user_id, track_type=track_type, type_id=type_id)        
+            create_data(added_favorite)
+            response['message'] = 'added'
         return response
 
 
-
-@app.route('/logout')
+@app.route('/api/logout')
 def logout():
     session.pop('id', None)
     session.pop('username', None)

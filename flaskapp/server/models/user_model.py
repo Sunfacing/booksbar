@@ -137,3 +137,17 @@ def check_user_browsing_history(user_id):
     for each in result:
         hash_table[each['isbn_id']] = {'title': each['title'], 'cover_photo': each['cover_photo'], 'description': each['description']}
     return hash_table
+
+
+def check_user_favorite(user_id, track_type, type_id):
+    favorite_record = db.session.execute("SELECT * FROM user_favorite\
+                        WHERE user_id={} AND track_type={} AND type_id={}"
+                        .format(user_id, track_type, type_id))
+    return favorite_record
+
+def delete_user_favorite(user_id, track_type, type_id):
+    db.session.execute("DELETE FROM user_favorite\
+                    WHERE user_id={} AND track_type={} AND type_id={}"
+                    .format(user_id, track_type, type_id))
+    db.session.commit()
+
