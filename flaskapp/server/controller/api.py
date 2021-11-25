@@ -39,6 +39,7 @@ def login(email=None, pwd=None):
     response['response'] = "帳號或密碼有誤, 請重新嘗試"
     return response
 
+
 @app.route('/api/register', methods=['GET', 'POST'])
 def register(email=None, pwd=None):
     email = request.args.get('email', email)
@@ -77,6 +78,7 @@ def register(email=None, pwd=None):
         return response
     return response
 
+
 @app.route('/api/favorite', methods=['GET', 'POST'])
 def add_to_favorite(subcate=None, author=None, price=None):
     response = defaultdict(dict)
@@ -86,13 +88,13 @@ def add_to_favorite(subcate=None, author=None, price=None):
         author = request.args.get('author', author)
         price = request.args.get('price', price)
         if subcate:
-            track_type = 1
+            track_type = TrackType.FAVORITE_CATEGORY.value
             type_id = subcate
         elif price:
-            track_type = 2
+            track_type = TrackType.FAVORITE_BOOK.value
             type_id = price
         elif author:
-            track_type = 3
+            track_type = Platform.KINGSTONE.value
             type_id = author
         user = db.session.execute("SELECT * FROM user_favorite\
                                     WHERE user_id={} AND track_type={} AND type_id={}"
