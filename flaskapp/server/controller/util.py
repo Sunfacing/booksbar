@@ -45,6 +45,27 @@ def create_booslist_by_category(*returned_booklists):
     return [product_list, count]
 
 
+def create_booslist_by_section(books, category_hash):
+    product_list = defaultdict(dict)
+    for book in books:
+        subcate_id = book['category_id']
+        sec_nm = category_hash[subcate_id]['section']
+        subcate_nm = category_hash[subcate_id]['subcategory']
+        data = {
+            'isbn_id': book['isbn_id'],
+            'subcategory': subcate_nm,
+            'title': book['title'],
+            'cover_photo': book['cover_photo'],
+            'description': book['description'],
+            'publish_date': book['publish_date'],
+            'author': book['author']
+        }
+        if not product_list[sec_nm]:
+            product_list[sec_nm] = [data]
+        else:
+            product_list[sec_nm].append(data)
+    return product_list
+
 def introduction_checker(info, error_message):
     """
     Used in product page under introduction section, called by [introduction_checker]
@@ -88,7 +109,7 @@ def show_paging(page, book_counts, books_per_page):
         shown_pages['next'] = -1
     else:
         shown_pages['next'] = int(page) + 1
-    
+
     shown_pages['current'] = page
     return shown_pages
 
@@ -97,8 +118,8 @@ def create_dict_list(list_to_loop, *sub_keys, main_key):
     """
     Return a dict of lists, with multiple sub_keys input based on each case.
     This function is used for member page's favorite categories and authors
-    :param sub_keys: keys under each main_key, such as publish dates, book names 
-    :param main_key: key for grouping sub_keys, two cases are author names and category names 
+    :param sub_keys: keys under each main_key, such as publish dates, book names
+    :param main_key: key for grouping sub_keys, two cases are author names and category names
     """
     dict_list = defaultdict(dict)
     for element in list_to_loop:
@@ -110,7 +131,7 @@ def create_dict_list(list_to_loop, *sub_keys, main_key):
         if not dict_list[main]:
             dict_list[main] = [temp_list]
         else:
-            dict_list[main].append(temp_list)    
+            dict_list[main].append(temp_list)
         temp_list = []
     return dict_list
 

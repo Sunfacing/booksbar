@@ -16,7 +16,7 @@ from server.controller.util import *
 
 
 # TODAY = datetime.datetime.now(pytz.timezone('US/Pacific')).strftime("%Y-%m-%d")
-TODAY = '2021-11-25'
+TODAY = '2021-11-06'
 YESTERDAY = (datetime.datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 MONTH_AGO = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=15)).strftime("%Y-%m-%d")
 
@@ -29,28 +29,9 @@ def index(period='month', user_id='0'):
         books = homepage_by_track(period, TODAY, MONTH_AGO, user_id)
     else:
         books = homepage_by_all(period, TODAY, MONTH_AGO)
-
     category_hash = get_category()
-    product_list = defaultdict(dict)
-    for book in books:
-        subcate_id = book['category_id']
-        sec_nm = category_hash[subcate_id]['section']
-        subcate_nm = category_hash[subcate_id]['subcategory']
-        data = {
-            'isbn_id': book['isbn_id'],
-            'subcategory': subcate_nm,
-            'title': book['title'],
-            'cover_photo': book['cover_photo'],
-            'description': book['description'],
-            'publish_date': book['publish_date'],
-            'author': book['author']
-        }
-        if not product_list[sec_nm]:
-            product_list[sec_nm] = [data]
-        else:
-            product_list[sec_nm].append(data)
+    product_list = create_booslist_by_category(books, category_hash)
     return render_template('index.html', product_list=product_list, period=period, user_id=user_id)
-
 
 @app.route('/<section_nm>', methods=['GET'])
 def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
@@ -74,7 +55,7 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
     subcate_list = cate_list[category_nm]
     if category_nm != 'all':
         product_list = get_catalog_subcategory(subcate_nm, page=page)
-        html_page = 'subcate.html'                       
+        html_page = 'subcate.html'             
     else:
         return_list = get_catalog_section(section_nm, MONTH_AGO, TODAY)
         product_list = [product for product in return_list]
@@ -118,6 +99,7 @@ def product(isbn_id=None):
             eslite  = info
         else:
             momo = info
+
         if not momo['price']:
             momo['price'] = 0
         if not eslite['price']:
@@ -126,7 +108,7 @@ def product(isbn_id=None):
             kingstone['price'] = 0
     pics = get_book_pics(isbn_id)
     pic_list = []
-    i = 2
+    i = 2 # i represents the slide show number, and cover photo is at 1, so starts at 2
     for pic in pics:
         pic_list.append([pic['pics'], i])
         i += 1
@@ -137,9 +119,9 @@ def product(isbn_id=None):
     if 'loggedin' in session:
         user_id = session['id']
         create_data(UserFavorite(user_id=user_id, track_type=TrackType.ACTIVITY_HISTORY.value, type_id=isbn_id))
-        tracking_hash = check_user_track_by_product(user_id=user_id, 
-                                                    category_id=kingstone['category_id'], 
-                                                    author_id=isbn_id, 
+        tracking_hash = check_user_track_by_product(user_id=user_id,
+                                                    category_id=kingstone['category_id'],
+                                                    author_id=isbn_id,
                                                     isbn_id=kingstone['author_id'])
     else:
         tracking_hash = {}
@@ -158,9 +140,9 @@ def member(track_type=TrackType.ACTIVITY_HISTORY.value):
         return redirect(url_for('login'))
     user_id = session['id']
     track_type = request.args.get('track_type', track_type)
-    
+
     # Render user's favorite cateogory page by Section -> Category -> Subcategory
-    if track_type == TrackType.FAVORITE_CATEGORY.value:    
+    if track_type == TrackType.FAVORITE_CATEGORY.value:
         result = get_user_favor_categories(user_id)
         return_list = create_dict_list(result, 'category', 'subcategory', main_key='section')
         return render_template('favor_cate.html', cates=return_list)
@@ -173,7 +155,7 @@ def member(track_type=TrackType.ACTIVITY_HISTORY.value):
         for book in books:
             category = book['category']
             isbn_id = book['isbn_id']
-            if book['platform'] == Platform.KINGSTONE.value:   
+            if book['platform'] == Platform.KINGSTONE.value:
                 return_list[isbn_id]['title'] = book['title']
                 return_list[isbn_id]['cover_photo'] = book['cover_photo']
                 platform = 'ks'
