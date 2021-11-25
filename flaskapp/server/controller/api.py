@@ -1,15 +1,11 @@
 from collections import defaultdict
 import re
 
-from flask import request, redirect, session
-from flask.helpers import url_for
-
+from flask import request, session
 from server import app, bcrypt
-from server import db
 from server.models.product_model import *
 from server.models.user_model import *
 from server.controller.util import *
-
 
 
 @app.route('/api/product/bookinfo/<isbn_id>')
@@ -25,9 +21,10 @@ def book_info(isbn_id=None):
 
 
 @app.route('/api/login', methods=['POST'])
-def login(email=None, pwd=None):
-    email = request.args.get('email', email)
-    password = request.args.get('pwd', pwd)
+def login():
+    request_data = request.get_json(force=True)
+    email = request_data.get('email', '')
+    password = request_data.get('pwd', '')
     response = defaultdict(dict)
     user = UserInfo.query.filter_by(email=email).first()
     if user and bcrypt.check_password_hash(user.password, password):
@@ -39,9 +36,10 @@ def login(email=None, pwd=None):
 
 
 @app.route('/api/register', methods=['POST'])
-def register(email=None, pwd=None):
-    email = request.args.get('email', email)
-    password = request.args.get('pwd', pwd)
+def register():
+    request_data = request.get_json(force=True)
+    email = request_data.get('email', '')
+    password = request_data.get('pwd', '')
     username = email.split('@')[0]
     response = defaultdict(dict)
     user = UserInfo.query.filter_by(email=email).first()
@@ -96,9 +94,3 @@ def add_to_favorite(subcate=None, author=None, price=None):
         return response
 
 
-@app.route('/api/logout')
-def logout():
-    session.pop('id', None)
-    session.pop('username', None)
-    session.pop('loggedin', None)
-    return redirect(url_for('index'))
