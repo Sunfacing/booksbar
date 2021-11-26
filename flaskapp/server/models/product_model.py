@@ -103,6 +103,11 @@ class HotItemRecom(db.Model):
     book_id = db.Column(db.Integer, ForeignKey('book_info.id'))
 
 
+def get_cate_list():
+    return db.session.execute("""SELECT * FROM category_list""")
+
+
+
 def homepage_by_track(period, today, month_ago, user_id):
     if period == 'month':
         books = db.session.execute("""
@@ -179,17 +184,6 @@ def homepage_by_all(period, today, month_ago):
                 ORDER BY publish_date DESC""".format(today))
     return books
 
-
-def get_category():
-    cate_list = db.session.execute("""SELECT id, section, category, subcategory FROM category_list""")
-    cate_hash = defaultdict(dict)
-    for cate in cate_list:
-        cate_id = cate['id']
-        section = cate['section']
-        category  = cate['category']
-        subcate = cate['subcategory']
-        cate_hash[cate_id] = {'section': section, 'category': category, 'subcategory': subcate}
-    return cate_hash
 
 
 def get_catalog_section(section, date_1, date_2):
