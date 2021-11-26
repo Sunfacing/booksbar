@@ -84,11 +84,12 @@
 
     var loginBtn = document.getElementById('login')
     loginBtn.addEventListener('click', (e) => {
-      var email = document.getElementById("loginMail").value;
-      var pwd = document.getElementById("loginPwd").value;
-      if ( email != 0 && pwd != 0) {
-        var api_member = "/api/login"+ "?email=" + email + "&pwd=" + pwd;
-        fetch(api_member, {method:'POST', headers: { Accept: 'application/json'}})
+      var e_mail = document.getElementById("loginMail").value;
+      var password = document.getElementById("loginPwd").value;
+      if ( e_mail != 0 && password != 0) {
+        var api_member = "/api/login";
+        const data = {email: e_mail, pwd: password}
+        fetch(api_member, {method:"POST", headers: { Accept: "application/json"}, body: JSON.stringify(data)})
               .then(response => response.json())
               .then(checker)
     }})
@@ -96,11 +97,12 @@
 
     var registerBtn = document.getElementById('register')
     registerBtn.addEventListener('click', (e) => {
-      var email = document.getElementById("registerMail").value;
-      var pwd = document.getElementById("registerPwd").value;
-      if ( email != 0 && pwd != 0) {
-        var api_member = "/api/register"+ "?email=" + email + "&pwd=" + pwd;
-        fetch(api_member, {method:'POST', headers: { Accept: 'application/json'}})
+      var e_mail = document.getElementById("registerMail").value;
+      var password = document.getElementById("registerPwd").value;
+      if ( e_mail != 0 && password != 0) {
+        var api_member = "/api/register";
+        const data = {email: e_mail, pwd: password}
+        fetch(api_member, {method:'POST', headers: { Accept: 'application/json'}, body: JSON.stringify(data)})
               .then(response => response.json())
               .then(checker)
     }})
