@@ -29,9 +29,29 @@ def index(period='month', user_id='0'):
         books = homepage_by_track(period, TODAY, MONTH_AGO, user_id)
     else:
         books = homepage_by_all(period, TODAY, MONTH_AGO)
-    category_hash = get_category()
-    product_list = create_booslist_by_category(books, category_hash)
+    cate_list = get_cate_list()
+    category_hash = get_category(cate_list)
+    product_list = defaultdict(dict)
+
+    for book in books:
+        subcate_id = book['category_id']
+        sec_nm = category_hash[subcate_id]['section']
+        subcate_nm = category_hash[subcate_id]['subcategory']
+        data = {
+            'isbn_id': book['isbn_id'],
+            'subcategory': subcate_nm,
+            'title': book['title'],
+            'cover_photo': book['cover_photo'],
+            'description': book['description'],
+            'publish_date': book['publish_date'],
+            'author': book['author']
+        }
+        if not product_list[sec_nm]:
+            product_list[sec_nm] = [data]
+        else:
+            product_list[sec_nm].append(data)
     return render_template('index.html', product_list=product_list, period=period, user_id=user_id)
+
 
 @app.route('/<section_nm>', methods=['GET'])
 def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
@@ -41,8 +61,7 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
         return render_template('404.html'), 404
     category_nm = request.args.get('category_nm', category_nm)
     subcate_nm = request.args.get('subcate_nm', subcate_nm)
-    books = db.session.execute("SELECT * FROM bookbar.category_list")
-
+    books = get_cate_list()
     cate_list = defaultdict(list)
     nav_sec = defaultdict(dict)
     for book in books:
@@ -55,7 +74,7 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
     subcate_list = cate_list[category_nm]
     if category_nm != 'all':
         product_list = get_catalog_subcategory(subcate_nm, page=page)
-        html_page = 'subcate.html'             
+        html_page = 'subcate.html'
     else:
         return_list = get_catalog_section(section_nm, MONTH_AGO, TODAY)
         product_list = [product for product in return_list]
@@ -65,14 +84,15 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
     page = request.args.get('page', page)
     shown_pages = show_paging(page, book_counts, books_per_page=20)
 
-    return render_template(html_page, nav_sec=nav_sec,
-                                cate_list=cate_list,
-                                subcate_list=subcate_list,
-                                current_sec=section_nm,
-                                current_cate=category_nm,
-                                current_sub=subcate_nm,
-                                product_list=product_list,
-                                shown_pages=shown_pages)
+    return render_template(html_page,
+                           nav_sec=nav_sec,
+                           cate_list=cate_list,
+                           subcate_list=subcate_list,
+                           current_sec=section_nm,
+                           current_cate=category_nm,
+                           current_sub=subcate_nm,
+                           product_list=product_list,
+                           shown_pages=shown_pages)
 
 
 @app.route('/product/<isbn_id>', methods=['GET'])
@@ -96,7 +116,7 @@ def product(isbn_id=None):
         if platform == Platform.KINGSTONE.value:
             kingstone = info
         elif platform == Platform.ESLITE.value:
-            eslite  = info
+            eslite = info
         else:
             momo = info
 
@@ -125,13 +145,14 @@ def product(isbn_id=None):
                                                     isbn_id=kingstone['author_id'])
     else:
         tracking_hash = {}
-    return render_template('product.html', nav_sec=nav_sec,
-                                        kingstone=kingstone,
-                                        eslite=eslite,
-                                        momo=momo,
-                                        pic_list=pic_list,
-                                        comment_list=comments,
-                                        tracking_hash=tracking_hash)
+    return render_template('product.html',
+                           nav_sec=nav_sec,
+                           kingstone=kingstone,
+                           eslite=eslite,
+                           momo=momo,
+                           pic_list=pic_list,
+                           comment_list=comments,
+                           tracking_hash=tracking_hash)
 
 
 @app.route('/member')
@@ -140,7 +161,6 @@ def member(track_type=TrackType.ACTIVITY_HISTORY.value):
         return redirect(url_for('login'))
     user_id = session['id']
     track_type = request.args.get('track_type', track_type)
-
     # Render user's favorite cateogory page by Section -> Category -> Subcategory
     if track_type == TrackType.FAVORITE_CATEGORY.value:
         result = get_user_favor_categories(user_id)
@@ -195,3 +215,10 @@ def search(search=None, only_author=False):
     product_list = create_booslist_by_category(keyword_result, author_result)
     return render_template('search.html', product_list=product_list[0], term=term, count=product_list[1])
 
+
+@app.route('/logout')
+def logout():
+    session.pop('id', None)
+    session.pop('username', None)
+    session.pop('loggedin', None)
+    return redirect(url_for('index'))

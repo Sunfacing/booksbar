@@ -3,6 +3,7 @@ from enum import Enum
 from flask import session
 from server import db
 
+
 class Platform(Enum):
     KINGSTONE = 1
     ESLITE = 2
@@ -66,6 +67,7 @@ def create_booslist_by_section(books, category_hash):
             product_list[sec_nm].append(data)
     return product_list
 
+
 def introduction_checker(info, error_message):
     """
     Used in product page under introduction section, called by [introduction_checker]
@@ -105,7 +107,7 @@ def show_paging(page, book_counts, books_per_page):
     else:
         shown_pages['pre'] = int(page) - 1
     # If user is at the last page, return -1 for html to turn off link, otherwise the previous page
-    if ttl_pages - int(page) < 0 :
+    if ttl_pages - int(page) < 0:
         shown_pages['next'] = -1
     else:
         shown_pages['next'] = int(page) + 1
@@ -136,7 +138,6 @@ def create_dict_list(list_to_loop, *sub_keys, main_key):
     return dict_list
 
 
-
 def store_user_session(user):
     """
     Record user's login status
@@ -144,3 +145,14 @@ def store_user_session(user):
     session['loggedin'] = True
     session['id'] = user.id
     session['username'] = user.username
+
+
+def get_category(cate_list):
+    cate_hash = defaultdict(dict)
+    for cate in cate_list:
+        cate_id = cate['id']
+        section = cate['section']
+        category = cate['category']
+        subcate = cate['subcategory']
+        cate_hash[cate_id] = {'section': section, 'category': category, 'subcategory': subcate}
+    return cate_hash
