@@ -2,15 +2,15 @@ from pymongo import MongoClient
 from collections import defaultdict
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
-from data_processor import *
-from scrapers import multi_scrapers
-from ip_list import ip_list, back_up_ip_list
+from .data_processor import *
+from .scrapers import multi_scrapers
+from .ip_list import ip_list, back_up_ip_list
 import requests
 import random
 import os
 from dotenv import load_dotenv
-from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
+# from airflow import DAG
+# from airflow.operators.python_operator import PythonOperator
 from datetime import date, timedelta
 import datetime
 import pytz
@@ -19,7 +19,6 @@ import time
 # client = MongoClient(f'mongodb://{os.getenv("mon_user")}:{os.getenv("mon_passwd")}@{os.getenv("mon_host")}/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false')
 load_dotenv()
 client = MongoClient('mongodb://{}:{}@{}/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false'.format(os.getenv("mon_user"), os.getenv("mon_passwd"), os.getenv("mon_host")))
-
 db = client.bookbar
 
 TODAY = datetime.datetime.now(pytz.timezone('Asia/Taipei')).strftime("%Y-%m-%d")
@@ -195,12 +194,14 @@ def get_product_list(url, subcate_code):
         mongo_insert(page_error, error_pages)
     return catalog
 
+
+
 def get_product_info(url_to_scrape, sliced_list, target_id_key):
     product_info = []
     not_found_list = []
     i = 0
     for each in sliced_list:
-        ip = random.choice(ip_list)
+        # ip = random.choice(ip_list)
         product_id = each[target_id_key]
         subcate_id = each['subcate_id']
         print('starting {}'.format(product_id))
@@ -209,13 +210,13 @@ def get_product_info(url_to_scrape, sliced_list, target_id_key):
         # In case website block connection, pause 10 seconds
         try:
             ip = random.choice(ip_list)
-            page  = requests.get(product_url, headers = HEADERS, proxies={"http": ip, "https": ip}, timeout=60)
+            page  = requests.get(product_url, headers=HEADERS, proxies={"http": ip, "https": ip}, timeout=60)
         except:
             print('{} fetching data {} failed, try again in 10 seconds'.format(subcate_id, product_url))
             time.sleep(10)
             try:
-                ip = random.choice(back_up_ip_list)
-                page  = requests.get(product_url, headers = HEADERS, proxies={"http": ip, "https": ip}, timeout=60)
+                # ip = random.choice(back_up_ip_list)
+                page  = requests.get(product_url, headers=HEADERS, proxies={"http": ip, "https": ip}, timeout=60)
             except:
                 not_found_list.append({'subcate_id': subcate_id, 'product_id': product_id, 'track_date': TODAY})
         # This try block will ignore single item failure, and continue    
@@ -250,36 +251,13 @@ def get_product_info(url_to_scrape, sliced_list, target_id_key):
             original_price = page_content.find('div', {'class': 'basicfield'}).find('b').getText()
             if original_price is not None: data['original_price'] = original_price
 
-
-            # Electronic version
-            electronic_book = BeautifulSoup(page.content, 'html.parser').find_all('span', {'class': 'versionbox'})
-            if len(electronic_book) > 0:
-                electronic_book = 'https://www.kingstone.com.tw/' + electronic_book[1].find('a')['href']
-                data['e_book'] = electronic_book
-            else:
-                data['e_book'] = None
-
             # Content description, this contains html tag, so store in text
             description = page_content.find('div', {'class': 'pdintro_txt1field panelCon'})
-            try:
-                # Kingstone's tag are not always in the same form, handle by each condition
-                # In case any unfound exception, return None
-                if description is not None: 
-                    if description.find('div', {'class': 'catalogfield panelCon'}) is not None:
-                        data['description'] = str(description.find('div', {'class': 'catalogfield panelCon'}).find('span').getText())
-                    elif description.find('div', {'class': 'pdintro_txt1field panelCon'}) is not None:
-                        data['description'] = str(description.find('div', {'class': 'pdintro_txt1field panelCon'}).find('span').getText())
-                    else:
-                        data['description'] = str(description.find('span').getText())
-            except:
-                data['description'] = ''
-
+            data['description'] = str(description)
+                    
             # For author description, same as content description, saving html tag in text
-            author_description = page_content.find('div', {'class': 'authorintrofield panelCon'})
-            if author_description is not None:
-                author_description = str(author_description.find('span'))
-            
-            data['author_description'] = author_description
+            author_description = page_content.find('div', {'class': 'authorintrofield panelCon'})   
+            data['author_description'] = str(author_description)
 
             # Same, this has html tag
             table_of_contents = page_content.find('div', {'class': 'catalogfield panelCon'})
@@ -497,3 +475,19 @@ def ks_drop_old_collection():
 # scrap_new_products()
 # scrap_unfound_products()
 # drop_old_collection()
+
+
+
+product_list = catalog_today.find()
+print(product_list)
+
+# product_id = product_list['kingstone_pid']
+# product_url = PRODUCT_PAGE + product_id
+# page  = requests.get(product_url, headers = HEADERS,timeout=60)
+# print(page)
+
+
+
+
+# def ks_printer():
+#     print('successfully imported!!')
