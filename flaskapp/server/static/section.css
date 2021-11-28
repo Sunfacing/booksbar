@@ -1,0 +1,41 @@
+button #pre{
+    background-color: white;
+    border: 0px;
+    cursor: pointer;
+}
+
+
+.carousel-control-prev-icon {
+    background-color: #393d3f;
+}
+
+#newbook {
+    font-weight: bold;
+    margin-right: 30px;
+    color: #393d3f;
+}
+
+.carousella {
+    text-decoration: none;
+    color: #393d3f;
+}
+
+.card {
+    height: 100%;
+    border: 0px;
+    box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2);
+    border-radius: 7px;
+}
+
+.card-img-top {
+    margin-top: 15px;
+}
+
+.card-title {
+    font-weight: bold;
+    color: #393d3f;
+}
+
+.card-text {
+    margin-bottom:30px;
+}

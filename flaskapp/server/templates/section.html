@@ -3,79 +3,41 @@
 <!-- Carousel wrapper -->
 <!-- Font Awesome -->
 
-    <div
-    id="carouselMultiItemExample"
-    class="carousel slide carousel-dark text-center"
-    data-mdb-ride="carousel"
-    >
-    <!-- <style scoped></style> -->
-    <link
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
-    rel="stylesheet"
-    />
-    <!-- Google Fonts -->
-    <link
-    href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-    rel="stylesheet"
-    />
-    <!-- MDB -->
-
-    </style>
-    <!-- MDB -->
-    
-    <script
-    type="text/javascript"
-    src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.6.0/mdb.min.js"
-    ></script>
-
-
-
-
-
-        <!-- Controls -->   
-        <div class="d-flex justify-content-center mb-4">
-            <button
-            class="carousel-control-prev position-relative"
-            type="button"
-            data-mdb-target="#carouselMultiItemExample"
-            data-mdb-slide="prev"
-            style="background-color: white; border: 0px; cursor: pointer; "
-            >
-            <span class="carousel-control-prev-icon" aria-hidden="true" style="background-color: #393d3f;"></span>
-            <span class="visually-hidden">Prev</span>
-            </button>
-            <h3 style="font-weight: bold; margin-right: 30px; color: #393d3f;">近期熱門新書</h3>
-            <button
-            class="carousel-control-next position-relative"
-            type="button"
-            data-mdb-target="#carouselMultiItemExample"
-            data-mdb-slide="next"
-            style="background-color: white; border: 0px; cursor: pointer; "
-            >
-            <span class="carousel-control-next-icon bg-dark" aria-hidden="true"></span>
-            <span class="visually-hidden">ItsNext</span>
-            </button>
-        </div>
+    <div id="carouselMultiItemExample" class="carousel slide carousel-dark text-center" data-mdb-ride="carousel">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet"/>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.6.0/mdb.min.js"></script>
+    <!-- Controls -->   
+    <div class="d-flex justify-content-center mb-4">
+        <button class="carousel-control-prev position-relative" type="button" data-mdb-target="#carouselMultiItemExample" data-mdb-slide="prev" style="background-color: white; border: 0px; cursor: pointer; ">
+        <span class="carousel-control-prev-icon" aria-hidden="true" style="background-color: #393d3f;"></span>
+        <span class="visually-hidden">Prev</span>
+        </button>
+        <h3 id="newbook">近期熱門新書</h3>
+        <button class="carousel-control-next position-relative" type="button" data-mdb-target="#carouselMultiItemExample" data-mdb-slide="next" style="background-color: white; border: 0px; cursor: pointer; ">
+        <span class="carousel-control-next-icon bg-dark" aria-hidden="true"></span>
+        <span class="visually-hidden">ItsNext</span>
+        </button>
+    </div>
         <!-- Inner -->
-        <div class="carousel-inner py-4  w3-animate-opacity ">
+        <div class="carousel-inner py-4 w3-animate-opacity ">
             <!-- Single item -->
             <div class="carousel-item active">
             <div class="container">
                 <div class="row">
                     {% for product in product_list[:3] %}
                     <div class="col-lg-4">
-                            <a href="product/{{ product['isbn_id']}}" style="text-decoration: none; color: #393d3f;" >
-                            <div class="card" style="height: 100%; border: 0px; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border-radius: 7px;">
+                            <a class="carousella" href="product/{{ product['isbn_id']}}">
+                            <div class="card">
                                 <img
                                     src="{{ product['cover_photo']}}"
                                     class="card-img-top"
                                     alt="..."
                                     onerror="this.onerror=null;this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/674/6392009674_d59d0209-6c03-4b75-9084-0e5fffb34183.png?cb=1637205240'"
-                                    style="margin-top: 15px;"
                                 />
-                                <div class="card-body ">
-                                    <h5 class="card-title " style="font-weight: bold; color: #393d3f;">{{ product['title'][:15]}}</h5>
-                                    <p class="card-text" style="margin-bottom:30px">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ product['title'][:15]}}</h5>
+                                    <p class="card-text">
                                         {{ product['description'][:60]}}....
                                     </p>
                                 </div>
@@ -94,18 +56,17 @@
                 <div class="row">
                 {% for product in product_list[3:6] %}
                     <div class="col-lg-4 d-none d-lg-block">
-                        <a href="product/{{ product['isbn_id']}}" style="text-decoration: none; color: #393d3f;">
-                        <div class="card" style="height: 100%; border: 0px; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border-radius: 7px;">  
+                        <a class="carousella" href="product/{{ product['isbn_id']}}">
+                        <div class="card">  
                             <img
                                 src="{{ product['cover_photo']}}"
                                 class="card-img-top"
                                 alt="..."
                                 onerror="this.onerror=null; this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/674/6392009674_d59d0209-6c03-4b75-9084-0e5fffb34183.png?cb=1637205240'"
-                                style="margin-top: 15px;"
                             />
                             <div class="card-body">
-                                <h5 class="card-title" style="font-weight: bold; color: #393d3f;">{{ product['title'][:15]}}</h5>
-                                <p class="card-text" style="margin-bottom:30px">
+                                <h5 class="card-title">{{ product['title'][:15]}}</h5>
+                                <p class="card-text">
                                     {{ product['description'][:60]}}....
                                 </p>
                             </div>
@@ -124,18 +85,17 @@
                     <div class="row">
                     {% for product in product_list[6:9] %}
                         <div class="col-lg-4 d-none d-lg-block">
-                            <a href="product/{{ product['isbn_id']}}" style="text-decoration: none; color: #393d3f;">
-                            <div class="card" style="height: 100%; border: 0px; box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border-radius: 7px;">
+                            <a class="carousella" href="product/{{ product['isbn_id']}}">
+                            <div class="card">
                                 <img
                                     src="{{ product['cover_photo']}}"
                                     class="card-img-top"
                                     alt="..."
                                     onerror="this.onerror=null;this.src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/674/6392009674_d59d0209-6c03-4b75-9084-0e5fffb34183.png?cb=1637205240';"
-                                    style="margin-top: 15px; "
                                 />
                                 <div class="card-body">
-                                    <h5 class="card-title" style="font-weight: bold; color: #393d3f;">{{ product['title'][:15]}}</h5>
-                                    <p class="card-text" style="margin-bottom:30px">
+                                    <h5 class="card-title">{{ product['title'][:15]}}</h5>
+                                    <p class="card-text">
                                         {{ product['description'][:60]}}....
                                     </p>
                                 </div>
