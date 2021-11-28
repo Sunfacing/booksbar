@@ -1,7 +1,3 @@
-import re
-import pymysql
-import os
-from dotenv import load_dotenv
 from pymongo import MongoClient
 from server import db
 from server.models.user_model import *
@@ -59,14 +55,10 @@ def register_status():
     db.session.commit()
 
 
-
-
 def register_kingstone_commenter():
     kingstone_user = UserInfo(username='kingstone_user')
     db.session.add(kingstone_user)
     db.session.commit()
-
-
 
 
 def register_track_type():
@@ -90,7 +82,6 @@ def register_pipeline_step():
     step_9 = PipelineStep(step='update_price')
     db.session.add_all([step_1, step_2, step_3, step_4, step_5, step_6, step_7, step_8, step_9])
     db.session.commit()
-
 
 
 if __name__ == '__main__':

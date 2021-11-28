@@ -4,7 +4,6 @@ import os
 import datetime
 import pytz
 from dotenv import load_dotenv
-from flask import url_for
 from flask_testing import TestCase
 from server import create_app, db
 from server.models.product_model import CategoryList, Platform
@@ -26,6 +25,7 @@ TODAY = datetime.datetime.now(pytz.timezone('Asia/Taipei')).strftime("%Y-%m-%d")
 
 unittest.TestLoader.sortTestMethodsUsing = None
 
+
 class SettingBase(TestCase):
     def create_app(self):
         return create_app("testing")
@@ -34,10 +34,10 @@ class SettingBase(TestCase):
 class ScrapProductDetail(SettingBase):
     def test_1_create_db(self):
         db.drop_all()
-        product_1 = {'subcate_id': '/book/job', 
-                     'kingstone_pid': '2018562671802', 
-                     'title': '我被滑雪場錄取了：畫說日本打工度假日常', 
-                     'author': 'author1', 
+        product_1 = {'subcate_id': '/book/job',
+                     'kingstone_pid': '2018562671802',
+                     'title': '我被滑雪場錄取了：畫說日本打工度假日常',
+                     'author': 'author1',
                      'publisher': 'publisher1'}
         product_2 = {'subcate_id': '/book/ccd',
                      'kingstone_pid': '2011771371532',
@@ -94,6 +94,7 @@ class TryCreateBookInfo(SettingBase):
         register_author(TEST_COLLECTION)
         register_publisher(TEST_COLLECTION)
         register_kingstone_from_catalog(TEST_COLLECTION, PRODUCT_INFO)
+
     def test_8_check_result(self):
         product_list = db.session.execute("SELECT * FROM book_info")
         final_list = []
@@ -106,7 +107,6 @@ class TryCreateBookInfo(SettingBase):
         TEST_COLLECTION.drop()
         PRODUCT_INFO.drop()
         db.drop_all()
-
 
 
 if __name__ == '__main__':

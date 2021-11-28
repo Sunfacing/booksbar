@@ -15,17 +15,16 @@ from server.models.user_model import *
 from server.controller.util import *
 
 
-# TODAY = datetime.datetime.now(pytz.timezone('US/Pacific')).strftime("%Y-%m-%d")
-TODAY = '2021-11-27'
+TODAY = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(hours=8)).strftime("%Y-%m-%d")
 YESTERDAY = (datetime.datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 MONTH_AGO = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=15)).strftime("%Y-%m-%d")
 
 
 @app.route('/', methods=['GET'])
-def index(period='month', user_id='0'):
+def index(period='month', user_id=None):
     period = request.args.get('period', period)
     user_id = request.args.get('user_id', user_id)
-    if user_id != '0':
+    if user_id is not None:
         books = homepage_by_track(period, TODAY, MONTH_AGO, user_id)
     else:
         books = homepage_by_all(period, TODAY, MONTH_AGO)

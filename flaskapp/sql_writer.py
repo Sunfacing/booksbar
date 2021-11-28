@@ -1,8 +1,5 @@
-import collections
-from sys import platform
 import pymysql
 import os
-from dotenv import load_dotenv
 from pymongo import MongoClient
 from server.models.user_model import *
 from server.models.product_model import *
@@ -10,9 +7,7 @@ from collections import defaultdict
 from datetime import date
 
 
-# client = MongoClient('localhost', 27017)
 client = MongoClient('mongodb://bartender:books@ec2-3-17-181-14.us-east-2.compute.amazonaws.com:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false')
-
 m_db = client.Bookstores
 h_db = client.bookbar
 ks_category_list = h_db.kingstone
@@ -23,21 +18,7 @@ TODAY_FOR_COLLECTION_NAME = date.today().strftime("%m%d")
 ks_catalog_today = h_db['kingstone_catalog_' + TODAY_FOR_COLLECTION_NAME]
 mm_catalog_today = h_db['momo_catalog_' + TODAY_FOR_COLLECTION_NAME]
 es_catalog_today = h_db['eslite_catalog_' + TODAY_FOR_COLLECTION_NAME]
-
 timecounter = h_db.timecounter
-
-
-
-connection = pymysql.connect(
-    host = os.getenv('host'),
-    user = os.getenv('user'),
-    passwd = os.getenv('passwd'),
-    database = os.getenv('database'),
-    port = int(os.getenv('port')),
-    cursorclass = pymysql.cursors.DictCursor,
-    autocommit=True
-)
-cursor = connection.cursor()
 
 
 def scraper_result_from_mongo():
@@ -61,11 +42,9 @@ def scraper_result_from_mongo():
         try:    
             step = PipelineTrack(date=doc['date'], platform=platform, step=step, minutes=round((doc['time'] / 60), 1), quantity=doc['quantity'])
             final_list.append(step)
-            # print(doc['date'], platform, step, round((doc['time'] / 60), 1), doc['quantity'])
         except:
             pass
-    # db.session.add_all(final_list)
-    # db.session.commit()
+
 
 def mongo_to_hashtable(collection, hashkey, duplicate_hashkey, date=None):
     if date is None:
@@ -86,15 +65,18 @@ def mongo_to_hashtable(collection, hashkey, duplicate_hashkey, date=None):
         hashtable[product_id] = information
     return hashtable
 
+
 def get_products():
     products = CategoryList.query.filter()
     return [p.to_json() for p in products]
+
 
 def create_hashtable(hashkey, data):
     hashtable = defaultdict(dict)
     for row in data:
         hashtable[row[hashkey]] = row['id']
     return hashtable
+
 
 def mongo_hash(collection, hashkey, query=None):
     if query is None:
@@ -106,6 +88,7 @@ def mongo_hash(collection, hashkey, query=None):
         hashtable[row[hashkey]] = row
     return hashtable
 
+
 def my_sql_isbn_hash():
     data = db.session.execute('SELECT * FROM isbn_catalog')
     isbn_hashtable = defaultdict(dict)
@@ -113,6 +96,7 @@ def my_sql_isbn_hash():
         isbn = row['isbn']
         isbn_hashtable[isbn] = {'isbn_id': row['id'], 'platform': row['platform']}
     return isbn_hashtable
+
 
 def register_picture(ks_product_info, date=TODAY):
     books = db.session.execute('SELECT platform_product_id, id FROM book_info WHERE platform = 1 and create_date = {}'.format(date))
@@ -140,6 +124,7 @@ def register_picture(ks_product_info, date=TODAY):
     db.session.commit()
     print('create picture: ', i, 'done, all finished')   
 
+
 def register_author(catalog_today):
     # Create author full list
     print('begin register new author')
@@ -166,6 +151,7 @@ def register_author(catalog_today):
     db.session.commit()
     print('author done')
  
+
 def register_publisher(catalog_today):
     # Create publisher full list
     print('begin register new publisher')
@@ -193,6 +179,7 @@ def register_publisher(catalog_today):
     db.session.commit()
     print('publisher done')    
     
+
 def register_kingstone_user_comment(product_info, date=TODAY):
     # Create comment full list
     isbn_catalog = my_sql_isbn_hash()
@@ -221,6 +208,7 @@ def register_kingstone_user_comment(product_info, date=TODAY):
     db.session.add_all(comments)
     db.session.commit()
     print('comment done')  
+
 
 def register_isbn(ks_product_info, date=None):
     """
@@ -259,6 +247,7 @@ def register_isbn(ks_product_info, date=None):
         i += 1
     db.session.add_all(isbn_list)
     db.session.commit()  
+
 
 def register_kingstone_from_catalog(ks_catalog, ks_product_info):
     sql_isbn_hashtable = my_sql_isbn_hash()
@@ -362,6 +351,7 @@ def register_kingstone_from_catalog(ks_catalog, ks_product_info):
     db.session.commit()
     print('kingstone register catalog', i, 'done, all finished')
 
+
 def update_kingstone_price(catalog_today):
     products = catalog_today.find()
     books = db.session.execute('SELECT platform_product_id, id FROM book_info WHERE platform = 1')
@@ -389,6 +379,7 @@ def update_kingstone_price(catalog_today):
     db.session.commit()
     print('kingstone register catalog', i, 'done, all finished')
 
+
 def isbn_hashtable():
     """
     Create hashtable with isbn as key, using kingstone's book info data
@@ -411,6 +402,7 @@ def isbn_hashtable():
         hashtable[isbn] = row
     return hashtable
 
+
 def create_platform_id_hashtable(platform_id):
     """
     Create hashtable with platform_product_id as key, 
@@ -425,6 +417,7 @@ def create_platform_id_hashtable(platform_id):
         platform_product_id = row['platform_product_id']
         hashtable[platform_product_id] = 1
     return hashtable
+
 
 def register_eslite_from_catalog(eslite_catalog):
     sql_isbn_hashtable = isbn_hashtable()
@@ -459,6 +452,7 @@ def register_eslite_from_catalog(eslite_catalog):
     db.session.commit()
     print('eslite register catalog', i, 'done, all finished')
 
+
 def update_eslite_price(eslite_catalog):
     products = eslite_catalog.find()
     books = db.session.execute('SELECT platform_product_id, id FROM book_info WHERE platform = 2')
@@ -491,6 +485,7 @@ def update_eslite_price(eslite_catalog):
     db.session.add_all(price_list)
     db.session.commit()
     print('eslite update price', i, 'done, all finished')
+
 
 def register_momo_from_catalog(momo_catalog, momo_product_info):
     sql_isbn_hashtable = isbn_hashtable()
@@ -527,6 +522,7 @@ def register_momo_from_catalog(momo_catalog, momo_product_info):
     db.session.commit()
     print('momo register catalog', i, 'done, all finished')
 
+
 def update_momo_price(momo_catalog):
     products = momo_catalog.find()
     books = db.session.execute('SELECT platform_product_id, id FROM book_info WHERE platform = 3')
@@ -556,39 +552,3 @@ def update_momo_price(momo_catalog):
     db.session.add_all(price_list)
     db.session.commit()
     print('momo update price', i, 'done, all finished')
-
-
-
-
-
-
-if __name__ == '__main__':
-    """
-    # Update kingstone
-    register_author(ks_catalog_today)
-    register_publisher(ks_catalog_today)
-    register_isbn(ks_product_info, date=TODAY)
-    register_kingstone_from_catalog(ks_catalog_today)
-    register_picture(ks_product_info, date=TODAY)
-    register_kingstone_user_comment(ks_product_info)
-    update_kingstone_price(ks_catalog_today)
-
-    # Update eslite
-    register_eslite_from_catalog(es_catalog_today)
-    update_eslite_price(es_catalog_today)
-
-    # Update momo
-    register_momo_from_catalog(mm_catalog_today, mm_product_info)
-    update_momo_price(mm_catalog_today)
-    """
-    result = db.session.execute('SELECT DISTINCT(title) FROM book_info WHERE platform = 1 LIMIT 10')
-    for each in result:
-        print(each)
-
-
-
-
-
-
-
-

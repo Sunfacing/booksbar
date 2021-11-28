@@ -13,6 +13,7 @@ class BaseModel(Model):
 
 db = SQLAlchemy(model_class=BaseModel)
 
+
 def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
@@ -20,15 +21,10 @@ def create_app(config_name):
     app.secret_key = 'super secret string'
     return app
 
+
 app = create_app('development')
 bcrypt = Bcrypt(app)  # Create/Check hashpassword
 migrate = Migrate(app, db)
-
-
-
-@app.errorhandler(404)
-def server_error(error):
-    return render_template('404.html'), 404
 
 
 @app.errorhandler(Exception)
@@ -39,14 +35,3 @@ def server_error(e):
 
 
 from server.controller import controller, api
-
-
-
-
-
-
-
-
-
-
-
