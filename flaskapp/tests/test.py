@@ -1,11 +1,16 @@
 import unittest
 import sys
 import os
+import datetime
+import pytz
 from dotenv import load_dotenv
 from flask import url_for
 from flask_testing import TestCase
-from server import create_app
+from server import create_app, db
+from server.models.product_model import CategoryList, Platform
+from sql_writer import register_isbn, register_author
 from pymongo import MongoClient
+
 sys.path.append("..")
 from scraper.kingstone import get_product_info, PRODUCT_PAGE
 from scraper.scrapers import multi_scrapers
@@ -17,7 +22,7 @@ CLIENT = MongoClient('mongodb://{}:{}@{}/?authSource=admin&readPreference=primar
 MONGO_DB = CLIENT.test_bookbar
 TEST_COLLECTION = MONGO_DB.test
 PRODUCT_INFO = MONGO_DB.product_info
-
+TODAY = datetime.datetime.now(pytz.timezone('Asia/Taipei')).strftime("%Y-%m-%d")
 
 class SettingBase(TestCase):
     def create_app(self):
@@ -28,11 +33,12 @@ class SettingBase(TestCase):
 # 這邊繼承剛剛的寫的 SettingBase class，接下來會把測試都寫在這裡
 class ScrapProductDetail(SettingBase):
     def test_1_create_db(self):
-        product_one = {'subcate_id': '/book/jod', 'kingstone_pid': '2018562671802', 'title': '我被滑雪場錄取了：畫說日本打工度假日常'}
-        product_two = {'subcate_id': '/book/jod', 'kingstone_pid': '2011771371532', 'title': '用寬容的心情，處理惱人的事情'}
-        TEST_COLLECTION.insert_many([product_one, product_two])
+        product_1 = {'subcate_id': '/book/job', 'kingstone_pid': '2018562671802', 'title': '我被滑雪場錄取了：畫說日本打工度假日常'}
+        product_2 = {'subcate_id': '/book/ccd', 'kingstone_pid': '2011771371532', 'title': '用寬容的心情，處理惱人的事情'}
+        TEST_COLLECTION.insert_many([product_1, product_2])
 
     def test_2_scrap_book(self):
+        print('here')
         product_list = TEST_COLLECTION.find()
         list_to_scrap = [product for product in product_list]
         multi_scrapers(
@@ -47,12 +53,47 @@ class ScrapProductDetail(SettingBase):
         )
         
     def test_3_check_result(self):
+        print('here')
         product_one = PRODUCT_INFO.find_one({'title': '我被滑雪場錄取了：畫說日本打工度假日常'})
         product_two = PRODUCT_INFO.find_one({'title': '用寬容的心情，處理惱人的事情'})
         self.assertEqual(len(product_one['description']), 691)
         self.assertEqual(len(product_two['description']), 1101)
-        TEST_COLLECTION.drop()
-        PRODUCT_INFO.drop()
+        # TEST_COLLECTION.drop()
+        # PRODUCT_INFO.drop()
+
+
+class CategoryList(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    section_id = db.Column(db.String(30))
+    section = db.Column(db.String(30))
+    category_id = db.Column(db.String(30))
+    category = db.Column(db.String(30))
+    subcategory_id = db.Column(db.String(30))
+    subcategory = db.Column(db.String(30))
+
+
+class MongoToSQLISBN(SettingBase):
+    def test_1_create_db(self):
+        db.create_all()
+        cate_1 = CategoryList(subcategory_id='/book/job')
+        cate_2 = CategoryList(subcategory_id='/book/ccd')
+        platform = Platform(id=1, platform='kingstone')
+        db.session.add_all([cate_1, cate_2, platform])
+        db.session.commit()
+
+    def test_2_create_isbn(self):
+        register_isbn(PRODUCT_INFO, date=TODAY)
+
+    def test_3_check_result(self):
+        product_list = db.session.execute("SELECT * FROM isbn_catalog")
+        final_list = []
+        for product in product_list:
+            final_list.append(product)
+        self.assertEqual(final_list[0]['isbn'], '9786263210493')
+        self.assertEqual(final_list[1]['isbn'], '9789863897996')
+
+
+
 
 
 
