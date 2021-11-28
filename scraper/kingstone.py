@@ -352,9 +352,9 @@ def phased_out_checker(url_to_scrape, sliced_list, target_id_key):
 
 
 
-# # Step 1: Get all subcategory id and scrape, with batch insertion at subcategory level #
-# if not category_list.find_one():
-#     create_category_list()
+# Step 1: Get all subcategory id and scrape, with batch insertion at subcategory level #
+if not category_list.find_one():
+    create_category_list()
 
 
 def ks_scrap_category():
@@ -450,44 +450,3 @@ def ks_scrap_unfound_products():
 def ks_drop_old_collection():
     # Step 7. Delete catalog of 7 days age, EX: today is '2021-10-26', so delete '2021-10-19'
     db.drop_collection(catalog_last_7_days)
-
-
-
-# with DAG(
-# dag_id='a_k_scraper',
-# schedule_interval='0 18 * * *',
-# start_date=datetime.datetime(2021, 11, 1),
-# catchup=False,
-# # default_args={'depends_on_past': True},
-# tags=['it_is_test'],
-# ) as dag:
-#     task_1 = PythonOperator(task_id='scrap_category', python_callable=ks_scrap_category)
-#     task_2 = PythonOperator(task_id='remove_duplicates', python_callable=ks_remove_duplicates)
-#     task_3 = PythonOperator(task_id='checking_new_unfound_products', python_callable=ks_checking_new_unfound_products)
-#     task_4 = PythonOperator(task_id='scrap_new_products', python_callable=ks_scrap_new_products, retries = 300)
-#     task_5 = PythonOperator(task_id='scrap_unfound_products', python_callable=ks_scrap_unfound_products)
-#     task_6 = PythonOperator(task_id='drop_old_collection', python_callable=ks_drop_old_collection)
-#     task_1 >> task_2 >> task_3 >> task_4 >> task_5 >> task_6
-
-# ks_scrap_category()
-# ks_remove_duplicates()
-# checking_new_unfound_products()
-# scrap_new_products()
-# scrap_unfound_products()
-# drop_old_collection()
-
-
-
-product_list = catalog_today.find()
-print(product_list)
-
-# product_id = product_list['kingstone_pid']
-# product_url = PRODUCT_PAGE + product_id
-# page  = requests.get(product_url, headers = HEADERS,timeout=60)
-# print(page)
-
-
-
-
-# def ks_printer():
-#     print('successfully imported!!')

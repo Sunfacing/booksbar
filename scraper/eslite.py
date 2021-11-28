@@ -3,12 +3,11 @@ import requests
 import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
-from collections import defaultdict
 from datetime import date, timedelta
 from fake_useragent import UserAgent
 from data_processor import *
 from scrapers import multi_scrapers
-from ip_list import ip_list, back_up_ip_list
+from ip_list import ip_list
 import random
 import datetime
 import pytz
@@ -334,31 +333,3 @@ def scrap_unfound_products():
 # Step 7. Delete catalog of 7 days age, EX: today is '2021-10-26', so delete '2021-10-19'
 def drop_old_collection():
     db.drop_collection(catalog_last_7_days)
-
-
-# with DAG(
-#     dag_id='a_scraper',
-#     schedule_interval='0 0 * * *',
-#     start_date=datetime(2021, 11, 15),
-#     catchup=False,
-#     dagrun_timeout=timedelta(seconds=120),
-#     # default_args={'depends_on_past': True},
-#     tags=['it_is_test'],
-#     ) as dag:
-#         task_1 = PythonOperator(task_id='scrap_category', python_callable=scrap_category)
-#         task_2 = PythonOperator(task_id='remove_duplicates', python_callable=remove_duplicates)
-#         task_3 = PythonOperator(task_id='checking_new_unfound_products', python_callable=checking_new_unfound_products)
-#         task_4 = PythonOperator(task_id='scrap_new_products', python_callable=scrap_new_products)
-#         task_5 = PythonOperator(task_id='scrap_unfound_products', python_callable=scrap_unfound_products)
-#         task_6 = PythonOperator(task_id='drop_old_collection', python_callable=drop_old_collection)
-#         task_1
-#         task_1 >> task_2 >> task_3 >> task_4 >> task_5 >> task_6
-
-
-scrap_category()
-remove_duplicates()
-checking_new_unfound_products()
-scrap_new_products()
-scrap_unfound_products()
-drop_old_collection()
-
