@@ -3,30 +3,15 @@ import pymysql
 import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
+from server import db
 from server.models.user_model import *
 from server.models.product_model import *
 from category_glossary import *
 
+
 client = MongoClient('localhost', 27017)
 m_db = client.Bookstores
 ks_category_list = m_db.kingstone
-
-
-
-
-
-connection = pymysql.connect(
-    host = os.getenv('host'),
-    user = os.getenv('user'),
-    passwd = os.getenv('passwd'),
-    database = os.getenv('database'),
-    port = int(os.getenv('port')),
-    cursorclass = pymysql.cursors.DictCursor,
-    autocommit=True
-)
-cursor = connection.cursor()
-
-
 
 
 def create_platform():
@@ -82,11 +67,6 @@ def register_kingstone_commenter():
     db.session.commit()
 
 
-    email = db.Column(db.String(255)) 
-    password = db.Column(db.String(255)) 
-    username = db.Column(db.String(255))
-    source = db.Column(db.String(255)) 
-    token = db.Column(db.String(255))
 
 
 def register_track_type():
@@ -114,7 +94,7 @@ def register_pipeline_step():
 
 
 if __name__ == '__main__':
-    if False:
+    if True:
         register_status()
         create_platform()
         register_price_type()

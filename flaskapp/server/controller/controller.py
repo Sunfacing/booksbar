@@ -16,7 +16,7 @@ from server.controller.util import *
 
 
 # TODAY = datetime.datetime.now(pytz.timezone('US/Pacific')).strftime("%Y-%m-%d")
-TODAY = '2021-11-06'
+TODAY = '2021-11-27'
 YESTERDAY = (datetime.datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 MONTH_AGO = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=15)).strftime("%Y-%m-%d")
 

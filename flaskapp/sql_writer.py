@@ -260,7 +260,7 @@ def register_isbn(ks_product_info, date=None):
     db.session.add_all(isbn_list)
     db.session.commit()  
 
-def register_kingstone_from_catalog(ks_catalog):
+def register_kingstone_from_catalog(ks_catalog, ks_product_info):
     sql_isbn_hashtable = my_sql_isbn_hash()
     product_info = mongo_to_hashtable(ks_product_info,  'kingstone_pid', 'ISBN')
     author_hash = create_hashtable('name', db.session.execute('SELECT id, name FROM author'))

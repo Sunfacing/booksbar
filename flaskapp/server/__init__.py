@@ -20,7 +20,7 @@ def create_app(config_name):
     app.secret_key = 'super secret string'
     return app
 
-app = create_app('testing')
+app = create_app('development')
 bcrypt = Bcrypt(app)  # Create/Check hashpassword
 migrate = Migrate(app, db)
 
