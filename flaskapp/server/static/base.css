@@ -112,7 +112,6 @@ body {
 }
 
 .section_nav {
-    color: #ffffff; 
     font-weight: bold; 
     text-decoration: none;
 }
@@ -140,7 +139,6 @@ body {
 
 a {
     text-decoration: none;
-    color: #ffffff;
 }
 
 .current_sec {
@@ -150,10 +148,7 @@ a {
     font-weight: bold;
 }
 
-.section_nav {
-    color: #ffffff;
-    font-weight: bold;
-}
+
 
 .col-sm-7.w3-animate-opacity {
     margin-left:0px;

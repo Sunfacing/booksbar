@@ -324,15 +324,12 @@ def search_by_author(name):
     return result
 
 
-def daily_result(date):
+def web_scrap_result(date):
     result = db.session.execute("""
-    SELECT t.step, s.step, t.*, p.platform 
-    FROM pipeline_step AS s
-    LEFT JOIN pipeline_track AS t
-    ON t.step = s.id
-    LEFT JOIN platform AS p
-    ON t.platform = p.id
-    WHERE p.platform not IN ('original', 'promotional')""".format(date))
+    SELECT pt.date, pt.quantity, pt.minutes, pt.step, ps.step, p.platform FROM pipeline_track AS pt
+    INNER JOIN pipeline_step AS ps
+    ON pt.step = ps.id
+    INNER JOIN platform AS p
+    ON pt.platform = p.id
+    WHERE date = '{}' and p.platform IN ('momo', 'eslite', 'kingstone')""".format(date))
     return result
-
-

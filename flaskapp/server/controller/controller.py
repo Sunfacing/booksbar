@@ -224,5 +224,26 @@ def logout():
 
 
 @app.route('/dashboard')
-def dashboard():
-    return render_template('dashboard.html')
+def dashboard(date=TODAY):
+    date = request.values.get('date', date)
+    if date > TODAY:
+        date = TODAY
+    scrap_result = web_scrap_result(date)
+    kingstone = defaultdict(dict)
+    eslite = defaultdict(dict)
+    momo = defaultdict(dict)
+    for result in scrap_result:
+        step = result['step']
+        minutes = result['minutes']
+        quantity = result['quantity']
+        if result['platform'] == 'kingstone':
+            kingstone[step] = [minutes, quantity]
+        elif result['platform'] == 'eslite':
+            eslite[step] = [minutes, quantity]           
+        else:
+            momo[step] = [minutes, quantity]
+    return render_template('dashboard.html',
+                           kingstone=kingstone,
+                           eslite=eslite,
+                           momo=momo,
+                           date=date)

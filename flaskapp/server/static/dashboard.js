@@ -22,7 +22,7 @@ function totalResult(t_ks, t_es, t_mm, p_ks, p_es, p_mm) {
     var data = [trace1, trace2];
 
     var layout = {
-        title: 'Web Scrap Result',
+        title: 'Web Scrap Result (Quantity)',
         barmode: 'group'
     };
     Plotly.newPlot('totalResult', data, layout);
@@ -70,7 +70,7 @@ function gapCheck(ks_dup, ks_unmatch, ks_new, ks_out, es_dup, es_unmatch, es_new
     var data = [trace1, trace2, trace3, trace4];
 
     var layout = {
-        title: 'Book catalog Gap Check',
+        title: 'Book catalog Gap Check (Quantity)',
         barmode: 'group'
     };
     Plotly.newPlot('gapCheck', data, layout);
@@ -90,7 +90,7 @@ function newRegistration(ks_isbn, es_isbn, mm_isbn) {
       ];
       
     var layout = {
-        title: 'New Books Registered',
+        title: 'New Books Registered (Quantity)',
     };
     Plotly.newPlot('newRegistration', data, layout);
 }
@@ -120,12 +120,12 @@ function timeSpent(
     },
     cells: {
       values: values,
-      align: "center",
+      align: "left",
       font: {family: "Arial", size: 11, color: ["black"]}
     }
   }]
   var layout = {
-    title: "Scrap Time In Detail"
+    title: "Scrap Time In Detail (Minutes)"
   }
   Plotly.newPlot('timeSpent', data, layout);
 }
