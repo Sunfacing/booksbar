@@ -1,0 +1,73 @@
+{% extends "member.html" %}
+{% block content %}
+<script src='https://cdn.plot.ly/plotly-2.6.3.min.js'></script>
+<script type="text/javascript" src="{{ url_for('static', filename='dashboard.js', u=last_updated) }}"></script>
+<div id='totalResult'></div>
+<div id='gapCheck'></div>
+<div id='newRegistration'></div>
+<div id='timeSpent'></div>
+<script>
+totalResult(
+    t_ks=10,
+    t_es=10,
+    t_mm=10,
+    p_ks=10,
+    p_es=10,
+    p_mm=10
+)
+</script>
+<script>
+newRegistration(
+    t_ks=10,
+    t_es=10,
+    t_mm=10,
+    p_ks=10,
+    p_es=10,
+    p_mm=10
+)
+</script>
+<script>
+gapCheck(
+    ks_dup=10,
+    ks_unmatch=10,
+    ks_new=10,
+    ks_out=10,
+    es_dup=10,
+    es_unmatch=10,
+    es_new=10,
+    es_out=10,
+    mm_dup=10,
+    mm_unmatch=10,
+    mm_new=10, 
+    mm_out=10
+)
+</script>
+
+<script>
+timeSpent(
+    ks_first=0,
+    ks_remove=0,
+    ks_check_unmatch=0,
+    ks_phase_out=0,
+    ks_update_price=0, 
+    ks_ttl=0,
+    es_first=0,
+    es_remove=0,
+    es_check_unmatch=0,
+    es_phase_out=0,
+    es_update_price=0,
+    es_ttl=0,
+    mm_first=0,
+    mm_remove=0,
+    mm_check_unmatch=0,
+    mm_phase_out=0,
+    mm_update_price=0,
+    mm_ttl=0
+)
+</script>
+
+
+
+
+
+{% endblock content%}

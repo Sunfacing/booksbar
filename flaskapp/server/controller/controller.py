@@ -221,3 +221,8 @@ def logout():
     session.pop('username', None)
     session.pop('loggedin', None)
     return redirect(url_for('index'))
+
+
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
