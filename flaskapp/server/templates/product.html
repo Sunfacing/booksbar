@@ -12,56 +12,48 @@
         <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-
-        
-        <style>
-          /* Make the image fully responsive */
-          .carousel-inner img {
-            width: 100%;
-            height: 100%;
-          }
-          </style>
-    
+        <link rel="stylesheet" href="{{ url_for('static', filename='product.css') }}">
+        <script type="text/javascript" src="{{ url_for('static', filename='product.js', u=last_updated) }}"></script>
       </head>
     <body>
-      <nav class="navbar" style="background-color: #393d3f;">
-        <a class="navbar-brand" style="color: #ffffff;" href="{{ url_for('index')}}"><img src='https://d3bu8utwyaxpsl.cloudfront.net/logo.png' style="width: 60%;"></a>
+      <nav class="navbar">
+        <a class="navbar-brand" href="{{ url_for('index')}}"><img class="navbarlogo" src='https://d3bu8utwyaxpsl.cloudfront.net/logo.png'></a>
         {% if 'loggedin' in session %}
-          <a href="/member"><i class="fas fa-user-circle fa-2x" style="color: #ffffff" ></i></a>        
+          <a href="/member"><i class="fas fa-user-circle fa-2x"></i></a>        
         {% else %}
-          <a onclick="document.getElementById('id01').style.display='block'" ><i class="fas fa-user-circle fa-2x" style="color: #ffffff" ></i></a>
+          <a onclick="document.getElementById('id01').style.display='block'" ><i class="fas fa-user-circle fa-2x"></i></a>
         {% endif %}
         {% include 'login.html' %}
       </nav>
-        <div id="mySidenav" class="sidenav" style="background-color: #393d3f;" >
-          <a class="navbar-brand" style="color: #ffffff;"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/380/6391619380_b1cf68eb-1598-4eb2-987f-bd1ab6196133.png?cb=1637199110' style="width: 100%;"></a>
-          <a href="javascript:void(0)" class="closebtn" style="background-color: #393d3f;"  onclick="closeNav()">&times;</a>
+        <div id="mySidenav" class="sidenav">
+          <a class="navbar-brand"><img src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/380/6391619380_b1cf68eb-1598-4eb2-987f-bd1ab6196133.png?cb=1637199110' style="width: 100%;"></a>
+          <a href="javascript:void(0)" class="closebtn"onclick="closeNav()">&times;</a>
           {% for each in nav_sec%}
-            <a href="/{{ each }}"><h5 class="section_nav" style="color: #ffffff; font-weight: bold; font-size: medium; margin-bottom: 0px;">{{each}}</h5></a>
+            <a class="seclink" href="/{{ each }}"><h5 class="section_nav">{{each}}</h5></a>
           {% endfor %}
         </div>
-        <div style="margin-top:10px">
+        <div class="divider">
         </div>
-        <span class="navbtn btn my-2 my-sm-0" href="#" role="button" onclick="openNav()" style="font-weight:bold; height:80px; border-radius: 7px; background-color: #393d3f; color: #ffffff;">分<br>類<br>表</span>
+        <span class="navbtn btn my-2 my-sm-0" href="#" role="button" onclick="openNav()">分<br>類<br>表</span>
         <div class="row  w3-animate-opacity ">
-          <div class="container col-sm-2" style="margin-left:0px;"></div>
-          <div class="container col-sm-8" style="margin-left:0px;">
-            <ul class="breadcrumb bg-light" style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px;">
-              <li style="margin-right: 10px; font-weight: bolder; color: #393d3f;">分類: </li>
-              <li><a href="/{{kingstone['section']}}" style="margin-right: 10px; font-weight: bold; color:#393d3f">{{kingstone['section']}}</a></li>
-              <li style="margin-right: 10px;"><i class="fas fa-angle-double-right" style="color: #393d3f;"></i></li>
-              <li><a href="/{{kingstone['section']}}?category_nm={{kingstone['category']}}" style="margin-right: 10px; font-weight: bold; color:#393d3f">{{kingstone['category']}}</a></li>
-              <li style="margin-right: 10px;"><i class="fas fa-angle-double-right" style="color: #393d3f;"></i></li>
-              <li><a href="/{{kingstone['section']}}?category_nm={{kingstone['category']}}&subcate_nm={{kingstone['subcategory']}}" style="margin-right: 10px; font-weight: bold; color:#393d3f">{{kingstone['subcategory']}}</a></li>
+          <div class="container col-sm-2"></div>
+          <div class="container col-sm-8 upper">
+            <ul class="breadcrumb bg-light">
+              <li class="subtitle">分類: </li>
+              <li><a class="catelink" href="/{{kingstone['section']}}">{{kingstone['section']}}</a></li>
+              <li style="margin-right: 10px;"><i class="fas fa-angle-double-right""></i></li>
+              <li><a class="catelink" href="/{{kingstone['section']}}?category_nm={{kingstone['category']}}">{{kingstone['category']}}</a></li>
+              <li style="margin-right: 10px;"><i class="fas fa-angle-double-right"></i></li>
+              <li><a class="catelink" href="/{{kingstone['section']}}?category_nm={{kingstone['category']}}&subcate_nm={{kingstone['subcategory']}}">{{kingstone['subcategory']}}</a></li>
             </ul>       
           </div>  
-          <div class="container col-sm-2" style="margin-left:0px;"></div>
+          <div class="container col-sm-2"></div>
           
         </div>
         <div class="row  w3-animate-opacity ">
-          <div class="container col-sm-2" style="margin-left:0px;"></div>
-          <div class="container col" style="margin-left:0px;" >
-            <div id="demo" class="carousel slide" data-ride="carousel" style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px;">
+          <div class="container col-sm-2"></div>
+          <div class="container col">
+            <div id="demo" class="carousel slide" data-ride="carousel">
               <!-- Indicators -->
               <ul class="carousel-indicators ">
                 <li data-target="#demo" data-slide-to="0" class="active"></li>
@@ -87,172 +79,97 @@
                   <span class="carousel-control-next-icon bg-dark"></span>
                 </a>
               </div>
-              <style>
-                .zoom {
-                  padding: 50px;
-                  background-color: white;
-                  transition: transform .2s; /* Animation */
-                  width: 200px;
-                  height: 200px;
-                  margin: 0 auto;
-                }
-                
-                .zoom:hover {
-                  transform: scale(1.5); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
-                }
-                </style>
- 
-
             </div>
           </div>
-          <div class="container col" style="padding-right:20px;">
-            <div class="row" style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; padding: 30px; border-radius: 7px; color: #ffffff; background-color: #393d3f;">
-              <h4 style="font-weight: bold;">{{kingstone['title']}}</h4>
+          <div class="container col">
+            <div class="row title">
+              <h4>{{kingstone['title']}}</h4>
             </div>
-            <div class="row" style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; padding: 20px; margin-top: 20px; border-radius: 7px;">
+            <div class="row info">
               <div>
               <a href="/keyword?search={{kingstone['author']}}&only_author=True" style="text-decoration: none;  color: #393d3f;"><h5 style="font-size: medium; font-weight: bold; color: #393d3f;">作者: {{kingstone['author']}}  <i class="fas fa-search" style="color:#E34234"></i></h5></a>
-              <h5 style="font-size: medium; font-weight: bold;" style="color: #393d3f;">出版社: {{kingstone['publisher']}}</h5>
-              <h5 style="font-size: medium; font-weight: bold;" style="color: #393d3f;">出版日: {{kingstone['publish_date']}}</h5>
-              <h5 style="font-size: medium; font-weight: bold;" style="color: #393d3f;">ISBN: {{kingstone['ISBN']}}</h5>
-              <h5 style="font-size: medium; font-weight: bold;" style="color: #393d3f;">頁數: {{kingstone['page']}}</h5>
-              <h5 style="font-size: medium; font-weight: bold;" style="color: #393d3f;">尺寸: {{kingstone['size']}}</h5>
+              <h5 class="info">出版社: {{kingstone['publisher']}}</h5>
+              <h5 class="info">出版日: {{kingstone['publish_date']}}</h5>
+              <h5 class="info">ISBN: {{kingstone['ISBN']}}</h5>
+              <h5 class="info">頁數: {{kingstone['page']}}</h5>
+              <h5 class="info">尺寸: {{kingstone['size']}}</h5>
               </div>
             </div>
             <div class="row" style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; padding: 10px; margin-top: 10px;  border-radius: 10px;">
               <div class="container col-3" style="text-align: center;">
-                <img src="https://linepaytw-cms.line-scdn.net/v0/fc8cb09e193cc3f5a8e7ebc6910debd296aacb3d84e1f1a2891dd45444a03855.png" style="width: 90px; height: 90px;">
+                <img class="brandlogo" src="https://linepaytw-cms.line-scdn.net/v0/fc8cb09e193cc3f5a8e7ebc6910debd296aacb3d84e1f1a2891dd45444a03855.png" >
                 {% if kingstone['price'] > 0 %} 
-                  <h4 style="color: #E34234; font-weight: bold;">{{kingstone['price']}} 元</h4><a href="{{kingstone['product_url']}}" class="btn" style="color:white; font-weight: bold; background-color: #393d3f;">前往網站</a>
+                  <h4 class="price available">{{kingstone['price']}} 元</h4><a href="{{kingstone['product_url']}}" class="btn available">前往網站</a>
                 {% else %}
-                  <h4 style="color: #ffffff; font-weight: bold;">{{kingstone['price']}}</h4><button type="button" class="btn btn-default" style="font-weight: bold;">暫無存貨</button>
+                  <h4 class="price out-of-stock">{{kingstone['price']}}</h4><button type="button" class="btn btn-default out-of-stock">暫無存貨</button>
                 {% endif %}
               </div>
 
               <div class="container col-4" style="text-align: center;">
-                <img src="https://meet.eslite.com/Content/Images/ThemePavilion/eslite-logo.jpg" style="width: 90px; height: 90px; ">
+                <img class="brandlogo" src="https://meet.eslite.com/Content/Images/ThemePavilion/eslite-logo.jpg">
                 {% if eslite['price'] > 0 %}  
-                  <h4 style="color: #E34234; font-weight: bold;">{{eslite['price']}} 元</h4><a href="{{eslite['product_url']}}" class="btn" style="color:white; font-weight: bold; background-color: #393d3f;">前往網站</a>
+                  <h4 class="price available">{{eslite['price']}} 元</h4><a href="{{eslite['product_url']}}" class="btn available">前往網站</a>
                 {% else %}
-                  <h4 style="color: #ffffff; font-weight: bold;">{{eslite['price']}}</h4><button type="button" class="btn btn-default" style="font-weight: bold;">暫無存貨</button>
+                  <h4 class="price out-of-stock">{{eslite['price']}}</h4><button type="button" class="btn btn-default out-of-stock">暫無存貨</button>
                 {% endif %}
               </div>
               
               <div class="container col-3" style="text-align: center;">
-                <img src="https://www.esunbank.com.tw/bank/-/media/esunbank-mobile/images/discount/shops/b_onlineshop/2008.jpg" style="width: 90px; height: 90px;">
+                <img class="brandlogo" src="https://www.esunbank.com.tw/bank/-/media/esunbank-mobile/images/discount/shops/b_onlineshop/2008.jpg" >
                 {% if momo['price'] > 0 %}                              
-                  <h4 style="color: #E34234; font-weight: bold;">{{momo['price']}} 元</h4><a href="{{momo['product_url']}}" class="btn" style="color:white; font-weight: bold; background-color: #393d3f;">前往網站</a>
+                  <h4 class="price available">{{momo['price']}} 元</h4><a href="{{momo['product_url']}}" class="btn available">前往網站</a>
                 {% else %}
-                  <h4 style="color: #ffffff; font-weight: bold;">{{momo['price']}}</h4><button type="button" class="btn btn-default" style="font-weight: bold;">暫無存貨</button>
+                  <h4 class="price out-of-stock">{{momo['price']}}</h4><button type="button" class="btn btn-default out-of-stock">暫無存貨</button>
                 {% endif %}
               </div>
             </div>
           </div>
-          <div class="container col-sm-2" style="margin-left:0px;" id='tracker'>
-            <div style="height: 10%;">
+          <div class="container col-sm-2 track" id='tracker'>
+            <div class="divider track">
               {% if tracking_hash[1] %}
-                <button type="button" class="btn btn-check row" id="subcategory" value="?subcate={{kingstone['category_id']}}" onclick="add_to_favorite()"><i class="fas fa-heart" id="heart" style="color:#ffffff"> 追蹤分類 - {{kingstone['subcategory']}}</i></button>
+                <button type="button" class="btn btn-check row" id="subcategory" value="?subcate={{kingstone['category_id']}}" onclick="add_to_favorite()"><i class="fas fa-heart on" id="heart"> 追蹤分類 - {{kingstone['subcategory']}}</i></button>
               {% else %}
-                <button type="button" class="btn btn-basic row" id="subcategory" value="?subcate={{kingstone['category_id']}}" onclick="add_to_favorite()"><i class="fas fa-heart" id="heart" style="color:#393d3f"> 追蹤分類 - {{kingstone['subcategory']}}</i></button>
+                <button type="button" class="btn btn-basic row" id="subcategory" value="?subcate={{kingstone['category_id']}}" onclick="add_to_favorite()"><i class="fas fa-heart off" id="heart"> 追蹤分類 - {{kingstone['subcategory']}}</i></button>
               {% endif %}
             </div>
             <div style="height: 10%;">
               {% if tracking_hash[3] %}
-                <button type="button" class="btn btn-check row" value="?author={{kingstone['author_id']}}" onclick="cancel_favorite()"><i class="fas fa-pen-nib" style="color:#ffffff"> 追蹤作者</i></button>
+                <button type="button" class="btn btn-check row" value="?author={{kingstone['author_id']}}" onclick="cancel_favorite()"><i class="fas fa-pen-nib on"> 追蹤作者</i></button>
               {% else %}  
-                <button type="button" class="btn btn-basic row" value="?author={{kingstone['author_id']}}" onclick="cancel_favorite()"><i class="fas fa-pen-nib" style="color:#393d3f"> 追蹤作者</i></button>
+                <button type="button" class="btn btn-basic row" value="?author={{kingstone['author_id']}}" onclick="cancel_favorite()"><i class="fas fa-pen-nib off"> 追蹤作者</i></button>
               {% endif %}  
             </div>
            <div style="height: 10%;">
             {% if tracking_hash[2] %}
-              <button type="button" class="btn btn-check row" value="?price={{kingstone['isbn_id']}}" onclick="add_to_favorit()"><i class="fas fa-tag" style="color:#ffffff"> 追蹤本書</i></button>
+              <button type="button" class="btn btn-check row" value="?price={{kingstone['isbn_id']}}" onclick="add_to_favorit()"><i class="fas fa-tag on"> 追蹤本書</i></button>
             {% else %}  
-              <button type="button" class="btn btn-basic row" value="?price={{kingstone['isbn_id']}}" onclick="add_to_favorit()"><i class="fas fa-tag" style="color:#393d3f"> 追蹤本書</i></button>
+              <button type="button" class="btn btn-basic row" value="?price={{kingstone['isbn_id']}}" onclick="add_to_favorit()"><i class="fas fa-tag off"> 追蹤本書</i></button>
             {% endif %}  
           </div>
-          <style>
-            .btn-check{
-              background-color: #cc444b;
-              border-color: #cc444b;
-            }
-
-          </style>
-          <script>
-            var tracker = document.getElementById('tracker')
-            let button_tag;
-            let icon_tag;
-            tracker.addEventListener('click', (e) => {
-              if (e.target.tagName == 'I') {
-                icon_tag = e.target;
-                button_tag = e.target.parentNode;
-                value = e.target.parentNode.value;
-              } else if (e.target.tagName == 'BUTTON') {
-                button_tag = e.target;
-                icon_tag = e.target.firstChild;
-                value = e.target.value;
-              } else {
-                value = 0;
-              }
-              if ( value != 0) {
-                var api = "/api/favorite"+ value;
-                let request_method = 'POST';
-                if (button_tag.className == 'btn btn-check row') {
-                  request_method = 'DELETE';
-                }
-
-              fetch(api, {method: request_method})
-                    .then(response => response.json())
-                    .then(set_favorite)}
-            })
-
-
-            function set_favorite(result) {
-                if (result.message == 'added') {
-                  button_tag.className = button_tag.className.replace("btn-basic", "btn-check");
-                  icon_tag.style.color = "#ffffff"
-                } else if ( result.message == 'cancelled') {
-                  button_tag.className = button_tag.className.replace("btn-check", "btn-basic");
-                  icon_tag.style.color = "#393d3f"                  
-                } else {
-                  document.getElementById('id01').style.display='block'
-                }
-            }
-          </script>
           </div>
-        </div>
-        
-        <div class="container col-sm-8  w3-animate-opacity " style="margin-top: 30px;">
+        </div>  
+        <div class="container col-sm-8 w3-animate-opacity info">
           <div id="naver">
-          <ul  class="nav nav-pills navbar navbar-expand-sm bg-light " style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px;">
-            <li><a data-toggle="pill" href="#table_of_content" class="btn active" style="margin:1px; color:#f1f1f1; border-radius: 5px; font-weight: bold;">目錄大綱</a></li>
-            <li><a data-toggle="pill" href="#description" class="btn" style="margin:1px; color:#f1f1f1; border-radius: 5px; font-weight: bold; ">內容簡介</a></li>
-            <li><a data-toggle="pill" href="#author_intro" class="btn" style="margin:1px; color:#f1f1f1; border-radius: 5px; font-weight: bold; ">作者介紹</a></li>
-            <li><a data-toggle="pill" href="#comment" class="btn" style="margin:1px; color:#f1f1f1; border-radius: 5px; font-weight: bold;">讀者評論</a></li>
+          <ul  class="nav nav-pills navbar navbar-expand-sm bg-light">
+            <li><a data-toggle="pill" href="#table_of_content" class="btn active">目錄大綱</a></li>
+            <li><a data-toggle="pill" href="#description" class="btn">內容簡介</a></li>
+            <li><a data-toggle="pill" href="#author_intro" class="btn">作者介紹</a></li>
+            <li><a data-toggle="pill" href="#comment" class="btn">讀者評論</a></li>
           </ul>
         </div>
-        <style>
-          a.btn.active {
-            background-color: #cc444b;
-            color: white;           
-          }
-          a.btn {
-            background-color: #393d3f;
-            color: white;           
-          }
-        </style>
           <div class="tab-content">
-            <div id="table_of_content" class="tab-pane fade in active" style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; padding: 40px;"> 
+            <div id="table_of_content" class="tab-pane fade in active"> 
             </div>
-            <div id="description" class="tab-pane fade" style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; padding: 40px;">
+            <div id="description" class="tab-pane fade">
             </div>
-            <div id="author_intro" class="tab-pane fade" style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; padding: 40px;">
+            <div id="author_intro" class="tab-pane fade">
             </div>
-            <div id="comment" class="tab-pane fade" style="box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; border-radius: 5px; padding: 40px;">
+            <div id="comment" class="tab-pane fade">
               {% if comment_list | length == 0%}
                   <p> 目前尚無評論 </p>
               {% else %}
               {% for each in comment_list %}
-                <div style="margin-bottom: 30px;">
+                <div class="usercomment">
                   {{ each[0] }}
                   <p>{{ each[1][1:-1] }}</p>
                 </div>
@@ -263,206 +180,50 @@
           </div>
         </div> 
         <script>
-          function render(productList){
-              var table_of_content = document.createElement('p');
-              table_of_content.innerHTML = productList.table_of_content
-              document.getElementById('table_of_content').append(table_of_content);
-             
-              var description = document.createElement('span');
-              description.innerHTML = '<p style="white-space: pre-line;">' + productList.description + '</p>'
-              document.getElementById('description').append(description);
-
-              var author_intro = document.createElement('p');
-              author_intro.innerHTML = productList.author_intro
-              document.getElementById('author_intro').append(author_intro);
-            };
-                  
           fetch("/api/product/bookinfo/{{kingstone['isbn_id']}}")
               .then(response => response.json())
               .then(render)
         </script>        
     </body>
+    <script>
+      var tracker = document.getElementById('tracker')
+      let button_tag;
+      let icon_tag;
+      tracker.addEventListener('click', (e) => {
+        if (e.target.tagName == 'I') {
+          icon_tag = e.target;
+          button_tag = e.target.parentNode;
+          value = e.target.parentNode.value;
+        } else if (e.target.tagName == 'BUTTON') {
+          button_tag = e.target;
+          icon_tag = e.target.firstChild;
+          value = e.target.value;
+        } else {
+          value = 0;
+        }
+        if ( value != 0) {
+          var api = "/api/favorite"+ value;
+          let request_method = 'POST';
+          if (button_tag.className == 'btn btn-check row') {
+            request_method = 'DELETE';
+          }
+
+        fetch(api, {method: request_method})
+              .then(response => response.json())
+              .then(set_favorite)}
+      })
 
 
-    
-    <script>
-      var slideIndex = 1;
-      showSlides(slideIndex);
-      
-      function plusSlides(n) {
-        showSlides(slideIndex += n);
+      function set_favorite(result) {
+          if (result.message == 'added') {
+            button_tag.className = button_tag.className.replace("btn-basic", "btn-check");
+            icon_tag.style.color = "#ffffff"
+          } else if ( result.message == 'cancelled') {
+            button_tag.className = button_tag.className.replace("btn-check", "btn-basic");
+            icon_tag.style.color = "#393d3f"                  
+          } else {
+            document.getElementById('id01').style.display='block'
+          }
       }
-      
-      function currentSlide(n) {
-        showSlides(slideIndex = n);
-      }
-      
-      function showSlides(n) {
-        var i;
-        var slides = document.getElementsByClassName("mySlides");
-        var dots = document.getElementsByClassName("demo");
-        var captionText = document.getElementById("caption");
-        if (n > slides.length) {slideIndex = 1}
-        if (n < 1) {slideIndex = slides.length}
-        for (i = 0; i < slides.length; i++) {
-            slides[i].style.display = "none";
-        }
-        for (i = 0; i < dots.length; i++) {
-            dots[i].className = dots[i].className.replace(" active", "");
-        }
-        slides[slideIndex-1].style.display = "block";
-        dots[slideIndex-1].className += " active";
-        captionText.innerHTML = dots[slideIndex-1].alt;
-      }
-    </script>
-    <style>
-      body {
-        font-family: Arial;
-        margin: 0;
-      }
-      
-      * {
-        box-sizing: border-box;
-      }
-      
-      img {
-        vertical-align: middle;
-      }
-      
-      /* Position the image container (needed to position the left and right arrows) */
-      .container {
-        position: relative;
-      }
-      
-      /* Hide the images by default */
-      .mySlides {
-        display: none;
-      }
-      
-      /* Add a pointer when hovering over the thumbnail images */
-      .cursor {
-        cursor: pointer;
-      }
-      
-      /* Next & previous buttons */
-      .prev,
-      .next {
-        cursor: pointer;
-        position: absolute;
-        top: 40%;
-        width: auto;
-        padding: 16px;
-        margin-top: -50px;
-        color: white;
-        font-weight: bold;
-        font-size: 20px;
-        border-radius: 0 3px 3px 0;
-        user-select: none;
-        -webkit-user-select: none;
-      }
-      
-      /* Position the "next button" to the right */
-      .next {
-        right: 0;
-        border-radius: 3px 0 0 3px;
-      }
-      
-      /* On hover, add a black background color with a little bit see-through */
-      .prev:hover,
-      .next:hover {
-        background-color: rgba(0, 0, 0, 0.8);
-      }
-      
-      /* Number text (1/3 etc) */
-      .numbertext {
-        color: #f2f2f2;
-        font-size: 12px;
-        padding: 8px 12px;
-        position: absolute;
-        top: 0;
-      }
-      
-      /* Container for image text */
-      .caption-container {
-        text-align: center;
-        background-color: #222;
-        padding: 2px 16px;
-        color: white;
-      }
-      
-      .row:after {
-        content: "";
-        display: table;
-        clear: both;
-      }
-      
-      /* Six columns side by side */
-      .column {
-        float: left;
-        width: 16.66%;
-      }
-      
-      /* Add a transparency effect for thumnbail images */
-      .demo {
-        opacity: 0.6;
-      }
-      
-      .active,
-      .demo:hover {
-        opacity: 1;
-      }
-    </style>   
-    <style>
-      body {
-        font-family: "Lato", sans-serif;
-      }
-      
-      .sidenav {
-        height: 100%;
-        width: 0;
-        position: fixed;
-        z-index: 1;
-        top: 0;
-        left: 0;
-        background-color: #111;
-        overflow-x: hidden;
-        transition: 0.5s;
-        padding-top: 60px;
-      }
-      
-      .sidenav a {
-        padding: 8px 8px 8px 32px;
-        text-decoration: none;
-        font-size: 25px;
-        color: #818181;
-        display: block;
-        transition: 0.3s;
-      }
-      
-      .sidenav a:hover {
-        color: #f1f1f1;
-      }
-      
-      .sidenav .closebtn {
-        position: absolute;
-        top: 0;
-        right: 25px;
-        font-size: 36px;
-        margin-left: 50px;
-      }
-      
-      @media screen and (max-height: 450px) {
-        .sidenav {padding-top: 15px;}
-        .sidenav a {font-size: 18px;}
-      }
-    </style>
-    <script>
-        function openNav() {
-          document.getElementById("mySidenav").style.width = "250px";
-        }
-        
-        function closeNav() {
-          document.getElementById("mySidenav").style.width = "0";
-        }
     </script>
 </html>
