@@ -95,8 +95,8 @@
               <h5 class="info">尺寸: {{kingstone['size']}}</h5>
               </div>
             </div>
-            <div class="row" style="max-width: 100%;box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2); border:0px; padding: 10px; margin-top: 10px;  border-radius: 10px;">
-              <div class="container col-3" style="text-align: center;">
+            <div class="row price">
+              <div class="container col-3 price">
                 <img class="brandlogo" src="https://linepaytw-cms.line-scdn.net/v0/fc8cb09e193cc3f5a8e7ebc6910debd296aacb3d84e1f1a2891dd45444a03855.png" >
                 {% if kingstone['price'] > 0 %} 
                   <h4 class="price available">{{kingstone['price']}} 元</h4><a href="{{kingstone['product_url']}}" class="btn available">前往網站</a>
@@ -105,7 +105,7 @@
                 {% endif %}
               </div>
 
-              <div class="container col-4" style="text-align: center;">
+              <div class="container col-4 price">
                 <img class="brandlogo" src="https://meet.eslite.com/Content/Images/ThemePavilion/eslite-logo.jpg">
                 {% if eslite['price'] > 0 %}  
                   <h4 class="price available">{{eslite['price']}} 元</h4><a href="{{eslite['product_url']}}" class="btn available">前往網站</a>
@@ -114,7 +114,7 @@
                 {% endif %}
               </div>
               
-              <div class="container col-3" style="text-align: center;">
+              <div class="container col-3">
                 <img class="brandlogo" src="https://www.esunbank.com.tw/bank/-/media/esunbank-mobile/images/discount/shops/b_onlineshop/2008.jpg" >
                 {% if momo['price'] > 0 %}                              
                   <h4 class="price available">{{momo['price']}} 元</h4><a href="{{momo['product_url']}}" class="btn available">前往網站</a>
@@ -132,14 +132,14 @@
                 <button type="button" class="btn btn-basic row" id="subcategory" value="?subcate={{kingstone['category_id']}}" onclick="add_to_favorite()"><i class="fas fa-heart off" id="heart"> 追蹤分類 - {{kingstone['subcategory']}}</i></button>
               {% endif %}
             </div>
-            <div style="height: 10%;">
+            <div class="divider track">
               {% if tracking_hash[3] %}
                 <button type="button" class="btn btn-check row" value="?author={{kingstone['author_id']}}" onclick="cancel_favorite()"><i class="fas fa-pen-nib on"> 追蹤作者</i></button>
               {% else %}  
                 <button type="button" class="btn btn-basic row" value="?author={{kingstone['author_id']}}" onclick="cancel_favorite()"><i class="fas fa-pen-nib off"> 追蹤作者</i></button>
               {% endif %}  
             </div>
-           <div style="height: 10%;">
+           <div class="divider track">
             {% if tracking_hash[2] %}
               <button type="button" class="btn btn-check row" value="?price={{kingstone['isbn_id']}}" onclick="add_to_favorit()"><i class="fas fa-tag on"> 追蹤本書</i></button>
             {% else %}  

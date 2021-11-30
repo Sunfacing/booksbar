@@ -155,6 +155,34 @@ button.btn.btn-default.out-of-stock {
 }
 
 
+div.row.price {
+    max-width: 100%;
+    box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2);
+    border:0px;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 10px;    
+}
+
+
+div.container.col-3.price {
+    text-align: center; 
+}
+
+
+div.container.col-4.price {
+    text-align: center; 
+}
+
+
+
+
+
+
+
+
+
+
 
 div.row.info {
     max-width: 100%;
