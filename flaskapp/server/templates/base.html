@@ -39,7 +39,7 @@
     <div id="mySidenav" class="sidenav">
       <a class="navbar-brand"><img class="sidebrandimg" src='https://dewey.tailorbrands.com/production/brand_version_mockup_image/380/6391619380_b1cf68eb-1598-4eb2-987f-bd1ab6196133.png?cb=1637199110'></a>
       {% for each in nav_sec%}
-      <a href="{{ each }}"><h5 class="section_nav">{{each}}</h5></a>
+      <a class="seclink" href="{{ each }}"><h5 class="section_nav">{{each}}</h5></a>
       {% endfor %}
       <a href="javascript:void(0)" class="closebtn"  onclick="closeNav()">&times;</a>
     </div>
@@ -67,7 +67,7 @@
                 {% if subcate == current_sub %}
                   <a href="?category_nm={{ current_cate }}&subcate_nm={{ subcate }}" class="btn now">{{ subcate }}</a>
                 {% else %}
-                  <a href="?category_nm={{ current_cate }}&subcate_nm={{ subcate }}"class="btns">{{ subcate }}</a>                  
+                  <a href="?category_nm={{ current_cate }}&subcate_nm={{ subcate }}" class="btn">{{ subcate }}</a>                  
                 {% endif %}
               {% endfor %}
             </div>  
@@ -79,5 +79,11 @@
     </div>
   </div>
   <button onclick="topFunction()" id="myBtn" title="Go to top">▲</button>
+  <script>//Get the button
+    var mybutton = document.getElementById("myBtn");
+    
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function() {scrollFunction()};
+    </script>
   </body>
 </html> 

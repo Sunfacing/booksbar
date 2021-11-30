@@ -19,14 +19,20 @@ body {
   padding: 8px 8px 8px 32px;
   text-decoration: none;
   font-size: 25px;
-  color: #818181;
+  color: #f1f1f1;
   display: block;
   transition: 0.3s;
 }
 
 .sidenav a:hover {
   color: #f1f1f1;
-  background-color: #818181;
+  text-decoration: none;
+}
+
+a.seclink:hover {
+    color: #f1f1f1;
+    background-color: #cc444b;
+    text-decoration: none;
 }
 
 .sidenav .closebtn {
@@ -43,13 +49,6 @@ body {
 }
 
 
-  
-.sidenav a:hover {
-    color: #f1f1f1;
-    background-color: #393d3f;
-    text-decoration: none;
-}
-  
 .sidenav .closebtn {
     position: absolute;
     background-color: #393d3f;
@@ -96,6 +95,7 @@ body {
 
 #myBtn:hover {
     background-color: #cc444b;
+    text-decoration: none;
 }
 
 .card:hover {
@@ -141,6 +141,13 @@ a {
     text-decoration: none;
 }
 
+
+a:hover {
+    text-decoration: none;
+    color: #393d3f;
+}
+
+
 .current_sec {
     color: #393d3f;
     margin-bottom:20px;
@@ -168,10 +175,14 @@ a {
     font-weight: bold;
 }
 
-.btns{
+.btn{
     margin:1px;
     background-color: #393d3f;
     color:#f1f1f1;
     border-radius: 5px;
     font-weight: bold;
+}
+
+.btn:hover{
+    color:#f1f1f1;
 }
