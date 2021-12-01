@@ -2,8 +2,6 @@ import datetime
 from collections import defaultdict
 from datetime import timedelta
 
-import plotly.express as px
-import plotly
 import pytz
 from flask import render_template, request, redirect, session
 from flask.helpers import url_for

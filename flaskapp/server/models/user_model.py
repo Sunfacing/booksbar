@@ -2,7 +2,7 @@ from collections import defaultdict
 from server import db
 from sqlalchemy import ForeignKey
 from server.models.product_model import *
-
+from server.controller.util import cleanhtml
 
 class UserInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
@@ -135,7 +135,7 @@ def check_user_browsing_history(user_id):
     LIMIT 20""".format(user_id))
     hash_table = defaultdict(dict)
     for each in result:
-        hash_table[each['isbn_id']] = {'title': each['title'], 'cover_photo': each['cover_photo'], 'description': each['description']}
+        hash_table[each['isbn_id']] = {'title': each['title'], 'cover_photo': each['cover_photo'], 'description': cleanhtml(each['description'])}
     return hash_table
 
 
