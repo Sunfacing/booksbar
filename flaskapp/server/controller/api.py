@@ -79,7 +79,7 @@ def add_to_favorite(subcate=None, author=None, price=None):
             track_type = TrackType.FAVORITE_BOOK.value
             type_id = price
         elif author:
-            track_type = Platform.KINGSTONE.value
+            track_type = TrackType.FAVORITE_AUTHOR.value
             type_id = author
         user = check_user_favorite(user_id, track_type, type_id)
         for data in user:

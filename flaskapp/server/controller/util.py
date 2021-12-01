@@ -182,7 +182,7 @@ def create_product_list(queried_list):
     product_list = []
     for product in queried_list:
         product_list.append({
-            'isdn': product['isbn_id'],
+            'isbn_id': product['isbn_id'],
             'book_id': product['book_id'],
             'publish_date': product['publish_date'],
             'title': product['title'],

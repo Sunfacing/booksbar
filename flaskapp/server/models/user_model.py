@@ -87,15 +87,17 @@ def get_user_favor_books(user_id, date):
 
 
 def check_user_track_by_product(user_id, category_id, author_id, isbn_id):
+    print(user_id, category_id, type(author_id), isbn_id)
     result = db.session.execute("""
-    SELECT track_type, type_id  
+    SELECT track_type, type_id
     FROM bookbar.user_favorite
     WHERE track_type= 1 AND type_id = {} AND user_id = {}
-    OR track_type= 2 AND type_id = {} AND user_id = {}
     OR track_type= 3 AND type_id = {} AND user_id = {}
+    OR track_type= 2 AND type_id = {} AND user_id = {}
     """.format(category_id, user_id, author_id, user_id, isbn_id, user_id))
     hash_table = defaultdict(dict)
     for each in result:
+        print(each)
         hash_table[each['track_type']] = each['type_id']
     return hash_table
 

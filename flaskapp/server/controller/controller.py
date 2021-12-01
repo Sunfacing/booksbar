@@ -143,10 +143,11 @@ def product(isbn_id=None):
         create_data(UserFavorite(user_id=user_id, track_type=TrackType.ACTIVITY_HISTORY.value, type_id=isbn_id))
         tracking_hash = check_user_track_by_product(user_id=user_id,
                                                     category_id=kingstone['category_id'],
-                                                    author_id=isbn_id,
-                                                    isbn_id=kingstone['author_id'])
+                                                    author_id=kingstone['author_id'],
+                                                    isbn_id=isbn_id)
     else:
         tracking_hash = {}
+    print(kingstone['category_id'], kingstone['author_id'])
     return render_template('product.html',
                            nav_sec=nav_sec,
                            kingstone=kingstone,
