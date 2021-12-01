@@ -27,7 +27,7 @@ tags=['final_version'],
     task_k1 = PythonOperator(task_id='ks_scrap_category', python_callable=ks_scrap_category)
     task_k2 = PythonOperator(task_id='ks_remove_duplicates', python_callable=ks_remove_duplicates)
     task_k3 = PythonOperator(task_id='ks_checking_new_unfound_products', python_callable=ks_checking_new_unfound_products)
-    task_k4 = PythonOperator(task_id='ks_scrap_new_products', python_callable=ks_scrap_new_products, retries = 300)
+    task_k4 = PythonOperator(task_id='ks_scrap_new_products', python_callable=ks_scrap_new_products, retries=300)
     task_k5 = PythonOperator(task_id='ks_scrap_unfound_products', python_callable=ks_scrap_unfound_products)
     task_k6 = PythonOperator(task_id='ks_drop_old_collection', python_callable=ks_drop_old_collection)
 

@@ -1,0 +1,151 @@
+div#loading {
+    width: 700px;
+    height: 600px;
+    display: none;
+    background: url(/static/img/loadingimage.gif) no-repeat;
+    cursor: wait;
+    margin: auto; 
+    margin-top: 120px;    
+}
+
+
+.card:hover {
+    transform: scale(1.05);
+}
+  
+
+#myBtn {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    z-index: 99;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    background-color: #393d3f;
+    color: #ffffff;
+    cursor: pointer;
+    padding: 10px;
+    margin: 30px;
+    border-radius: 7px;
+    height: 50px;
+    width: 50px;
+}
+  
+
+#myBtn:hover {
+    background-color: #cc444b;
+}
+
+
+a.navbar-brand {
+    color: #ffffff;
+}
+
+
+img.logoimg{
+    width: 60%;
+}
+
+
+i.fas.fa-user-circle.fa-2x {
+    color: #ffffff;    
+}
+
+
+#row {
+    margin-top: 5vh;
+}
+
+
+h3 {
+    font-weight: bold;
+    color:#393d3f 
+}
+
+
+div.container.col-sm-6 {
+    margin-left:0px;
+}
+
+
+h2.d-flex.justify-content-center {
+    font-weight: bold;
+    margin-top: 30vh;
+    color:#393d3f;
+    margin-bottom: 30px;    
+}
+
+
+button.btn.btn-dark.my-2.my-sm-0 {
+    background-color:#393d3f;
+    border-color: #393d3f;
+    font-weight:bold;
+}
+
+
+div.subheader {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+
+ul.breadcrumb {
+    background-color: #393d3f;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2);
+    border:0px;
+    border-radius: 5px;
+    margin-bottom: 8px;    
+}
+
+
+li.headertitle {
+    margin-right: 10px;
+    font-weight: bold;
+    color:#ffffff;
+    background-color: #393d3f;
+}
+
+
+div.card.mb-3.w3-animate-opacity {
+    max-width: 100%;
+    box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2);
+    border:0px;
+    border-radius: 7px;    
+}
+
+
+a.productlink {
+    text-decoration: none;
+    color: #393d3f;    
+}
+
+
+img.card-img {
+    height: 85%;
+    width: 85%;
+    margin-top: 15px;
+    margin-left: 15px;    
+}
+
+
+h5.card-title {
+    font-weight: bold;
+}
+
+
+p.card-text.author {
+    font-weight: bold;
+}
+
+
+div.container.col-sm-2.return {
+    margin-left:0px;
+}

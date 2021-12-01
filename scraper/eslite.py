@@ -1,13 +1,13 @@
 import time
 import requests
-
+import os
+from dotenv import load_dotenv
 from pymongo import MongoClient
-from collections import defaultdict
 from datetime import date, timedelta
 from fake_useragent import UserAgent
 from data_processor import *
 from scrapers import multi_scrapers
-from ip_list import ip_list, back_up_ip_list
+from ip_list import ip_list
 import random
 import datetime
 import pytz
@@ -28,8 +28,13 @@ DATE_SUBTRACT_7 = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedel
 DATE_FOR_DELETE_COLLECTION_NAME = ''.join(DATE_SUBTRACT_7)
 
 
+
+
 # client = MongoClient('localhost', 27017)
-client = MongoClient('mongodb://bartender:books@ec2-3-17-181-14.us-east-2.compute.amazonaws.com:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false')
+load_dotenv()
+client = MongoClient('mongodb://{}:{}@{}/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false'.format(os.getenv("mon_user"), os.getenv("mon_passwd"), os.getenv("mon_host")))
+
+
 db = client.bookbar
 # Set collection name with variable for auto addition / validation / deletion
 catalog_today = db['eslite_catalog_' + TODAY_FOR_COLLECTION_NAME]
@@ -57,21 +62,21 @@ def create_category_list(url):
     # Create list for Category / Subcategory Level
     nomenclature = []
     for section in cate_list:
-        nomenclature.append({'id': section['id'], 
-                            'depth': section['depth'], 
+        nomenclature.append({'id': section['id'],
+                            'depth': section['depth'],
                             'description': section['description'],
                             'path': section['path']
                             })
         for cate in section['children']:
-            nomenclature.append({'id': cate['id'], 
-                                'depth': cate['depth'], 
+            nomenclature.append({'id': cate['id'],
+                                'depth': cate['depth'],
                                 'description': cate['description'],
                                 'path': cate['path']
                                 })
             for subcate in cate['children']:
                 if '新書' not in subcate['description']:
-                    nomenclature.append({'id': subcate['id'], 
-                                        'depth': subcate['depth'], 
+                    nomenclature.append({'id': subcate['id'],
+                                        'depth': subcate['depth'],
                                         'description': subcate['description'],
                                         'path': subcate['path']
                                         })
@@ -328,44 +333,3 @@ def scrap_unfound_products():
 # Step 7. Delete catalog of 7 days age, EX: today is '2021-10-26', so delete '2021-10-19'
 def drop_old_collection():
     db.drop_collection(catalog_last_7_days)
-
-
-# with DAG(
-#     dag_id='a_scraper',
-#     schedule_interval='0 0 * * *',
-#     start_date=datetime(2021, 11, 15),
-#     catchup=False,
-#     dagrun_timeout=timedelta(seconds=120),
-#     # default_args={'depends_on_past': True},
-#     tags=['it_is_test'],
-#     ) as dag:
-#         task_1 = PythonOperator(task_id='scrap_category', python_callable=scrap_category)
-#         task_2 = PythonOperator(task_id='remove_duplicates', python_callable=remove_duplicates)
-#         task_3 = PythonOperator(task_id='checking_new_unfound_products', python_callable=checking_new_unfound_products)
-#         task_4 = PythonOperator(task_id='scrap_new_products', python_callable=scrap_new_products)
-#         task_5 = PythonOperator(task_id='scrap_unfound_products', python_callable=scrap_unfound_products)
-#         task_6 = PythonOperator(task_id='drop_old_collection', python_callable=drop_old_collection)
-#         task_1
-#         task_1 >> task_2 >> task_3 >> task_4 >> task_5 >> task_6
-
-
-scrap_category()
-remove_duplicates()
-checking_new_unfound_products()
-scrap_new_products()
-scrap_unfound_products()
-drop_old_collection()
-
-
-
-# start = time.time()
-# copy_to_collection(catalog_today, catalog_tem_today, 'eslite_pid')
-# db.drop_collection(catalog_today)
-# end = time.time()
-# timecounter.insert_one({'date': TODAY, 'platform': 'eslite', 'step': 'remove duplicates', 'time': end - start, 'start': start, 'end': end})
-
-# start = time.time()
-# copy_to_collection(catalog_tem_today, catalog_today, 'eslite_pid')
-# db.drop_collection(catalog_tem_today)
-# end = time.time()
-# timecounter.insert_one({'date': TODAY, 'platform': 'eslite', 'step': 'remove duplicates', 'time': end - start, 'start': start, 'end': end})

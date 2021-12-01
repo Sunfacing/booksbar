@@ -2,7 +2,6 @@ from collections import defaultdict
 from server import db
 from sqlalchemy import ForeignKey
 from sqlalchemy.schema import UniqueConstraint, Index
-import random
 
 class CategoryList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -28,11 +27,11 @@ class IsbnCatalog(db.Model):
 
 
 class BookInfo(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement = True) 
+    id = db.Column(db.Integer, primary_key=True, autoincrement = True)
     isbn_id = db.Column(db.Integer, ForeignKey('isbn_catalog.id'), nullable=False)
     platform = db.Column(db.Integer, ForeignKey('platform.id'), nullable=False)
     platform_product_id = db.Column(db.String(255), primary_key=True, nullable=False)
-    create_date = db.Column(db.DateTime, nullable=False) 
+    create_date = db.Column(db.DateTime, nullable=False)
     title = db.Column(db.String(255), nullable=False, index = True)
     author = db.Column(db.Integer, ForeignKey('author.id'))
     publisher = db.Column(db.Integer, ForeignKey('publisher.id'))
@@ -45,7 +44,6 @@ class BookInfo(db.Model):
     page = db.Column(db.Integer)
     product_url = db.Column(db.String(255))
     __table_args__ = (Index('title', title, mysql_prefix='FULLTEXT', mysql_with_parser="ngram"),)
-
 
 
 class Author(db.Model):
@@ -75,17 +73,21 @@ class PriceStatusInfo(db.Model):
     price = db.Column(db.Integer)
     survey_date = db.Column(db.Date)
 
+
 class PriceType(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
     price_type = db.Column(db.String(30))     
+
 
 class Status(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
     status = db.Column(db.String(30))   
 
+
 class PipelineStep(db.Model):
     step = db.Column(db.String(30))
     id = db.Column(db.Integer, primary_key=True) 
+
 
 class PipelineTrack(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -101,12 +103,21 @@ class HotItemRecom(db.Model):
     book_id = db.Column(db.Integer, ForeignKey('book_info.id'))
 
 
+def get_cate_list():
+    return db.session.execute("""SELECT * FROM category_list""")
+
 
 
 def homepage_by_track(period, today, month_ago, user_id):
     if period == 'month':
         books = db.session.execute("""
-                SELECT isbn_id, i.category_id, b.title, b.description, b.cover_photo, DATE_FORMAT(publish_date,'%Y-%m-%d') AS publish_date, a.name AS author 
+                SELECT isbn_id,
+                    i.category_id,
+                    b.title,
+                    b.description,
+                    b.cover_photo,
+                    DATE_FORMAT(publish_date,'%Y-%m-%d') AS publish_date,
+                    a.name AS author 
                 FROM user_favorite AS u
                 INNER JOIN isbn_catalog AS i
                 ON u.type_id = i.category_id
@@ -118,7 +129,13 @@ def homepage_by_track(period, today, month_ago, user_id):
                 ORDER BY publish_date DESC""".format(user_id, month_ago, today))
     else:
         books = db.session.execute("""
-                SELECT isbn_id, i.category_id, b.title, b.description, b.cover_photo, DATE_FORMAT(publish_date,'%Y-%m-%d') AS publish_date, a.name AS author 
+                SELECT isbn_id,
+                    i.category_id,
+                    b.title,
+                    b.description,
+                    b.cover_photo,
+                    DATE_FORMAT(publish_date,'%Y-%m-%d') AS publish_date,
+                    a.name AS author
                 FROM user_favorite AS u
                 INNER JOIN isbn_catalog AS i
                 ON u.type_id = i.category_id
@@ -128,48 +145,44 @@ def homepage_by_track(period, today, month_ago, user_id):
                 ON b.author = a.id
                 WHERE u.user_id = {} AND u.track_type = 1 AND b.platform = 1 AND publish_date > '{}'
                 ORDER BY publish_date DESC""".format(user_id, today))
-
     return books
 
-# DATE_FORMAT(publish_date,'%Y-%m-%d')
 
 def homepage_by_all(period, today, month_ago):
-    data = tuple(random.sample(range(900), 40))
-    import time
-    start = time.time()
     if period == 'month':
-        books = db.session.execute("""SELECT isbn_id, category_id, b.title, b.description, b.cover_photo, DATE_FORMAT(publish_date,'%Y-%m-%d') AS publish_date, b.product_url, a.name AS author FROM isbn_catalog AS i
-                                    INNER JOIN book_info AS b
-                                    ON i.id = b.isbn_id
-                                    INNER JOIN author AS a
-                                    ON b.author = a.id
-                                    WHERE b.platform = 1 and publish_date BETWEEN '{}' AND '{}'
-                                    ORDER BY publish_date DESC""".format(month_ago, today))
+        books = db.session.execute("""
+                SELECT isbn_id, 
+                    category_id,
+                    b.title,
+                    b.description,
+                    b.cover_photo,
+                    DATE_FORMAT(publish_date,'%Y-%m-%d') AS publish_date,
+                    b.product_url,
+                    a.name AS author
+                FROM isbn_catalog AS i
+                INNER JOIN book_info AS b
+                ON i.id = b.isbn_id
+                INNER JOIN author AS a
+                ON b.author = a.id
+                WHERE b.platform = 1 and publish_date BETWEEN '{}' AND '{}'
+                ORDER BY publish_date DESC""".format(month_ago, today))
     else:
-        books = db.session.execute("""SELECT isbn_id, category_id, b.title, b.description, b.cover_photo, DATE_FORMAT(publish_date,'%Y-%m-%d') AS publish_date, b.product_url, a.name AS author FROM isbn_catalog AS i
-                                    INNER JOIN book_info AS b
-                                    ON i.id = b.isbn_id
-                                    INNER JOIN author AS a
-                                    ON b.author = a.id
-                                    WHERE b.platform = 1 and publish_date > '{}'
-                                    ORDER BY publish_date DESC""".format(today))
-    end = time.time()
-    print(end - start, 'used')
-    
+        books = db.session.execute("""
+                SELECT isbn_id,
+                    category_id,
+                    b.title,
+                    b.description,
+                    b.cover_photo,
+                    DATE_FORMAT(publish_date,'%Y-%m-%d') AS publish_date,
+                    b.product_url,
+                    a.name AS author FROM isbn_catalog AS i
+                INNER JOIN book_info AS b
+                ON i.id = b.isbn_id
+                INNER JOIN author AS a
+                ON b.author = a.id
+                WHERE b.platform = 1 and publish_date > '{}'
+                ORDER BY publish_date DESC""".format(today))
     return books
-
-
-
-def get_category():
-    cate_list = db.session.execute("""SELECT id, section, subcategory FROM category_list""")
-    cate_hash = defaultdict(dict)
-    for cate in cate_list:
-        cate_id = cate['id']
-        category = cate['section']
-        subcate = cate['subcategory']
-        cate_hash[cate_id] = {'category': category, 'subcategory': subcate}
-    return cate_hash
-
 
 
 
@@ -235,10 +248,6 @@ def get_subcate_book_counts(subcategory):
     return book_counts
 
 
-
-
-
-
 def get_book_info(isbn_id, date):
     info_list = db.session.execute("""
     SELECT title, a.name AS author, a.id AS author_id, u.name AS publisher, u.id AS publisher_id,
@@ -260,7 +269,6 @@ def get_book_info(isbn_id, date):
     return info_list
 
 
-
 def get_book_pics(isbn_id):
     pic_list = db.session.execute("""
     SELECT b.cover_photo, p.url AS pics FROM book_info AS b
@@ -270,13 +278,10 @@ def get_book_pics(isbn_id):
     return pic_list
 
 
-
 def get_book_comments(isbn_id):
     comment_list = db.session.execute("""
-    SELECT * FROM bookbar.user_comment WHERE isbn = {}""".format(isbn_id))
+    SELECT * FROM user_comment WHERE isbn = {}""".format(isbn_id))
     return comment_list
-
-
 
 
 def api_book_info(isbn_id):
@@ -288,7 +293,6 @@ def api_book_info(isbn_id):
     INNER JOIN author AS a
     ON a.id = b.author
     WHERE isbn_id = {} and b.platform = 1""".format(isbn_id))
-
     return result
 
 
@@ -303,14 +307,7 @@ def search_by_term(term):
     INNER JOIN author AS a
     ON b.author = a.id
 	WHERE MATCH (title) AGAINST('{}' IN boolean mode ) AND b.platform = 1""".format(term))
-
     return result
-
-
-
-
-
-
 
 
 def search_by_author(name):
@@ -327,18 +324,12 @@ def search_by_author(name):
     return result
 
 
-
-
-
-def daily_result(date):
+def web_scrap_result(date):
     result = db.session.execute("""
-    SELECT t.step, s.step, t.*, p.platform 
-    FROM pipeline_step AS s
-    LEFT JOIN pipeline_track AS t
-    ON t.step = s.id
-    LEFT JOIN platform AS p
-    ON t.platform = p.id
-    WHERE p.platform not IN ('original', 'promotional')""".format(date))
+    SELECT pt.date, pt.quantity, pt.minutes, pt.step, ps.step, p.platform FROM pipeline_track AS pt
+    INNER JOIN pipeline_step AS ps
+    ON pt.step = ps.id
+    INNER JOIN platform AS p
+    ON pt.platform = p.id
+    WHERE date = '{}' and p.platform IN ('momo', 'eslite', 'kingstone')""".format(date))
     return result
-
-

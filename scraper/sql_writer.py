@@ -20,10 +20,10 @@ import time
 
 
 
-
-client = MongoClient('mongodb://bartender:books@ec2-3-17-181-14.us-east-2.compute.amazonaws.com:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false')
-
+load_dotenv()
+client = MongoClient('mongodb://{}:{}@{}/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false'.format(os.getenv("mon_user"), os.getenv("mon_passwd"), os.getenv("mon_host")))
 # client = MongoClient('localhost', 27017)
+
 m_db = client.Bookstores
 h_db = client.bookbar
 ks_category_list = h_db.kingstone

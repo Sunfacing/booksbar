@@ -1,0 +1,475 @@
+.navbar {
+    background-color: #393d3f;   
+}
+
+
+.navbar-brand {
+    color: #ffffff;  
+}
+
+.navbarlogo {
+    width: 60%;
+}
+
+
+i.fas.fa-user-circle.fa-2x {
+    color: #ffffff   
+}
+
+
+i.fas.fa-user-circle.fa-2x {
+    color: #ffffff
+}
+
+
+.sidenav {
+    background-color: #393d3f;  
+}
+
+
+.navbar-brand {
+    color: #ffffff;
+}
+
+
+
+.section_nav {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: medium;
+    margin-bottom: 0px;    
+}
+
+div.divider {
+    margin-top:10px;
+}
+
+
+span.navbtn.btn.my-2.my-sm-0 {
+    font-weight:bold;
+    height:80px;
+    border-radius: 7px;
+    background-color: #393d3f;
+    color: #ffffff;
+}
+
+
+div.container.col-sm-2 {
+    margin-left:0px;
+}
+
+div.container.col-sm-8.upper {
+    margin-left:0px;
+}
+
+
+ul.breadcrumb.bg-light {
+    box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2);
+    border:0px;
+    border-radius: 5px;    
+}
+
+
+li.subtitle {
+    margin-right: 10px;
+    font-weight: bolder;
+    color: #393d3f;    
+}
+
+
+a.catelink {
+    margin-right: 10px;
+    font-weight: bold;
+    color:#393d3f;   
+}
+
+
+i.fas.fa-angle-double-right {
+    color: #393d3f; 
+}
+
+
+div.container.col-sm-2 {
+    margin-left:0px;
+}
+
+
+div.container.col {
+    margin-left:0px;  
+}
+
+
+#demo {
+    max-width: 100%;
+    box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2);
+    border:0px;    
+}
+
+
+div.container.col {
+    padding-right:20px;
+}
+
+div.row.title {
+    max-width: 100%;
+    box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2);
+    border:0px; padding: 30px;
+    border-radius: 7px;
+    color: #ffffff;
+    background-color: #393d3f;    
+}
+
+
+h4 {
+    font-weight: bold;
+}
+
+
+h4.price.available {
+    color: #E34234;
+    font-weight: bold;
+}
+
+
+h4.price.out-of-stock {
+    color: #ffffff;
+    font-weight: bold;
+}
+
+img.brandlogo {
+    width: 90px;
+    height: 90px;  
+}
+
+
+
+a.btn.available {
+    color:white;
+    font-weight: bold;
+    background-color: #393d3f;    
+}
+
+
+button.btn.btn-default.out-of-stock {
+    font-weight: bold;
+}
+
+
+div.row.price {
+    max-width: 100%;
+    box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2);
+    border:0px;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 10px;    
+}
+
+
+div.container.col-3.price {
+    text-align: center; 
+}
+
+
+div.container.col-4.price {
+    text-align: center; 
+}
+
+
+
+
+
+
+
+
+
+
+
+div.row.info {
+    max-width: 100%;
+    box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2);
+    border:0px;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 7px;    
+}
+
+
+h5.info {
+    font-size: medium; 
+    font-weight: bold;
+    color: #393d3f;
+}
+
+
+
+
+div.container.col-sm-2.track {
+    margin-left:0px;    
+}
+
+
+div.divider.track {
+    height: 10%;
+}
+
+
+i.fas.fa-heart.on {
+    color:#ffffff;
+}
+
+
+i.fas.fa-heart.off {
+    color:#393d3f;
+}
+
+
+i.fas.fa-pen-nib.on {
+    color:#ffffff;
+}
+
+
+i.fas.fa-pen-nib.off {
+    color:#393d3f;
+}
+
+
+i.fas.fa-tag.on {
+    color:#ffffff;
+}
+
+i.fas.fa-tag.off {
+    color:#393d3f;
+}
+
+div.container.col-sm-8.w3-animate-opacity.info {
+    margin-top: 30px;    
+}
+
+
+ul.nav.av-pills.navbar.navbar-expand-sm bg-light {
+    box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2);
+    border:0px;
+    border-radius: 5px;    
+}
+
+
+a.btn.active {
+    margin:1px;
+    color:#f1f1f1;
+    border-radius: 5px;
+    font-weight: bold;    
+}
+
+a.btn {
+    margin:1px;
+    color:#f1f1f1;
+    border-radius: 5px;
+    font-weight: bold; 
+}
+
+div.tab-pane.fade.in.active {
+    box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2);
+    border:0px;
+    border-radius: 5px;
+    padding: 40px;    
+}
+
+
+div.tab-pane.fade {
+    box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2);
+    border:0px;
+    border-radius: 5px;
+    padding: 40px;    
+}
+
+
+div.usercomment {
+    margin-bottom: 30px;    
+}
+
+
+
+
+
+
+/* Make the image fully responsive */
+.carousel-inner img {
+    width: 100%;
+    height: 100%;
+}
+
+
+.zoom {
+    padding: 50px;
+    background-color: white;
+    transition: transform .2s; /* Animation */
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+}
+
+.zoom:hover {
+transform: scale(1.5); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+}
+
+
+.btn-check{
+    background-color: #cc444b;
+    border-color: #cc444b;
+  }
+
+
+a.btn.active {
+    background-color: #cc444b;
+    color: white;           
+  }
+
+
+a.btn {
+    background-color: #393d3f;
+    color: white;           
+}
+
+
+body {
+    font-family: "Lato", sans-serif;
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+img {
+    vertical-align: middle;
+}
+
+/* Position the image container (needed to position the left and right arrows) */
+.container {
+    position: relative;
+}
+
+/* Hide the images by default */
+.mySlides {
+    display: none;
+}
+
+/* Add a pointer when hovering over the thumbnail images */
+.cursor {
+    cursor: pointer;
+}
+
+/* Next & previous buttons */
+.prev,
+.next {
+    cursor: pointer;
+    position: absolute;
+    top: 40%;
+    width: auto;
+    padding: 16px;
+    margin-top: -50px;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Position the "next button" to the right */
+.next {
+    right: 0;
+    border-radius: 3px 0 0 3px;
+}
+
+/* On hover, add a black background color with a little bit see-through */
+.prev:hover,
+.next:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Number text (1/3 etc) */
+.numbertext {
+    color: #f2f2f2;
+    font-size: 12px;
+    padding: 8px 12px;
+    position: absolute;
+    top: 0;
+}
+
+/* Container for image text */
+.caption-container {
+    text-align: center;
+    background-color: #222;
+    padding: 2px 16px;
+    color: white;
+}
+
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Six columns side by side */
+.column {
+    float: left;
+    width: 16.66%;
+}
+
+/* Add a transparency effect for thumnbail images */
+.demo {
+    opacity: 0.6;
+}
+
+.active,
+.demo:hover {
+    opacity: 1;
+}
+
+
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #393d3f;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+a.seclink:hover {
+    color: #f1f1f1;
+    background-color: #cc444b;
+    text-decoration: none;
+}
+
+
+.sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidenav a:hover {
+    color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+@media screen and (max-height: 450px) {
+.sidenav {padding-top: 15px;}
+.sidenav a {font-size: 18px;}
+}

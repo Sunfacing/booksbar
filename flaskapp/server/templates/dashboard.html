@@ -1,0 +1,86 @@
+{% extends "member.html" %}
+{% block content %}
+<script src='https://cdn.plot.ly/plotly-2.6.3.min.js'></script>
+<script type="text/javascript" src="{{ url_for('static', filename='dashboard.js', u=last_updated) }}"></script>
+
+<h1> {{ date }} </h1>
+<form action="{{url_for('dashboard')}}" method='get'>
+    <label for="date">Choose Date:</label>
+    <input type="date" id="start" name="date" value="{{ date }}" min="2021-11-22" max="2021-12-31">
+    <input class="btn bg-light" type="submit">
+</form>
+<div id='totalResult'></div>
+<script>
+totalResult(
+    t_ks={{ kingstone['total scraped'][1]}},
+    t_es={{ eslite['total scraped'][1]}},
+    t_mm={{ momo['total scraped'][1]}},
+    p_ks={{ kingstone['price updated'][1]}},
+    p_es={{ eslite['price updated'][1]}},
+    p_mm={{ momo['price updated'][1]}}
+)
+</script>
+
+
+<div id='gapCheck'></div>
+<script>
+gapCheck(
+    ks_dup={{ kingstone['duplicate found'][1] }},
+    ks_unmatch={{ kingstone['unmatched books'][1] }},
+    ks_new={{ kingstone['new books'][1] }},
+    ks_out={{ kingstone['phase out'][1] }},
+    es_dup={{ eslite['duplicate found'][1] }},
+    es_unmatch={{ eslite['unmatched books'][1] }},
+    es_new={{ eslite['new books'][1] }},
+    es_out={{ eslite['phase out'][1] }},
+    mm_dup={{ momo['duplicate found'][1] }},
+    mm_unmatch={{ momo['unmatched books'][1] }},
+    mm_new={{ momo['new books'][1] }},
+    mm_out={{ momo['phase out'][1] }}
+)
+</script>
+
+
+<div id='newRegistration'></div>
+{% if kingstone['new_isbn'][1] > 0 or eslite['new_isbn'][1] > 0 or momo['new_isbn'][1] > 0%}
+<script>
+newRegistration(
+    ks_isbn={{ kingstone['new_isbn'][1] }},
+    es_isbn={{ eslite['new_isbn'][1] }},
+    mm_isbn={{ momo['new_isbn'][1] }}
+)
+</script>
+{% else %}
+    <div style="text-align: center; margin-top: 50px; margin-bottom: 50px;"> No New Book Registered Today</div>
+{% endif %}
+
+
+<div id='timeSpent'></div>
+<script>
+timeSpent(
+    ks_first={{ kingstone['total scraped'][0] }},
+    ks_remove={{ kingstone['duplicate found'][0] }},
+    ks_check_unmatch={{ kingstone['unmatched books'][0] }},
+    ks_phase_out={{ kingstone['phase out'][0] }},
+    ks_update_price={{ kingstone['price updated'][0] }}, 
+    ks_ttl={{ kingstone['total scraped'][0] + kingstone['duplicate found'][0] + kingstone['unmatched books'][0] + kingstone['phase out'][0] + kingstone['price updated'][0] }},
+    es_first={{ eslite['total scraped'][0] }},
+    es_remove={{ eslite['duplicate found'][0] }},
+    es_check_unmatch={{ eslite['unmatched books'][0] }},
+    es_phase_out={{ eslite['phase out'][0] }},
+    es_update_price={{ eslite['price updated'][0] }},
+    es_ttl={{ eslite['total scraped'][0] + eslite['duplicate found'][0] + eslite['unmatched books'][0] + eslite['phase out'][0] + eslite['price updated'][0] }},
+    mm_first={{ momo['total scraped'][0] }},
+    mm_remove={{ momo['duplicate found'][0] }},
+    mm_check_unmatch={{ momo['unmatched books'][0] }},
+    mm_phase_out={{ momo['phase out'][0] }},
+    mm_update_price={{ momo['price updated'][0] }},
+    mm_ttl={{ momo['total scraped'][0] + momo['duplicate found'][0] + momo['unmatched books'][0] + momo['phase out'][0] + momo['price updated'][0] }}
+)
+</script>
+
+
+
+
+
+{% endblock content%}

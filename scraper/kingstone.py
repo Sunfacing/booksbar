@@ -2,19 +2,23 @@ from pymongo import MongoClient
 from collections import defaultdict
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
-from data_processor import *
-from scrapers import multi_scrapers
-from ip_list import ip_list, back_up_ip_list
+from .data_processor import *
+from .scrapers import multi_scrapers
+from .ip_list import ip_list, back_up_ip_list
 import requests
 import random
-from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
+import os
+from dotenv import load_dotenv
+# from airflow import DAG
+# from airflow.operators.python_operator import PythonOperator
 from datetime import date, timedelta
 import datetime
 import pytz
 import time
 # client = MongoClient('localhost', 27017)
-client = MongoClient('mongodb://bartender:books@ec2-3-17-181-14.us-east-2.compute.amazonaws.com:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false')
+# client = MongoClient(f'mongodb://{os.getenv("mon_user")}:{os.getenv("mon_passwd")}@{os.getenv("mon_host")}/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false')
+load_dotenv()
+client = MongoClient('mongodb://{}:{}@{}/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false'.format(os.getenv("mon_user"), os.getenv("mon_passwd"), os.getenv("mon_host")))
 db = client.bookbar
 
 TODAY = datetime.datetime.now(pytz.timezone('Asia/Taipei')).strftime("%Y-%m-%d")
@@ -190,12 +194,14 @@ def get_product_list(url, subcate_code):
         mongo_insert(page_error, error_pages)
     return catalog
 
+
+
 def get_product_info(url_to_scrape, sliced_list, target_id_key):
     product_info = []
     not_found_list = []
     i = 0
     for each in sliced_list:
-        ip = random.choice(ip_list)
+        # ip = random.choice(ip_list)
         product_id = each[target_id_key]
         subcate_id = each['subcate_id']
         print('starting {}'.format(product_id))
@@ -204,13 +210,13 @@ def get_product_info(url_to_scrape, sliced_list, target_id_key):
         # In case website block connection, pause 10 seconds
         try:
             ip = random.choice(ip_list)
-            page  = requests.get(product_url, headers = HEADERS, proxies={"http": ip, "https": ip}, timeout=60)
+            page  = requests.get(product_url, headers=HEADERS, proxies={"http": ip, "https": ip}, timeout=60)
         except:
             print('{} fetching data {} failed, try again in 10 seconds'.format(subcate_id, product_url))
             time.sleep(10)
             try:
-                ip = random.choice(back_up_ip_list)
-                page  = requests.get(product_url, headers = HEADERS, proxies={"http": ip, "https": ip}, timeout=60)
+                # ip = random.choice(back_up_ip_list)
+                page  = requests.get(product_url, headers=HEADERS, proxies={"http": ip, "https": ip}, timeout=60)
             except:
                 not_found_list.append({'subcate_id': subcate_id, 'product_id': product_id, 'track_date': TODAY})
         # This try block will ignore single item failure, and continue    
@@ -245,36 +251,13 @@ def get_product_info(url_to_scrape, sliced_list, target_id_key):
             original_price = page_content.find('div', {'class': 'basicfield'}).find('b').getText()
             if original_price is not None: data['original_price'] = original_price
 
-
-            # Electronic version
-            electronic_book = BeautifulSoup(page.content, 'html.parser').find_all('span', {'class': 'versionbox'})
-            if len(electronic_book) > 0:
-                electronic_book = 'https://www.kingstone.com.tw/' + electronic_book[1].find('a')['href']
-                data['e_book'] = electronic_book
-            else:
-                data['e_book'] = None
-
             # Content description, this contains html tag, so store in text
             description = page_content.find('div', {'class': 'pdintro_txt1field panelCon'})
-            try:
-                # Kingstone's tag are not always in the same form, handle by each condition
-                # In case any unfound exception, return None
-                if description is not None: 
-                    if description.find('div', {'class': 'catalogfield panelCon'}) is not None:
-                        data['description'] = str(description.find('div', {'class': 'catalogfield panelCon'}).find('span').getText())
-                    elif description.find('div', {'class': 'pdintro_txt1field panelCon'}) is not None:
-                        data['description'] = str(description.find('div', {'class': 'pdintro_txt1field panelCon'}).find('span').getText())
-                    else:
-                        data['description'] = str(description.find('span').getText())
-            except:
-                data['description'] = ''
-
+            data['description'] = str(description)
+                    
             # For author description, same as content description, saving html tag in text
-            author_description = page_content.find('div', {'class': 'authorintrofield panelCon'})
-            if author_description is not None:
-                author_description = str(author_description.find('span'))
-            
-            data['author_description'] = author_description
+            author_description = page_content.find('div', {'class': 'authorintrofield panelCon'})   
+            data['author_description'] = str(author_description)
 
             # Same, this has html tag
             table_of_contents = page_content.find('div', {'class': 'catalogfield panelCon'})
@@ -369,9 +352,9 @@ def phased_out_checker(url_to_scrape, sliced_list, target_id_key):
 
 
 
-# # Step 1: Get all subcategory id and scrape, with batch insertion at subcategory level #
-# if not category_list.find_one():
-#     create_category_list()
+# Step 1: Get all subcategory id and scrape, with batch insertion at subcategory level #
+if not category_list.find_one():
+    create_category_list()
 
 
 def ks_scrap_category():
@@ -467,28 +450,3 @@ def ks_scrap_unfound_products():
 def ks_drop_old_collection():
     # Step 7. Delete catalog of 7 days age, EX: today is '2021-10-26', so delete '2021-10-19'
     db.drop_collection(catalog_last_7_days)
-
-
-
-# with DAG(
-# dag_id='a_k_scraper',
-# schedule_interval='0 18 * * *',
-# start_date=datetime.datetime(2021, 11, 1),
-# catchup=False,
-# # default_args={'depends_on_past': True},
-# tags=['it_is_test'],
-# ) as dag:
-#     task_1 = PythonOperator(task_id='scrap_category', python_callable=ks_scrap_category)
-#     task_2 = PythonOperator(task_id='remove_duplicates', python_callable=ks_remove_duplicates)
-#     task_3 = PythonOperator(task_id='checking_new_unfound_products', python_callable=ks_checking_new_unfound_products)
-#     task_4 = PythonOperator(task_id='scrap_new_products', python_callable=ks_scrap_new_products, retries = 300)
-#     task_5 = PythonOperator(task_id='scrap_unfound_products', python_callable=ks_scrap_unfound_products)
-#     task_6 = PythonOperator(task_id='drop_old_collection', python_callable=ks_drop_old_collection)
-#     task_1 >> task_2 >> task_3 >> task_4 >> task_5 >> task_6
-
-
-# remove_duplicates()
-# checking_new_unfound_products()
-# scrap_new_products()
-# scrap_unfound_products()
-# drop_old_collection()
