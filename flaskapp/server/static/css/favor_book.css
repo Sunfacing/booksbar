@@ -1,0 +1,139 @@
+.btn-check{
+  background-color: #cc444b;
+  border-color: #cc444b;
+}
+
+h2.d-flex.justify-content-center {
+    font-weight: bold;
+    margin-top: 30vh;
+    color:#393d3f
+}
+
+div.divider.book {
+    margin-bottom: 30px;    
+}
+
+ul.breadcrumb.cate {
+    background-color: #393d3f;
+    box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2);
+    border:0px;
+    border-radius: 5px;
+    margin-bottom: 8px;
+    position: sticky;
+    top: 0;
+    z-index: 1;    
+}
+
+
+a.cate {
+    margin-right: 10px;
+    font-weight: bold;
+    color:#ffffff    
+}
+
+
+div.row.no-gutters {
+    max-width: 100%;
+    box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2);
+    border:0px;
+    border-radius: 7px;    
+}
+
+
+a.isbn {
+    text-decoration: none;   
+}
+
+
+h5.card-title {
+    font-weight: bold; color: #393d3f; 
+}
+
+div.card-body {
+    padding-bottom: 0px;
+    margin-right: 30px;
+    margin-top: 20px;    
+}
+
+
+a.bookurl {
+    text-decoration: none;    
+}
+
+h5.card-title {
+    font-weight: bold;
+    color: #393d3f;
+}
+
+
+
+i.fas.fa-tag.book {
+    color:#ffffff;
+}
+
+div.row.book {
+    margin-bottom: 20px;   
+}
+
+div.container.col-3 {
+    text-align: center;
+}
+
+div.container.col-4 {
+    text-align: center;
+}
+
+
+div.card-body.price {
+    padding-bottom: 0px;
+    margin-right: 30px;
+    margin-top: 20px;    
+}
+
+
+div.row.pricearea {
+    margin-bottom: 20px;    
+}
+
+
+img.card-img {
+    margin-top: 20%;     
+}
+
+
+div.container.col-4.price {
+    text-align: center;    
+}
+
+div.container.col-3.price {
+    text-align: center;    
+}
+
+
+img.price {
+    width: 50%;
+    height: 50%;    
+}
+
+
+h4.active.price {
+    color: #E34234;
+    font-weight: bold;    
+}
+
+h4.noprice {
+    color: #ffffff;
+    font-weight: bold;  
+}
+
+a.btn.link {
+    color:white;
+    font-weight: bold;
+    background-color: #393d3f;
+    text-decoration: none;"
+}
+
+button.btn.btn-default.noprice {
+    color: #393d3f;
+    font-weight: bold; 
+}
