@@ -51,9 +51,20 @@ a.page-link {
 }
 
 
+li.page-item.active {
+    background-color: #393d3f;
+    padding-left: 10px;
+    padding-right: 10px; 
+    vertical-align: middle;
+}
+
+
+
 a.page-link-active {
     background-color: #393d3f;
-    border-color: #393d3f; 
+    border-color: #393d3f;
+    color: white;
+    vertical-align: middle;
 }
 
 
