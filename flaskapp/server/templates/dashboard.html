@@ -1,7 +1,7 @@
 {% extends "member.html" %}
 {% block content %}
 <script src='https://cdn.plot.ly/plotly-2.6.3.min.js'></script>
-<script type="text/javascript" src="{{ url_for('static', filename='dashboard.js', u=last_updated) }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js', u=last_updated) }}"></script>
 
 <h1> {{ date }} </h1>
 <form action="{{url_for('dashboard')}}" method='get'>

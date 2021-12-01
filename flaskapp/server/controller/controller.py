@@ -246,7 +246,6 @@ def dashboard(date=TODAY):
             eslite[step] = [minutes, quantity]      
         else:
             momo[step] = [minutes, quantity]
-
     return render_template('dashboard.html',
                            kingstone=kingstone,
                            eslite=eslite,
