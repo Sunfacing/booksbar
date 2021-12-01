@@ -102,7 +102,6 @@ def check_user_track_by_product(user_id, category_id, author_id, isbn_id):
     return hash_table
 
 
-
 def summerize_user_activity(user_id):
     result = db.session.execute("""
     SELECT 
@@ -146,6 +145,7 @@ def check_user_favorite(user_id, track_type, type_id):
                         WHERE user_id={} AND track_type={} AND type_id={}"
                         .format(user_id, track_type, type_id))
     return favorite_record
+
 
 def delete_user_favorite(user_id, track_type, type_id):
     db.session.execute("DELETE FROM user_favorite\
