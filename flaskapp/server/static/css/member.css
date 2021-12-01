@@ -88,7 +88,7 @@ div.col-md-7.button {
 }
 
 
-button.btn {
+button.btn.member {
   font-weight: bold;
   background-color: #393d3f;
   color: #ffffff;
@@ -172,7 +172,7 @@ div.row.d-flex.justify-content-center {
 }
 
 
-div.row.no-gutters {
+div.row.no-gutters.member {
   width:95%;
   box-shadow: 0 8px 16px 0 rgba(133, 104, 104, 0.2);
   border:0px;

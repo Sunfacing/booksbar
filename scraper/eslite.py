@@ -62,21 +62,21 @@ def create_category_list(url):
     # Create list for Category / Subcategory Level
     nomenclature = []
     for section in cate_list:
-        nomenclature.append({'id': section['id'], 
-                            'depth': section['depth'], 
+        nomenclature.append({'id': section['id'],
+                            'depth': section['depth'],
                             'description': section['description'],
                             'path': section['path']
                             })
         for cate in section['children']:
-            nomenclature.append({'id': cate['id'], 
-                                'depth': cate['depth'], 
+            nomenclature.append({'id': cate['id'],
+                                'depth': cate['depth'],
                                 'description': cate['description'],
                                 'path': cate['path']
                                 })
             for subcate in cate['children']:
                 if '新書' not in subcate['description']:
-                    nomenclature.append({'id': subcate['id'], 
-                                        'depth': subcate['depth'], 
+                    nomenclature.append({'id': subcate['id'],
+                                        'depth': subcate['depth'],
                                         'description': subcate['description'],
                                         'path': subcate['path']
                                         })

@@ -45,7 +45,7 @@
                             <a class="favitem"  href="/member?track_type=2"><i class="fas fa-tag">  追蹤書籍</i></a>
                         </div>
                         <div class="col-md-7 button">
-                            <a href="{{ url_for('logout') }}"><button class="btn" type="submit">登出</button></a>
+                            <a href="{{ url_for('logout') }}"><button class="btn member" type="submit">登出</button></a>
                         </div>
                     </div>
                 </div>
@@ -69,7 +69,7 @@
 
                         {% for isbn_id, product in browse_history.items() %}
                         <div class="row d-flex justify-content-center">
-                            <div class="row no-gutters">
+                            <div class="row no-gutters member">
                                 <div class="col-md-3 " >
                                     <a href="product/{{ isbn_id }}">
                                         <img src="{{product['cover_photo']}}" class="card-img" onerror="this.onerror=null;this.src='https://cdn-icons-png.flaticon.com/128/171/171322.png'" style="height: 85%; width: 85%; margin-bottom: 15px; margin-top: 15px; margin-left: 15px;">

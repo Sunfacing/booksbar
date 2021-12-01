@@ -28,6 +28,8 @@ def index(period='month', user_id=None):
         books = homepage_by_track(period, TODAY, MONTH_AGO, user_id)
     else:
         books = homepage_by_all(period, TODAY, MONTH_AGO)
+        user_id = 0
+
     cate_list = get_cate_list()
     category_hash = get_category(cate_list)
     product_list = defaultdict(dict)
@@ -49,6 +51,7 @@ def index(period='month', user_id=None):
             product_list[sec_nm] = [data]
         else:
             product_list[sec_nm].append(data)
+    print(period, user_id)
     return render_template('index.html', product_list=product_list, period=period, user_id=user_id)
 
 
@@ -239,9 +242,10 @@ def dashboard(date=TODAY):
         if result['platform'] == 'kingstone':
             kingstone[step] = [minutes, quantity]
         elif result['platform'] == 'eslite':
-            eslite[step] = [minutes, quantity]           
+            eslite[step] = [minutes, quantity]      
         else:
             momo[step] = [minutes, quantity]
+
     return render_template('dashboard.html',
                            kingstone=kingstone,
                            eslite=eslite,
