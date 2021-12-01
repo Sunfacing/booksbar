@@ -17,7 +17,8 @@ from server.controller.util import *
 
 TODAY = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(hours=8)).strftime("%Y-%m-%d")
 YESTERDAY = (datetime.datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-MONTH_AGO = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=15)).strftime("%Y-%m-%d")
+MONTH_AGO = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=30)).strftime("%Y-%m-%d")
+TWO_MONTHS_AGO = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=60)).strftime("%Y-%m-%d")
 
 
 @app.route('/', methods=['GET'])
@@ -43,7 +44,7 @@ def index(period='month', user_id=None):
             'subcategory': subcate_nm,
             'title': book['title'],
             'cover_photo': book['cover_photo'],
-            'description': book['description'],
+            'description': cleanhtml(book['description']),
             'publish_date': book['publish_date'],
             'author': book['author']
         }
@@ -75,11 +76,12 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
             cate_list[category].append(subcategory)
     subcate_list = cate_list[category_nm]
     if category_nm != 'all':
-        product_list = get_catalog_subcategory(subcate_nm, page=page)
+        queried_list = get_catalog_subcategory(subcate_nm, page=page)
+        product_list = create_product_list(queried_list)
         html_page = 'subcate.html'
     else:
-        return_list = get_catalog_section(section_nm, MONTH_AGO, TODAY)
-        product_list = [product for product in return_list]
+        queried_list = get_catalog_section(section_nm, TWO_MONTHS_AGO, TODAY)
+        product_list = create_product_list(queried_list)
         html_page = 'section.html'
 
     book_counts = get_subcate_book_counts(subcate_nm)
