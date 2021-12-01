@@ -127,23 +127,23 @@
           <div class="container col-sm-2 track" id='tracker'>
             <div class="divider track">
               {% if tracking_hash[1] %}
-                <button type="button" class="btn btn-check row" id="subcategory" value="?subcate={{kingstone['category_id']}}" onclick="add_to_favorite()"><i class="fas fa-heart on" id="heart"> 追蹤分類 - {{kingstone['subcategory']}}</i></button>
+                <button type="button" class="btn btn-check row" id="subcategory" value="?subcate={{kingstone['category_id']}}"><i class="fas fa-heart on" id="heart"> 追蹤分類 - {{kingstone['subcategory']}}</i></button>
               {% else %}
-                <button type="button" class="btn btn-basic row" id="subcategory" value="?subcate={{kingstone['category_id']}}" onclick="add_to_favorite()"><i class="fas fa-heart off" id="heart"> 追蹤分類 - {{kingstone['subcategory']}}</i></button>
+                <button type="button" class="btn btn-basic row" id="subcategory" value="?subcate={{kingstone['category_id']}}"><i class="fas fa-heart off" id="heart"> 追蹤分類 - {{kingstone['subcategory']}}</i></button>
               {% endif %}
             </div>
             <div class="divider track">
               {% if tracking_hash[3] %}
-                <button type="button" class="btn btn-check row" value="?author={{kingstone['author_id']}}" onclick="cancel_favorite()"><i class="fas fa-pen-nib on"> 追蹤作者</i></button>
+                <button type="button" class="btn btn-check row" value="?author={{kingstone['author_id']}}"><i class="fas fa-pen-nib on"> 追蹤作者</i></button>
               {% else %}  
-                <button type="button" class="btn btn-basic row" value="?author={{kingstone['author_id']}}" onclick="cancel_favorite()"><i class="fas fa-pen-nib off"> 追蹤作者</i></button>
+                <button type="button" class="btn btn-basic row" value="?author={{kingstone['author_id']}}"><i class="fas fa-pen-nib off"> 追蹤作者</i></button>
               {% endif %}  
             </div>
            <div class="divider track">
             {% if tracking_hash[2] %}
-              <button type="button" class="btn btn-check row" value="?price={{kingstone['isbn_id']}}" onclick="add_to_favorit()"><i class="fas fa-tag on"> 追蹤本書</i></button>
+              <button type="button" class="btn btn-check row" value="?price={{kingstone['isbn_id']}}"><i class="fas fa-tag on"> 追蹤本書</i></button>
             {% else %}  
-              <button type="button" class="btn btn-basic row" value="?price={{kingstone['isbn_id']}}" onclick="add_to_favorit()"><i class="fas fa-tag off"> 追蹤本書</i></button>
+              <button type="button" class="btn btn-basic row" value="?price={{kingstone['isbn_id']}}"><i class="fas fa-tag off"> 追蹤本書</i></button>
             {% endif %}  
           </div>
           </div>

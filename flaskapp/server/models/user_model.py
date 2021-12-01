@@ -2,7 +2,7 @@ from collections import defaultdict
 from server import db
 from sqlalchemy import ForeignKey
 from server.models.product_model import *
-
+from server.controller.util import cleanhtml
 
 class UserInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
@@ -87,18 +87,19 @@ def get_user_favor_books(user_id, date):
 
 
 def check_user_track_by_product(user_id, category_id, author_id, isbn_id):
+    print(user_id, category_id, type(author_id), isbn_id)
     result = db.session.execute("""
-    SELECT track_type, type_id  
+    SELECT track_type, type_id
     FROM bookbar.user_favorite
     WHERE track_type= 1 AND type_id = {} AND user_id = {}
-    OR track_type= 2 AND type_id = {} AND user_id = {}
     OR track_type= 3 AND type_id = {} AND user_id = {}
+    OR track_type= 2 AND type_id = {} AND user_id = {}
     """.format(category_id, user_id, author_id, user_id, isbn_id, user_id))
     hash_table = defaultdict(dict)
     for each in result:
+        print(each)
         hash_table[each['track_type']] = each['type_id']
     return hash_table
-
 
 
 def summerize_user_activity(user_id):
@@ -135,7 +136,7 @@ def check_user_browsing_history(user_id):
     LIMIT 20""".format(user_id))
     hash_table = defaultdict(dict)
     for each in result:
-        hash_table[each['isbn_id']] = {'title': each['title'], 'cover_photo': each['cover_photo'], 'description': each['description']}
+        hash_table[each['isbn_id']] = {'title': each['title'], 'cover_photo': each['cover_photo'], 'description': cleanhtml(each['description'])}
     return hash_table
 
 
@@ -144,6 +145,7 @@ def check_user_favorite(user_id, track_type, type_id):
                         WHERE user_id={} AND track_type={} AND type_id={}"
                         .format(user_id, track_type, type_id))
     return favorite_record
+
 
 def delete_user_favorite(user_id, track_type, type_id):
     db.session.execute("DELETE FROM user_favorite\

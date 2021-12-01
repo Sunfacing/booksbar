@@ -1,7 +1,12 @@
 from collections import defaultdict
 from enum import Enum
+import re
+
 from flask import session
 from server import db
+
+
+CLEANR = re.compile('<.*?>')
 
 
 class Platform(Enum):
@@ -156,3 +161,34 @@ def get_category(cate_list):
         subcate = cate['subcategory']
         cate_hash[cate_id] = {'section': section, 'category': category, 'subcategory': subcate}
     return cate_hash
+
+
+def cleanhtml(raw_description):
+    """
+    Takes book's information to check and clean html tags, if no tags then return what was passed
+    :param raw_description: book's information crawled from website
+    """
+    cleantext = re.sub(CLEANR, '', raw_description)
+    if len(cleantext) == 0:
+        return raw_description
+    return cleantext
+
+
+def create_product_list(queried_list):
+    """
+    Create a new product list due to html tags of description
+    :param queryed_list: queried list from SQL
+    """
+    product_list = []
+    for product in queried_list:
+        product_list.append({
+            'isbn_id': product['isbn_id'],
+            'book_id': product['book_id'],
+            'publish_date': product['publish_date'],
+            'title': product['title'],
+            'description': cleanhtml(product['description']),
+            'cover_photo': product['cover_photo'],
+            'author': product['author'],
+            'publisher': product['publisher']
+        })    
+    return product_list

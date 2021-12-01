@@ -2,8 +2,6 @@ import datetime
 from collections import defaultdict
 from datetime import timedelta
 
-import plotly.express as px
-import plotly
 import pytz
 from flask import render_template, request, redirect, session
 from flask.helpers import url_for
@@ -17,7 +15,8 @@ from server.controller.util import *
 
 TODAY = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(hours=8)).strftime("%Y-%m-%d")
 YESTERDAY = (datetime.datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-MONTH_AGO = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=15)).strftime("%Y-%m-%d")
+MONTH_AGO = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=30)).strftime("%Y-%m-%d")
+TWO_MONTHS_AGO = (datetime.datetime.now(pytz.timezone('Asia/Taipei')) - timedelta(days=60)).strftime("%Y-%m-%d")
 
 
 @app.route('/', methods=['GET'])
@@ -43,7 +42,7 @@ def index(period='month', user_id=None):
             'subcategory': subcate_nm,
             'title': book['title'],
             'cover_photo': book['cover_photo'],
-            'description': book['description'],
+            'description': cleanhtml(book['description']),
             'publish_date': book['publish_date'],
             'author': book['author']
         }
@@ -58,6 +57,7 @@ def index(period='month', user_id=None):
 @app.route('/<section_nm>', methods=['GET'])
 def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
     section_nm = request.args.get('section_nm', section_nm)
+    page = request.args.get('page', page)
     checker = CategoryList.query.filter_by(section=section_nm).first()
     if checker is None:
         return render_template('404.html'), 404
@@ -75,15 +75,15 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
             cate_list[category].append(subcategory)
     subcate_list = cate_list[category_nm]
     if category_nm != 'all':
-        product_list = get_catalog_subcategory(subcate_nm, page=page)
+        queried_list = get_catalog_subcategory(subcate_nm, page=page)
+        product_list = create_product_list(queried_list)
         html_page = 'subcate.html'
     else:
-        return_list = get_catalog_section(section_nm, MONTH_AGO, TODAY)
-        product_list = [product for product in return_list]
+        queried_list = get_catalog_section(section_nm, TWO_MONTHS_AGO, TODAY)
+        product_list = create_product_list(queried_list)
         html_page = 'section.html'
 
     book_counts = get_subcate_book_counts(subcate_nm)
-    page = request.args.get('page', page)
     shown_pages = show_paging(page, book_counts, books_per_page=20)
 
     return render_template(html_page,
@@ -143,10 +143,11 @@ def product(isbn_id=None):
         create_data(UserFavorite(user_id=user_id, track_type=TrackType.ACTIVITY_HISTORY.value, type_id=isbn_id))
         tracking_hash = check_user_track_by_product(user_id=user_id,
                                                     category_id=kingstone['category_id'],
-                                                    author_id=isbn_id,
-                                                    isbn_id=kingstone['author_id'])
+                                                    author_id=kingstone['author_id'],
+                                                    isbn_id=isbn_id)
     else:
         tracking_hash = {}
+    print(kingstone['category_id'], kingstone['author_id'])
     return render_template('product.html',
                            nav_sec=nav_sec,
                            kingstone=kingstone,
@@ -245,7 +246,6 @@ def dashboard(date=TODAY):
             eslite[step] = [minutes, quantity]      
         else:
             momo[step] = [minutes, quantity]
-
     return render_template('dashboard.html',
                            kingstone=kingstone,
                            eslite=eslite,
