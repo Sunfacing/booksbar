@@ -1,5 +1,5 @@
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 
 <div id="id01" class="modal">
     <div class="flip-container animate">
@@ -7,7 +7,7 @@
         <div class="front">
           <div class="container login">
             <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
-            <h3>會員登入</h3>
+            <h3 class="login">會員登入</h3>
             <div class="login">
               <div class="form-group">
                 <label for="email">Email:</label>
@@ -26,7 +26,7 @@
         <div class="back">      
           <div class="container login">
             <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
-            <h3>新會員註冊</h3>
+            <h3 class="login">新會員註冊</h3>
             <div class="register">
               <div class="form-group">
                 <label for="email">Email:</label>
@@ -45,7 +45,7 @@
     </div>   
   </div>
   <!-- <script type="text/javascript" src="/flaskapp/server/static/login.js"></script> -->
-  <script type="text/javascript" src="{{ url_for('static', filename='login.js', u=last_updated) }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/login.js', u=last_updated) }}"></script>
 
 
 
