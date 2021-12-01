@@ -2,7 +2,7 @@ div#loading {
     width: 700px;
     height: 600px;
     display: none;
-    background: url(/static/loadingimage.gif) no-repeat;
+    background: url(/static/img/loadingimage.gif) no-repeat;
     cursor: wait;
     margin: auto; 
     margin-top: 120px;    

@@ -63,19 +63,19 @@ timeSpent(
     ks_check_unmatch={{ kingstone['unmatched books'][0] }},
     ks_phase_out={{ kingstone['phase out'][0] }},
     ks_update_price={{ kingstone['price updated'][0] }}, 
-    ks_ttl={{ kingstone['new_isbn'][0] }},
+    ks_ttl={{ kingstone['total scraped'][0] + kingstone['duplicate found'][0] + kingstone['unmatched books'][0] + kingstone['phase out'][0] + kingstone['price updated'][0] }},
     es_first={{ eslite['total scraped'][0] }},
     es_remove={{ eslite['duplicate found'][0] }},
     es_check_unmatch={{ eslite['unmatched books'][0] }},
     es_phase_out={{ eslite['phase out'][0] }},
     es_update_price={{ eslite['price updated'][0] }},
-    es_ttl=0,
+    es_ttl={{ eslite['total scraped'][0] + eslite['duplicate found'][0] + eslite['unmatched books'][0] + eslite['phase out'][0] + eslite['price updated'][0] }},
     mm_first={{ momo['total scraped'][0] }},
     mm_remove={{ momo['duplicate found'][0] }},
     mm_check_unmatch={{ momo['unmatched books'][0] }},
     mm_phase_out={{ momo['phase out'][0] }},
     mm_update_price={{ momo['price updated'][0] }},
-    mm_ttl=0
+    mm_ttl={{ momo['total scraped'][0] + momo['duplicate found'][0] + momo['unmatched books'][0] + momo['phase out'][0] + momo['price updated'][0] }}
 )
 </script>
 
