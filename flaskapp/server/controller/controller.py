@@ -57,6 +57,7 @@ def index(period='month', user_id=None):
 @app.route('/<section_nm>', methods=['GET'])
 def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
     section_nm = request.args.get('section_nm', section_nm)
+    page = request.args.get('page', page)
     checker = CategoryList.query.filter_by(section=section_nm).first()
     if checker is None:
         return render_template('404.html'), 404
@@ -83,7 +84,6 @@ def section(section_nm='文學', category_nm='all', subcate_nm='all', page=1):
         html_page = 'section.html'
 
     book_counts = get_subcate_book_counts(subcate_nm)
-    page = request.args.get('page', page)
     shown_pages = show_paging(page, book_counts, books_per_page=20)
 
     return render_template(html_page,

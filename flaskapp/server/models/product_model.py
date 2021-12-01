@@ -212,6 +212,7 @@ def get_catalog_section(section, date_1, date_2):
 
 
 def get_catalog_subcategory(subcategory, page):
+    print(subcategory, page)
     # Page begins at 1, so must deduct to 1 to get the fisrt 20 books
     offset = (int(page) - 1) * 20
     product_list =db.session.execute("""
