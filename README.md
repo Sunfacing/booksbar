@@ -1,5 +1,10 @@
 # [booksbar](https://www.books-bar.com)
 
+
+#### Login to enjoy (user functions only)
+* E-mail: reader@barmail.com
+* Password: oceanofbooks
+
 ### A Personal Library with 2 main features: 
 ####  - Users can follow their favorite categories, authors and books
 ####  - Users can see prices of 3 online bookstores, Kingstone, Eslite and Momo, to buy at the best price
@@ -7,11 +12,6 @@
 
 ![](https://imgur.com/fHfmome.jpg)
 ### Website : https://www.books-bar.com
-
-
-#### Login to enjoy (user functions only)
-* E-mail: reader@barmail.com
-* Password: oceanofbooks
 
 ****
 # Table of Contents
