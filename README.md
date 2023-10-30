@@ -1,5 +1,4 @@
-# [booksbar](https://www.books-bar.com)
-
+# [booksbar](https://www.books-bar.com) 
 
 #### Login to enjoy (user functions only)
 * E-mail: reader@barmail.com
@@ -11,7 +10,7 @@
 ****
 
 ![](https://imgur.com/fHfmome.jpg)
-### Website : https://www.books-bar.com
+### Website : https://www.books-bar.com [Website is currently unavailable]
 
 ****
 # Table of Contents
@@ -67,7 +66,7 @@
 ![](https://i.imgur.com/rCBAnx4.gif)
 
 ### Search Keywords - Book Title & Author Name
-![](https://i.imgur.com/7VktSSd.gif)
+![](https://i.imgur.com/Nzztodc.gif)
 
 ### Add to Favourite - Category & Author & Book
 ![](https://i.imgur.com/nQ7vYuW.gif)
